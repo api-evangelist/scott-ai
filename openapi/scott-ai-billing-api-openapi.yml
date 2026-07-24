@@ -1,0 +1,336 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access billing API
+  version: 1.0.0
+tags:
+- name: billing
+paths:
+  /billing/checkout-session:
+    post:
+      tags:
+      - billing
+      summary: Create Checkout Session
+      description: 'Create a Stripe checkout session for subscription purchase.
+
+        Requires authentication via Stytch session token.'
+      operationId: create_checkout_session_billing_checkout_session_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutSessionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutSessionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /billing/subscription-status:
+    post:
+      tags:
+      - billing
+      summary: Get Subscription Status
+      description: 'Check subscription status by email or session ID.
+
+        Requires authentication via Stytch session token.'
+      operationId: get_subscription_status_billing_subscription_status_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionStatusRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionStatusResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /billing/customer-portal:
+    post:
+      tags:
+      - billing
+      summary: Create Customer Portal Session
+      description: 'Create a Stripe Customer Portal session for subscription management.
+
+        Allows users to update payment methods, cancel subscriptions, view invoices, etc.
+
+        Requires authentication via Stytch session token.'
+      operationId: create_customer_portal_session_billing_customer_portal_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerPortalRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerPortalResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /billing/usage-status:
+    get:
+      tags:
+      - billing
+      summary: Get Usage Status
+      description: 'Get the user''s current conversation usage status.
+
+        Returns plan tier, current usage count, limit, and reset date.
+
+        Free tier: 3 conversations per day, resets daily
+
+        Premium tier: unlimited conversations'
+      operationId: get_usage_status_billing_usage_status_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageStatusResponse'
+      security:
+      - HTTPBearer: []
+  /billing/turn-usage-status:
+    get:
+      tags:
+      - billing
+      summary: Get Turn Usage Status
+      description: Hourly rolling-window message usage status for workspace turns.
+      operationId: get_turn_usage_status_billing_turn_usage_status_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TurnUsageStatusResponse'
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    CheckoutSessionRequest:
+      properties:
+        priceId:
+          type: string
+          title: Priceid
+        quantity:
+          type: integer
+          title: Quantity
+          default: 1
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        return_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Return Url
+      type: object
+      required:
+      - priceId
+      title: CheckoutSessionRequest
+    CheckoutSessionResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: CheckoutSessionResponse
+    CustomerPortalRequest:
+      properties:
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+      type: object
+      title: CustomerPortalRequest
+    SubscriptionStatusRequest:
+      properties:
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        sessionId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sessionid
+      type: object
+      title: SubscriptionStatusRequest
+    UsageStatusResponse:
+      properties:
+        plan_tier:
+          type: string
+          title: Plan Tier
+        conversation_count:
+          type: integer
+          title: Conversation Count
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+        day_start_date:
+          type: string
+          title: Day Start Date
+        resets_at:
+          type: string
+          title: Resets At
+      type: object
+      required:
+      - plan_tier
+      - conversation_count
+      - limit
+      - day_start_date
+      - resets_at
+      title: UsageStatusResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TurnUsageStatusResponse:
+      properties:
+        plan_tier:
+          type: string
+          title: Plan Tier
+        message_count:
+          type: integer
+          title: Message Count
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+        is_throttled:
+          type: boolean
+          title: Is Throttled
+        window_resets_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Window Resets At
+      type: object
+      required:
+      - plan_tier
+      - message_count
+      - limit
+      - is_throttled
+      - window_resets_at
+      title: TurnUsageStatusResponse
+    SubscriptionStatusResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+        plan:
+          type: string
+          title: Plan
+        customerId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Customerid
+        subscriptionId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Subscriptionid
+        currentPeriodEnd:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Currentperiodend
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      required:
+      - status
+      - plan
+      title: SubscriptionStatusResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CustomerPortalResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: CustomerPortalResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,669 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access agent-counsel-internal API
+  version: 1.0.0
+tags:
+- name: agent-counsel-internal
+paths:
+  /agent-loop/internal/agent-counsel/finish:
+    post:
+      tags:
+      - agent-counsel-internal
+      summary: Finish Agent Counsel Review
+      operationId: finish_agent_counsel_review
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentFinishBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDecisionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/internal/agent-counsel/comment:
+    post:
+      tags:
+      - agent-counsel-internal
+      summary: Add Agent Counsel Comment
+      description: 'Delegated quote-anchored comment write for an agent-counsel reviewer.
+
+
+        Agent-service calls this with its agent JWT instead of writing to hocuspocus
+
+        directly; fastapi signs the HMAC envelope and relays. The author is the
+
+        reviewer named in the verified JWT — never request input — so the agent cannot
+
+        comment as anyone else. Authorized by the cap plus an open ReviewRequest for
+
+        (reviewer_id, snapshot_id), matching the context route; refuses once the review
+
+        is finished or cancelled.'
+      operationId: add_agent_counsel_comment
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentCommentBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentCommentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/agent-counsel/context:
+    get:
+      tags:
+      - agent-counsel-internal
+      summary: Get Agent Counsel Context
+      description: 'Snapshot-scoped context for an agent-service agent-counsel turn (the branch loader).
+
+
+        Agent-service-facing (caps=[''agent-counsel-turn'']). The reviewer (=user_id) and
+
+        snapshot_id come from the verified JWT, never request input. Authorization is
+
+        the cap plus an open ReviewRequest for (reviewer_id, snapshot_id); never workspace
+
+        membership, since synthetic reviewers are not members. Returns the one snapshot''s
+
+        content, the workspace identity + connected sources, and the comments on that
+
+        snapshot. ``turns`` is empty: agent counsel is a single fire-and-forget pass with no
+
+        private thread to walk.'
+      operationId: get_agent_counsel_context
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentCounselContextResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    UploadedFileSourceConfig:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+      type: object
+      required:
+      - file_id
+      title: UploadedFileSourceConfig
+      description: Configuration for an uploaded file source
+    AgentFinishBody:
+      properties: {}
+      type: object
+      title: AgentFinishBody
+      description: 'Empty body: the agent does not choose a verdict; finish records approved.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UploadedFileSourceMetadata:
+      properties:
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - filename
+      title: UploadedFileSourceMetadata
+      description: Metadata for an uploaded file source
+    SourceVisibility:
+      type: string
+      enum:
+      - private
+      - public
+      title: SourceVisibility
+      description: Visibility level of a source
+    AgentCommentBody:
+      properties:
+        quote:
+          type: string
+          title: Quote
+        body:
+          type: string
+          title: Body
+        context_before:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Context Before
+        context_after:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Context After
+      type: object
+      required:
+      - quote
+      - body
+      title: AgentCommentBody
+      description: A quote-anchored review comment from a synthetic reviewer.
+    GitHubSourceMetadata:
+      properties:
+        installation_id:
+          type: integer
+          title: Installation Id
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - installation_id
+      - commit_sha
+      title: GitHubSourceMetadata
+      description: Metadata for a GitHub source
+    AgentCommentResponse:
+      properties:
+        thread_id:
+          type: string
+          title: Thread Id
+        resolved_anchor_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resolved Anchor Text
+      type: object
+      required:
+      - thread_id
+      title: AgentCommentResponse
+    AgentCounselContextResponse:
+      properties:
+        snapshot:
+          $ref: '#/components/schemas/SnapshotInfo'
+        workspace:
+          $ref: '#/components/schemas/WorkspaceContextInfo'
+        comments:
+          items:
+            $ref: '#/components/schemas/CommentSnapshot'
+          type: array
+          title: Comments
+          default: []
+        turns:
+          items:
+            $ref: '#/components/schemas/ReviewerContextTurn'
+          type: array
+          title: Turns
+      type: object
+      required:
+      - snapshot
+      - workspace
+      - turns
+      title: AgentCounselContextResponse
+      description: 'Agent-counsel''s snapshot-scoped context. Same shape as SnapshotScopedContext;
+
+        owns its own name + OpenAPI id, decoupled from review-chat. ``turns`` is always
+
+        empty (a counsel review is a single fire-and-forget pass).'
+    AgentDecisionResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        requester_id:
+          type: string
+          title: Requester Id
+        reviewer_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewer Id
+        pending_invite_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pending Invite Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        latest_agent_counsel_turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Agent Counsel Turn Id
+        status:
+          type: string
+          enum:
+          - open
+          - closed
+          - cancelled
+          title: Status
+        state:
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - in_progress
+            - approved
+            - rejected
+          - type: 'null'
+          title: State
+        engaged_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Engaged At
+        decision:
+          anyOf:
+          - type: string
+            enum:
+            - approved
+            - rejected
+          - type: 'null'
+          title: Decision
+        decided_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Decided At
+        prior_decisions:
+          items:
+            $ref: '#/components/schemas/PriorReviewDecision'
+          type: array
+          title: Prior Decisions
+          default: []
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - id
+      - workspace_id
+      - snapshot_id
+      - requester_id
+      - reviewer_id
+      - pending_invite_id
+      - message
+      - status
+      - state
+      - engaged_at
+      - decision
+      - decided_at
+      - created_at
+      - updated_at
+      title: AgentDecisionResponse
+      description: 'The finish endpoint returns the unenriched review-request shape: the
+
+        agent caller has no use for workspace_name / display names, and resolving
+
+        them would force a workspace fetch + profile lookup this path skips. The
+
+        closed request carries an approved decision; the UI hides the verdict for
+
+        agent reviewers.'
+    CommentSnapshot:
+      properties:
+        id:
+          type: string
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        author_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Author Display Name
+        content:
+          type: string
+          title: Content
+        anchor_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Anchor Text
+        resolved:
+          type: boolean
+          title: Resolved
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - content
+      - resolved
+      - created_at
+      title: CommentSnapshot
+      description: 'Comment projection for agent context — derived from `thread_comments`
+
+        joined with `threads` and the author''s user profile.
+
+
+        Replies share `parent_id` = the thread''s first comment id (so the agent
+
+        prompt''s `<comments>` block keeps its `reply_to` thread structure intact).
+
+        `anchor_text` carries the prosemirror range the thread anchors to (mirrored
+
+        from hocuspocus when the comment mark lands in the Y.Doc); null for
+
+        pre-anchor threads and threads whose anchor was lost to a concurrent edit.'
+    PriorReviewDecision:
+      properties:
+        decision:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Decision
+        decided_at:
+          type: string
+          format: date-time
+          title: Decided At
+      type: object
+      required:
+      - decision
+      - decided_at
+      title: PriorReviewDecision
+    SnapshotInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - id
+      - content
+      title: SnapshotInfo
+    ConnectedSource:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        linked_by_user_id:
+          type: string
+          title: Linked By User Id
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+        config:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceConfig'
+          - $ref: '#/components/schemas/SlackSourceConfig'
+          - $ref: '#/components/schemas/UploadedFileSourceConfig'
+          title: Config
+        metadata:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceMetadata'
+          - $ref: '#/components/schemas/SlackSourceMetadata'
+          - $ref: '#/components/schemas/UploadedFileSourceMetadata'
+          title: Metadata
+      type: object
+      required:
+      - linked_by_user_id
+      - adapter
+      - config
+      - metadata
+      title: ConnectedSource
+    SlackSourceMetadata:
+      properties:
+        team_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Name
+        channel_name:
+          type: string
+          title: Channel Name
+        is_private:
+          type: boolean
+          title: Is Private
+          default: false
+      type: object
+      required:
+      - channel_name
+      title: SlackSourceMetadata
+      description: Metadata for a Slack source
+    GitHubSourceConfig:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceConfig
+      description: Configuration for a GitHub source
+    WorkspaceContextInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        connected_sources:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ConnectedSource'
+            type: array
+          - type: 'null'
+          title: Connected Sources
+        connected_sources_fingerprint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Connected Sources Fingerprint
+      type: object
+      required:
+      - id
+      title: WorkspaceContextInfo
+    SlackSourceConfig:
+      properties:
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        channel_id:
+          type: string
+          title: Channel Id
+      type: object
+      required:
+      - slack_team_id
+      - channel_id
+      title: SlackSourceConfig
+      description: Configuration for a Slack source
+    ReviewerContextTurn:
+      properties:
+        id:
+          type: string
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        user_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Display Name
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        assistant_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Text
+        message_deltas:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Message Deltas
+        usage:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Usage
+      type: object
+      required:
+      - id
+      - parent_id
+      - user_message
+      - assistant_text
+      title: ReviewerContextTurn
+      description: 'A snapshot-scoped thread turn for agent hydration. `parent_id` is the
+
+        linear chain pointer; user authorship is always the reviewer.'
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

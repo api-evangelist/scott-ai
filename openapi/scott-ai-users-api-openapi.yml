@@ -1,0 +1,669 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access users API
+  version: 1.0.0
+tags:
+- name: users
+paths:
+  /users/me:
+    get:
+      tags:
+      - users
+      summary: Get My Profile
+      description: 'Get own UserProfile, auto-creating it on first call (upsert).
+
+
+        Also returns the viewer''s own org (with `external_sharing_enabled` and
+
+        `viewer_role`) so settings UI can render org-scoped controls without a
+
+        second round-trip.'
+      operationId: get_my_profile
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+      security:
+      - HTTPBearer: []
+    put:
+      tags:
+      - users
+      summary: Update My Profile
+      description: Update own display_name and/or avatar_url.
+      operationId: update_my_profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /users/me/identity:
+    get:
+      tags:
+      - users
+      summary: Get My Identity
+      description: 'Return the authenticated user''s Stytch id + email with no side effects.
+
+
+        Intended for the Scott CLI to attach identity to product-analytics events.
+
+        Deliberately does not upsert the profile or resolve the org the way
+
+        `GET /users/me` does — an analytics identity read should be cheap and
+
+        idempotent.'
+      operationId: get_my_identity
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserIdentityResponse'
+      security:
+      - HTTPBearer: []
+  /users/me/onboarding-options:
+    get:
+      tags:
+      - users
+      summary: Get Onboarding Options
+      description: 'Return the data the frontend needs to choose an onboarding UX.
+
+
+        Composes one fact from user_profile (`has_completed_onboarding`) with two from orgs
+
+        (`current_org`, `matching_org`) — neither service crosses domain boundaries.'
+      operationId: get_onboarding_options
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingOptionsResponse'
+      security:
+      - HTTPBearer: []
+  /users/me/complete-onboarding:
+    post:
+      tags:
+      - users
+      summary: Complete Onboarding
+      description: 'Mark onboarding complete and place the user in exactly one org.
+
+
+        `kind: "solo"` creates a personal org; `kind: "team"` joins the user to the
+
+        org that has claimed their email domain. Org write + flag flip share a single
+
+        DB transaction so partial state is impossible.'
+      operationId: complete_onboarding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/_SoloOnboarding'
+              - $ref: '#/components/schemas/_TeamOnboarding'
+              title: Body
+              discriminator:
+                propertyName: kind
+                mapping:
+                  solo: '#/components/schemas/_SoloOnboarding'
+                  team: '#/components/schemas/_TeamOnboarding'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteOnboardingResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /users/search:
+    get:
+      tags:
+      - users
+      summary: Search Users
+      description: Search users by email or display name, filtered to the caller's email domain.
+      operationId: search_users
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 100
+          default: ''
+          title: Q
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/{user_id}:
+    get:
+      tags:
+      - users
+      summary: Get User Profile
+      description: Get public profile of any user by their user_id.
+      operationId: get_user_profile
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/members:
+    get:
+      tags:
+      - users
+      summary: List Workspace Members
+      description: List all members of a workspace with their profiles.
+      operationId: list_workspace_members
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWorkspaceMembersResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - users
+      summary: Add Workspace Member
+      description: Directly add a same-org user to a workspace (owner only, no invite round trip).
+      operationId: add_workspace_member
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddWorkspaceMemberRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceMemberResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/members/{target_user_id}:
+    patch:
+      tags:
+      - users
+      summary: Update Member Role
+      description: Change a member's role (owner only).
+      operationId: update_member_role
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: target_user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Target User Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMemberRoleRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Member Role
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - users
+      summary: Remove Workspace Member
+      description: Remove a member from a workspace. Owners and editors may remove members; only owners may remove an owner.
+      operationId: remove_workspace_member
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: target_user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Target User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Remove Workspace Member
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ListWorkspaceMembersResponse:
+      properties:
+        members:
+          items:
+            $ref: '#/components/schemas/WorkspaceMemberResponse'
+          type: array
+          title: Members
+      type: object
+      required:
+      - members
+      title: ListWorkspaceMembersResponse
+    AddWorkspaceMemberRequest:
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          title: Email
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+          default: editor
+      type: object
+      required:
+      - email
+      title: AddWorkspaceMemberRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CompleteOnboardingResponse:
+      properties:
+        profile:
+          $ref: '#/components/schemas/UserProfileResponse'
+        current_org:
+          $ref: '#/components/schemas/OrgRefDTO'
+      type: object
+      required:
+      - profile
+      - current_org
+      title: CompleteOnboardingResponse
+    _SoloOnboarding:
+      properties:
+        kind:
+          type: string
+          const: solo
+          title: Kind
+      type: object
+      required:
+      - kind
+      title: _SoloOnboarding
+    UserProfileResponse:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        display_name:
+          type: string
+          title: Display Name
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        needs_onboarding:
+          type: boolean
+          title: Needs Onboarding
+          default: false
+        current_org:
+          anyOf:
+          - $ref: '#/components/schemas/CurrentOrg'
+          - type: 'null'
+      type: object
+      required:
+      - user_id
+      - display_name
+      - avatar_url
+      - email
+      title: UserProfileResponse
+    UpdateMemberRoleRequest:
+      properties:
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+      type: object
+      required:
+      - role
+      title: UpdateMemberRoleRequest
+    CurrentOrg:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        claimed_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Claimed Domain
+        external_sharing_enabled:
+          type: boolean
+          title: External Sharing Enabled
+        viewer_role:
+          type: string
+          enum:
+          - owner
+          - admin
+          - member
+          title: Viewer Role
+        is_personal:
+          type: boolean
+          title: Is Personal
+          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
+          readOnly: true
+      type: object
+      required:
+      - id
+      - name
+      - external_sharing_enabled
+      - viewer_role
+      - is_personal
+      title: CurrentOrg
+      description: 'The viewer''s own org — adds the fields the renderer needs to render settings
+
+        without a second round-trip: the toggle value plus the viewer''s role for owner-gated UI.'
+    WorkspaceMemberResponse:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+        joined_at:
+          type: string
+          format: date-time
+          title: Joined At
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+      type: object
+      required:
+      - user_id
+      - role
+      - joined_at
+      - display_name
+      - avatar_url
+      - email
+      title: WorkspaceMemberResponse
+    OnboardingOptionsResponse:
+      properties:
+        has_completed_onboarding:
+          type: boolean
+          title: Has Completed Onboarding
+        current_org:
+          anyOf:
+          - $ref: '#/components/schemas/OrgRefDTO'
+          - type: 'null'
+        matching_org:
+          anyOf:
+          - $ref: '#/components/schemas/OrgRefDTO'
+          - type: 'null'
+      type: object
+      required:
+      - has_completed_onboarding
+      - current_org
+      - matching_org
+      title: OnboardingOptionsResponse
+    UserIdentityResponse:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+      type: object
+      required:
+      - user_id
+      - email
+      title: UserIdentityResponse
+      description: 'Lean identity for CLI/telemetry: Stytch user_id + email only.
+
+
+        Unlike GET /users/me this does NO DB work — no profile upsert, no commit,
+
+        no org lookup — so it is a cheap, side-effect-free "who am I" suited to the
+
+        CLI''s per-invocation analytics identity resolution.'
+    UserSearchResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/UserProfileResponse'
+          type: array
+          title: Users
+      type: object
+      required:
+      - users
+      title: UserSearchResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    _TeamOnboarding:
+      properties:
+        kind:
+          type: string
+          const: team
+          title: Kind
+      type: object
+      required:
+      - kind
+      title: _TeamOnboarding
+    OrgRefDTO:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        claimed_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Claimed Domain
+        is_personal:
+          type: boolean
+          title: Is Personal
+          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
+          readOnly: true
+      type: object
+      required:
+      - id
+      - name
+      - is_personal
+      title: OrgRefDTO
+      description: Lightweight {id, name, is_personal} pointer used by settings and onboarding flows.
+    UpdateProfileRequest:
+      properties:
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+      type: object
+      title: UpdateProfileRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

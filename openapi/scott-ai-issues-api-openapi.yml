@@ -1,0 +1,151 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access issues API
+  version: 1.0.0
+tags:
+- name: issues
+paths:
+  /issues:
+    post:
+      tags:
+      - issues
+      summary: File Issue
+      operationId: file_issue
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileIssueRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileIssueResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    FileIssueResponse:
+      properties:
+        issue_url:
+          type: string
+          title: Issue Url
+        issue_identifier:
+          type: string
+          title: Issue Identifier
+      type: object
+      required:
+      - issue_url
+      - issue_identifier
+      title: FileIssueResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    FileIssueRequest:
+      properties:
+        title:
+          type: string
+          maxLength: 300
+          minLength: 1
+          title: Title
+        description:
+          type: string
+          title: Description
+          default: ''
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+        state:
+          type: string
+          title: State
+          default: Backlog
+        extra_fields:
+          items:
+            $ref: '#/components/schemas/IssueField'
+          type: array
+          title: Extra Fields
+        screenshots:
+          items:
+            type: string
+          type: array
+          title: Screenshots
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        workspace_snapshot:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Workspace Snapshot
+      type: object
+      required:
+      - title
+      title: FileIssueRequest
+    IssueField:
+      properties:
+        label:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Label
+        value:
+          type: string
+          maxLength: 400
+          minLength: 1
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: IssueField
+      description: A labelled value rendered into the Linear issue description (e.g. Category).
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

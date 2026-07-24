@@ -1,0 +1,109 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access github API
+  version: 1.0.0
+tags:
+- name: github
+paths:
+  /github/pull-request:
+    get:
+      tags:
+      - github
+      summary: Get Github Pull Request Status
+      operationId: get_github_pull_request_status
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: url
+        in: query
+        required: true
+        schema:
+          type: string
+          description: github.com pull-request URL
+          title: Url
+        description: github.com pull-request URL
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrStatus'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PrStatus:
+      properties:
+        number:
+          type: integer
+          title: Number
+        title:
+          type: string
+          title: Title
+        repo:
+          type: string
+          title: Repo
+        url:
+          type: string
+          title: Url
+        state:
+          type: string
+          enum:
+          - open
+          - merged
+          - closed
+          - draft
+          title: State
+      type: object
+      required:
+      - number
+      - title
+      - repo
+      - url
+      - state
+      title: PrStatus
+      description: Live status of a pull request, resolved via a GitHub App installation.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

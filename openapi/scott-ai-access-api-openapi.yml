@@ -1,0 +1,79 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access API
+  version: 1.0.0
+tags:
+- name: access
+paths:
+  /access/check:
+    get:
+      tags:
+      - access
+      summary: Check Access
+      description: Public (no auth) — called before login to gate browser app access.
+      operationId: check_access_access_check_get
+      parameters:
+      - name: email
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Email to check
+          title: Email
+        description: Email to check
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Check Access Access Check Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,507 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access invites API
+  version: 1.0.0
+tags:
+- name: invites
+paths:
+  /invites/{token}:
+    get:
+      tags:
+      - invites
+      summary: Get Workspace Invite By Token
+      description: Resolve an invite token to its workspace_id. Used by the router to detect already-accepted invites.
+      operationId: get_workspace_invite_by_token
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvitePreviewResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/invites:
+    post:
+      tags:
+      - invites
+      summary: Create Workspace Invite
+      description: Create a magic-link invite for a workspace. Returns the token.
+      operationId: create_workspace_invite
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInviteRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - invites
+      summary: List Workspace Invites
+      description: List pending (not accepted, not expired) invites for a workspace.
+      operationId: list_workspace_invites
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWorkspaceInvitesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/invites/{invite_id}:
+    delete:
+      tags:
+      - invites
+      summary: Revoke Workspace Invite
+      description: Revoke (delete) a pending invite. Owners and editors may revoke any invite.
+      operationId: revoke_workspace_invite
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: invite_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Invite Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Revoke Workspace Invite
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - invites
+      summary: Update Workspace Invite
+      description: Update the role and/or message of a pending invite in place.
+      operationId: update_workspace_invite
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: invite_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Invite Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInviteRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/my-pending-invite:
+    get:
+      tags:
+      - invites
+      summary: Get My Pending Workspace Invite
+      description: Return the authenticated user's pending invite for a workspace, identified by email match.
+      operationId: get_my_pending_workspace_invite
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyPendingInviteResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/my-pending-invite/accept:
+    post:
+      tags:
+      - invites
+      summary: Accept My Pending Workspace Invite
+      description: Accept the authenticated user's pending invite for a workspace, identified by email match.
+      operationId: accept_my_pending_workspace_invite
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcceptInviteResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /invites/{token}/accept:
+    post:
+      tags:
+      - invites
+      summary: Accept Workspace Invite
+      description: Accept a magic-link invite. Adds the authenticated user as a workspace member.
+      operationId: accept_workspace_invite
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcceptInviteResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ReviewMetadata:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      additionalProperties: false
+      type: object
+      required:
+      - snapshot_id
+      title: ReviewMetadata
+      description: 'Optional review request metadata for combined invite + review flow.
+
+
+        snapshot_id anchors the request to the node being shared; the reviewer
+
+        binds in on invite acceptance.'
+    ListWorkspaceInvitesResponse:
+      properties:
+        invites:
+          items:
+            $ref: '#/components/schemas/InviteResponse'
+          type: array
+          title: Invites
+      type: object
+      required:
+      - invites
+      title: ListWorkspaceInvitesResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    MyPendingInviteResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+      type: object
+      required:
+      - workspace_id
+      - role
+      title: MyPendingInviteResponse
+      description: Pending-invite preview for the authenticated user, scoped to a workspace.
+    UpdateInviteRequest:
+      properties:
+        role:
+          anyOf:
+          - type: string
+            enum:
+            - owner
+            - editor
+            - viewer
+            - commenter
+          - type: 'null'
+          title: Role
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      additionalProperties: false
+      type: object
+      title: UpdateInviteRequest
+    InvitePreviewResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+      type: object
+      required:
+      - workspace_id
+      title: InvitePreviewResponse
+    CreateInviteRequest:
+      properties:
+        invitee_email:
+          type: string
+          title: Invitee Email
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+          default: editor
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        notify_people:
+          type: boolean
+          title: Notify People
+          default: true
+        review:
+          anyOf:
+          - $ref: '#/components/schemas/ReviewMetadata'
+          - type: 'null'
+      type: object
+      required:
+      - invitee_email
+      title: CreateInviteRequest
+    InviteResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        invitee_email:
+          type: string
+          title: Invitee Email
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token
+        expires_at:
+          type: string
+          format: date-time
+          title: Expires At
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        accepted_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Accepted At
+      type: object
+      required:
+      - id
+      - workspace_id
+      - invitee_email
+      - role
+      - message
+      - token
+      - expires_at
+      - created_at
+      - accepted_at
+      title: InviteResponse
+    AcceptInviteResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+        review:
+          anyOf:
+          - $ref: '#/components/schemas/AcceptInviteReviewHint'
+          - type: 'null'
+      type: object
+      required:
+      - workspace_id
+      - role
+      title: AcceptInviteResponse
+      description: Accept result; `review` is set iff the invite carried a review request (SCO-1353).
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AcceptInviteReviewHint:
+      properties:
+        review_request_id:
+          type: string
+          title: Review Request Id
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+      type: object
+      required:
+      - review_request_id
+      - snapshot_id
+      title: AcceptInviteReviewHint
+      description: Node-anchored routing hint set when an accepted invite carried a review request.
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

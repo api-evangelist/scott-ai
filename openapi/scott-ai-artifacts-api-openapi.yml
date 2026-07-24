@@ -1,0 +1,198 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access artifacts API
+  version: 1.0.0
+tags:
+- name: artifacts
+paths:
+  /workspaces/{workspace_id}/document-artifacts:
+    post:
+      tags:
+      - artifacts
+      summary: Create Document Artifact
+      description: "Land an agent `write_document` turn — as a suggestion or a committed node.\n\nDispatched per actor by ``_suggestions_enabled_for``:\n\n  * **enabled** (allowlisted user, or any non-prod env) -> suggestion\n    flow (``_land_suggestion``); no node minted.\n  * **disabled** (prod, non-allowlisted) -> pre-Phase-1 flow\n    (``_land_committed_node``); mint a committed node.\n\nBoth share the dual-auth contract from ``require_turn_access_from_body``."
+      operationId: create_document_artifact_workspaces__workspace_id__document_artifacts_post
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDocumentArtifactRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDocumentArtifactResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ChangeEntry:
+      properties:
+        changeType:
+          type: string
+          enum:
+          - added
+          - modified
+          - removed
+          title: Changetype
+        concept:
+          type: string
+          title: Concept
+        summary:
+          type: string
+          title: Summary
+        sectionHeading:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sectionheading
+      type: object
+      required:
+      - changeType
+      - concept
+      - summary
+      title: ChangeEntry
+      description: 'One semantic change emitted by the agent''s `write_document` tool.
+
+
+        Field-name casing matches the agent''s serialization (camelCase) so
+
+        Pydantic round-trips without aliasing.'
+    CreateDocumentArtifactRequest:
+      properties:
+        id:
+          type: string
+          title: Id
+        turn_id:
+          type: string
+          title: Turn Id
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        diff:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ChangeEntry'
+            type: array
+          - type: 'null'
+          title: Diff
+        initial_blocks:
+          items: {}
+          type: array
+          title: Initial Blocks
+        initial_markdown:
+          type: string
+          title: Initial Markdown
+      type: object
+      required:
+      - id
+      - turn_id
+      - initial_blocks
+      - initial_markdown
+      title: CreateDocumentArtifactRequest
+      description: 'Body for POST /document-artifacts.
+
+
+        Sent by the agent service when `write_document` produces a new
+
+        document artifact. The client UUID becomes the artifact''s
+
+        `document_artifact_id`. The Hocuspocus room id is built at the
+
+        boundary as `<workspace_id>:<document_artifact_id>`; not stored in
+
+        the schema.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CreateDocumentArtifactResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        produced_at_turn_id:
+          type: string
+          title: Produced At Turn Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - workspace_id
+      - name
+      - produced_at_turn_id
+      - created_at
+      title: CreateDocumentArtifactResponse
+      description: 'Same shape as the document-only fields of `ArtifactSummary`,
+
+        declared here to keep the write endpoint self-contained.'
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,270 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access notifications API
+  version: 1.0.0
+tags:
+- name: notifications
+paths:
+  /notifications:
+    get:
+      tags:
+      - notifications
+      summary: List Notifications
+      description: Paginated notification list for the current user, with actor display name.
+      operationId: list_notifications
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: unread_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Unread Only
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 20
+          title: Page Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListNotificationsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /notifications/unread-count:
+    get:
+      tags:
+      - notifications
+      summary: Get Unread Count
+      description: Fast count of unread notifications for the current user.
+      operationId: get_unread_count
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnreadCountResponse'
+      security:
+      - HTTPBearer: []
+  /notifications/{notification_id}/read:
+    post:
+      tags:
+      - notifications
+      summary: Mark Notification Read
+      description: 'Mark a single notification as read.
+
+
+        Note: Notifications are user-scoped, not workspace-scoped. No workspace authz required.'
+      operationId: mark_notification_read
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: notification_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Notification Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Mark Notification Read
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /notifications/read-all:
+    post:
+      tags:
+      - notifications
+      summary: Mark All Read
+      description: 'Mark all unread notifications as read for the current user.
+
+
+        Note: Notifications are user-scoped, not workspace-scoped. No workspace authz required.'
+      operationId: mark_all_notifications_read
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Mark All Notifications Read
+      security:
+      - HTTPBearer: []
+  /notifications/stream:
+    get:
+      tags:
+      - notifications
+      summary: Notification Stream
+      description: 'SSE stream: polls DB every 3s for new notifications. Heartbeat every 15s.'
+      operationId: notification_stream
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    UnreadCountResponse:
+      properties:
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - count
+      title: UnreadCountResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    NotificationResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        workspace_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Workspace Id
+        actor_user_id:
+          type: string
+          title: Actor User Id
+        actor_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Actor Display Name
+        entity_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+        entity_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Id
+        payload:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Payload
+        read_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Read At
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - type
+      - workspace_id
+      - actor_user_id
+      - entity_type
+      - entity_id
+      - payload
+      - read_at
+      - created_at
+      title: NotificationResponse
+    NotificationType:
+      type: string
+      enum:
+      - mention
+      - workspace_invite
+      - member_joined
+      - fork_created
+      - review_requested
+      - review_decision
+      - review_nudge
+      - review_retracted
+      - comment_new
+      - comment_reply
+      title: NotificationType
+      description: Types of in-app notifications.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ListNotificationsResponse:
+      properties:
+        notifications:
+          items:
+            $ref: '#/components/schemas/NotificationResponse'
+          type: array
+          title: Notifications
+      type: object
+      required:
+      - notifications
+      title: ListNotificationsResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

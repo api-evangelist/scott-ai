@@ -1,0 +1,144 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access integrations API
+  version: 1.0.0
+tags:
+- name: integrations
+paths:
+  /integrations:
+    get:
+      tags:
+      - integrations
+      summary: List Integrations
+      operationId: list_integrations
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: integration_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IntegrationType'
+          - type: 'null'
+          title: Integration Type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIntegrationsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    IntegrationType:
+      type: string
+      enum:
+      - github
+      - slack
+      title: IntegrationType
+      description: Type of OAuth integration that produces a third-party install.
+    SlackInstall:
+      properties:
+        integration_type:
+          type: string
+          const: slack
+          title: Integration Type
+          default: slack
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        team_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Name
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - slack_team_id
+      - status
+      title: SlackInstall
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ListIntegrationsResponse:
+      properties:
+        items:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/GitHubInstall'
+            - $ref: '#/components/schemas/SlackInstall'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: ListIntegrationsResponse
+    GitHubInstall:
+      properties:
+        integration_type:
+          type: string
+          const: github
+          title: Integration Type
+          default: github
+        installation_id:
+          type: integer
+          title: Installation Id
+        account_login:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Login
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - installation_id
+      - status
+      title: GitHubInstall
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

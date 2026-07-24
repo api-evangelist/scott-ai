@@ -1,0 +1,2735 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access agent-loop API
+  version: 1.0.0
+tags:
+- name: agent-loop
+paths:
+  /agent-loop/workspaces:
+    get:
+      tags:
+      - agent-loop
+      summary: List Workspaces
+      description: List all workspaces the current user is a member of, ordered by most recent turn activity.
+      operationId: list_workspaces
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWorkspacesResponse'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - agent-loop
+      summary: Create Workspace
+      description: "Create a new workspace OR (for Scott pushes) upsert one keyed on\n`(captured_by_user_id, source_kind, source_id)`.\n\nTwo flows:\n  - No `scott_push`: classic workspace creation. Single transaction.\n  - With `scott_push`: idempotent. Same (user, source_kind, source_id)\n    returns the same planspace. Push artifact metadata is replaced in\n    place; scott_push turns are APPENDED past the existing chain tip\n    (never deleted). Non-scott_push turns the user added in the Scott\n    UI are never touched — they stay parented where the user put them\n    and become branches at the prior tip after the next push."
+      operationId: create_workspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkspaceRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWorkspaceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /agent-loop/workspaces/{workspace_id}:
+    delete:
+      tags:
+      - agent-loop
+      summary: Delete Workspace
+      description: Delete workspace and all its turns (cascade).
+      operationId: delete_workspace
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Delete Workspace
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - agent-loop
+      summary: Update Workspace
+      description: Update workspace settings.
+      operationId: update_workspace
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkspaceRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Workspace
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/turns:
+    post:
+      tags:
+      - agent-loop
+      summary: Create Turn
+      description: 'Write-ahead: create a pending turn before agent starts running.'
+      operationId: create_turn
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTurnRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTurnResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/turns/{turn_id}:
+    patch:
+      tags:
+      - agent-loop
+      summary: Update Turn
+      description: 'Single completion call — updates turn with all results at once.
+
+
+        Dual-auth (see ``require_turn_access``): a per-turn agent-svc JWT bound to
+
+        this ``turn_id`` is the agent-service path; Stytch session is the user
+
+        path. Both routes resolve to ``actor.user_id`` for cursor advances and
+
+        downstream attribution.'
+      operationId: update_turn
+      parameters:
+      - name: turn_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Turn Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTurnRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Turn
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/state:
+    get:
+      tags:
+      - agent-loop
+      summary: Get Workspace State
+      description: 'Single call: all turns with DAG annotations + cursor position.
+
+        Anonymous access allowed for public workspaces (cursor/member tracking skipped).
+
+        Pure read — no E2B calls. Frontend calls /wake separately to ensure the sandbox is running.'
+      operationId: get_workspace_state
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceStateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/events:
+    get:
+      tags:
+      - agent-loop
+      summary: Workspace Event Stream
+      description: 'SSE stream of state-change events for workspace members.
+
+
+        Strict-membership only: the agent-service shared-secret principal is
+
+        rejected so the bypass in ``assert_workspace_access`` can''t be reused
+
+        to subscribe to arbitrary workspaces.'
+      operationId: workspace_event_stream
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: token
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/wake:
+    post:
+      tags:
+      - agent-loop
+      summary: Wake Workspace
+      description: 'Ensure the sandbox is running. Returns its current URL.
+
+
+        For Electron workspaces returns ''electron'' immediately (no E2B calls).
+
+        For E2B workspaces: health-checks the shared sandbox and recreates it if unhealthy.'
+      operationId: wake_workspace
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WakeWorkspaceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/context:
+    get:
+      tags:
+      - agent-loop
+      summary: Get Workspace Context
+      description: Walk parent_id chain and optionally bind the response to one document node.
+      operationId: get_workspace_context
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: from_turn_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: From Turn Id
+      - name: snapshot_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Snapshot Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/review-chat/turns:
+    post:
+      tags:
+      - agent-loop
+      summary: Create Review Chat Turn
+      description: 'Open or extend the caller''s private review-chat thread on a snapshot.
+
+
+        Renderer-facing (workspace membership gates the call; the thread is the
+
+        caller''s own). Writes a pending review_chat_turns row, then mints a handoff
+
+        JWT carrying caps=[''review-chat-turn''] plus the snapshot_id claim that flips
+
+        agent-service into the read-only review sandbox. The claim — never a body
+
+        flag — is the source of truth for the turn kind. Returns the handoff code
+
+        the renderer forwards to agent-service.'
+      operationId: create_review_chat_turn
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReviewChatTurnRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReviewChatTurnResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - agent-loop
+      summary: List Review Chat Turns
+      description: 'List the caller''s private review-chat thread on a snapshot (renderer-facing).
+
+
+        Workspace membership gates the call; the thread is scoped to the
+
+        authenticated reviewer, so one reviewer never sees another''s thread and the
+
+        contributor sees none. Turns come back oldest-first so the Chat tab repaints
+
+        the conversation on reload and chains the next message onto the last. The
+
+        agent-facing context GET is the wrong surface here: it needs the review-chat
+
+        JWT the renderer never holds and rebuilds one focal turn''s ancestry, not the
+
+        whole thread.'
+      operationId: list_review_chat_turns
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewChatThreadResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/review-chat/context:
+    get:
+      tags:
+      - agent-loop
+      summary: Get Review Chat Context
+      description: 'Snapshot-scoped context for an agent-service review-chat turn.
+
+
+        Agent-service-facing (caps=[''review-chat-turn'']). The JWT''s snapshot_id and
+
+        user_id (the reviewer) scope the entire response; request inputs cannot
+
+        widen it. Returns the one snapshot''s content, workspace identity + connected
+
+        sources, comments on that snapshot only, and this private thread''s ancestry.
+
+        Deliberately never touches the workspace /context walk.'
+      operationId: get_review_chat_context
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: from_turn_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: From Turn Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewChatContextResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/review-chat/turns/{turn_id}:
+    patch:
+      tags:
+      - agent-loop
+      summary: Update Review Chat Turn
+      description: 'Persist agent output onto a review-chat turn (agent-service-facing).
+
+
+        The JWT is bound to this ``turn_id`` (caps=[''review-chat-turn'']); the
+
+        service cross-checks workspace + reviewer ownership before writing. Same
+
+        body shape as the contributor PATCH /turns/{id}. No cursor advance — review
+
+        chat is off the DAG.'
+      operationId: update_review_chat_turn
+      parameters:
+      - name: turn_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Turn Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTurnRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Review Chat Turn
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/access-token:
+    post:
+      tags:
+      - agent-loop
+      summary: Mint Access Token
+      description: Issue a short-lived JWT for direct frontend → agent-service communication.
+      operationId: mint_access_token
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/internal/workspaces/{workspace_id}/connected-sources/{connected_source_id}/retrieval-details:
+    get:
+      tags:
+      - agent-loop
+      summary: Get Connected Source Retrieval Details
+      description: Per-turn agent-svc JWT (``turn-write`` OR ``review-chat-turn`` cap, ``workspace_id`` claim matches path).
+      operationId: get_connected_source_retrieval_details
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: connected_source_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Connected Source Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrievalResult'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/internal/agent-token/redeem:
+    post:
+      tags:
+      - agent-loop
+      summary: Redeem Handoff Code
+      operationId: redeem_handoff_code
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RedeemHandoffRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RedeemHandoffResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/internal/sandbox/heartbeat:
+    post:
+      tags:
+      - agent-loop
+      summary: Sandbox Heartbeat
+      operationId: sandbox_heartbeat
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Sandbox Heartbeat
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/cursor:
+    put:
+      tags:
+      - agent-loop
+      summary: Upsert Cursor
+      description: Upsert workspace cursor — tracks where this user is in the Turn DAG.
+      operationId: upsert_cursor
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertCursorRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - agent-loop
+      summary: Get Cursor
+      description: Get current cursor position for this user in the workspace.
+      operationId: get_cursor
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    WorkspaceConfig:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        system_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Prompt
+        connected_sources:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ConnectedSource'
+            type: array
+          - type: 'null'
+          title: Connected Sources
+        connected_sources_fingerprint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Connected Sources Fingerprint
+      type: object
+      required:
+      - id
+      - name
+      - created_at
+      title: WorkspaceConfig
+      description: Agent-service hydration. Used in WorkspaceSnapshotResponse only.
+    ChangeEntry:
+      properties:
+        changeType:
+          type: string
+          enum:
+          - added
+          - modified
+          - removed
+          title: Changetype
+        concept:
+          type: string
+          title: Concept
+        summary:
+          type: string
+          title: Summary
+        sectionHeading:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sectionheading
+      type: object
+      required:
+      - changeType
+      - concept
+      - summary
+      title: ChangeEntry
+      description: 'One semantic change emitted by the agent''s `write_document` tool.
+
+
+        Field-name casing matches the agent''s serialization (camelCase) so
+
+        Pydantic round-trips without aliasing.'
+    UploadedFileSourceConfig:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+      type: object
+      required:
+      - file_id
+      title: UploadedFileSourceConfig
+      description: Configuration for an uploaded file source
+    PromptContextTurn:
+      properties:
+        text:
+          type: string
+          title: Text
+        ts:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ts
+        apiCalls:
+          type: integer
+          title: Apicalls
+        here:
+          type: boolean
+          title: Here
+      additionalProperties: false
+      type: object
+      required:
+      - text
+      - apiCalls
+      - here
+      title: PromptContextTurn
+    RetrievalKind:
+      type: string
+      enum:
+      - git
+      - file
+      title: RetrievalKind
+      description: Kind of retrieval method (git clone, file download, etc.)
+    CreateWorkspaceResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        initial_turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Initial Turn Id
+        final_turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Final Turn Id
+        planspace_url:
+          type: string
+          title: Planspace Url
+      type: object
+      required:
+      - workspace_id
+      - planspace_url
+      title: CreateWorkspaceResponse
+    ArtifactContent:
+      properties:
+        blocks:
+          items: {}
+          type: array
+          title: Blocks
+        markdown:
+          type: string
+          title: Markdown
+      type: object
+      required:
+      - blocks
+      - markdown
+      title: ArtifactContent
+      description: 'Blocks + markdown to render. Selection rule lives in
+
+        `_build_artifact_summaries` (cursor-scoped latest capture, else
+
+        creation node).'
+    ReviewChatContextResponse:
+      properties:
+        snapshot:
+          $ref: '#/components/schemas/SnapshotInfo'
+        workspace:
+          $ref: '#/components/schemas/WorkspaceContextInfo'
+        comments:
+          items:
+            $ref: '#/components/schemas/CommentSnapshot'
+          type: array
+          title: Comments
+          default: []
+        turns:
+          items:
+            $ref: '#/components/schemas/ReviewerContextTurn'
+          type: array
+          title: Turns
+      type: object
+      required:
+      - snapshot
+      - workspace
+      - turns
+      title: ReviewChatContextResponse
+      description: 'Review-chat''s snapshot-scoped context. Shape lives in
+
+        SnapshotScopedContext; this subclass owns review-chat''s name + OpenAPI id.'
+    TokenUsage:
+      properties:
+        inputUncached:
+          type: integer
+          title: Inputuncached
+        inputCacheCreate:
+          type: integer
+          title: Inputcachecreate
+        inputCacheRead:
+          type: integer
+          title: Inputcacheread
+        output:
+          type: integer
+          title: Output
+        total:
+          type: integer
+          title: Total
+      additionalProperties: false
+      type: object
+      required:
+      - inputUncached
+      - inputCacheCreate
+      - inputCacheRead
+      - output
+      - total
+      title: TokenUsage
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UpdateTurnRequest:
+      properties:
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        assistant_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Text
+        tool_calls:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Tool Calls
+        message_deltas:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Message Deltas
+        usage:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Usage
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      title: UpdateTurnRequest
+    ReviewChatThreadTurn:
+      properties:
+        id:
+          type: string
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        status:
+          type: string
+          title: Status
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        assistant_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Text
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - parent_id
+      - status
+      - user_message
+      - assistant_text
+      - created_at
+      title: ReviewChatThreadTurn
+      description: 'One persisted review-chat turn for renderer rehydration. Mirrors the
+
+        contributor TurnSummary fields the Chat tab paints: the reviewer''s message
+
+        and the final assistant_text (history renders from the string, not blocks).'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RedeemHandoffRequest:
+      properties:
+        handoff_code:
+          type: string
+          title: Handoff Code
+      type: object
+      required:
+      - handoff_code
+      title: RedeemHandoffRequest
+    WorkspaceListItem:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        use_local_sandbox:
+          type: boolean
+          title: Use Local Sandbox
+          default: false
+        pinned:
+          type: boolean
+          title: Pinned
+          default: false
+        is_example:
+          type: boolean
+          title: Is Example
+          default: false
+        doc_count:
+          type: integer
+          title: Doc Count
+          default: 0
+        latest_doc_label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Doc Label
+        review_status:
+          type: string
+          title: Review Status
+          default: draft
+        owner_user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner User Id
+        owner_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Display Name
+        member_count:
+          type: integer
+          title: Member Count
+          default: 0
+        viewer_role:
+          anyOf:
+          - type: string
+            enum:
+            - owner
+            - editor
+            - viewer
+            - commenter
+          - type: 'null'
+          title: Viewer Role
+      type: object
+      required:
+      - id
+      - name
+      - created_at
+      title: WorkspaceListItem
+      description: GET /workspaces list entry. Adds turn aggregates.
+    CreateReviewChatTurnResponse:
+      properties:
+        turn_id:
+          type: string
+          title: Turn Id
+        handoff_code:
+          type: string
+          title: Handoff Code
+          description: Single-use code redeemable at /agent-loop/internal/agent-token/redeem for the review-chat agent-svc JWT (caps=['review-chat-turn'] + snapshot_id) bound to this turn. 60s TTL.
+      type: object
+      required:
+      - turn_id
+      - handoff_code
+      title: CreateReviewChatTurnResponse
+    UploadedFileSourceMetadata:
+      properties:
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - filename
+      title: UploadedFileSourceMetadata
+      description: Metadata for an uploaded file source
+    SourceVisibility:
+      type: string
+      enum:
+      - private
+      - public
+      title: SourceVisibility
+      description: Visibility level of a source
+    ScottPushSpec:
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Inferred title for the workspace + push artifact.
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        source_kind:
+          type: string
+          title: Source Kind
+          default: claude-code-session
+        source_id:
+          type: string
+          title: Source Id
+          description: Upstream session id (e.g. Claude sessionId UUID).
+        captured_by_client:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Captured By Client
+        originating_agent:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Originating Agent
+        git_remote:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Git Remote
+        git_branch:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Git Branch
+        git_head_sha:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Git Head Sha
+        git_dirty:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Git Dirty
+        payload:
+          $ref: '#/components/schemas/ScottPushPayload'
+        messages:
+          items:
+            $ref: '#/components/schemas/CanonicalMessageSpec'
+          type: array
+          maxItems: 2000
+          title: Messages
+        intent:
+          anyOf:
+          - type: string
+            maxLength: 4000
+          - type: 'null'
+          title: Intent
+        synthesize:
+          type: boolean
+          title: Synthesize
+          default: true
+        transcript_provenance:
+          anyOf:
+          - type: string
+            enum:
+            - verbatim
+            - reflected
+          - type: 'null'
+          title: Transcript Provenance
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - source_id
+      - payload
+      title: ScottPushSpec
+      description: 'Optional sub-object on `CreateWorkspaceRequest` that turns the call
+
+        into a Scott push. Idempotent on `(captured_by_user_id, source_kind,
+
+        source_id)`: same triple from the same user returns the same planspace,
+
+        replacing the push payload and any scott_push turns in-place. See D6
+
+        in the scott-push-v2 design doc.
+
+
+        The structured payload is a typed `ScottPushPayload` (mirroring
+
+        `packages/scott-ext-core/src/types.ts` in `one-shot-core`). Strong
+
+        typing here is what lets orval emit useful client types instead of
+
+        `Record<string, unknown>`.'
+    ScottPushPayloadTotals:
+      properties:
+        sessions:
+          type: integer
+          title: Sessions
+        apiCalls:
+          type: integer
+          title: Apicalls
+        humanMessages:
+          type: integer
+          title: Humanmessages
+        usage:
+          $ref: '#/components/schemas/TokenUsage'
+        cacheBreaksCount:
+          type: integer
+          title: Cachebreakscount
+        subagentCalls:
+          type: integer
+          title: Subagentcalls
+        subagentTokens:
+          type: integer
+          title: Subagenttokens
+      additionalProperties: false
+      type: object
+      required:
+      - sessions
+      - apiCalls
+      - humanMessages
+      - usage
+      - cacheBreaksCount
+      - subagentCalls
+      - subagentTokens
+      title: ScottPushPayloadTotals
+    ListWorkspacesResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceListItem'
+          type: array
+          title: Workspaces
+      type: object
+      required:
+      - workspaces
+      title: ListWorkspacesResponse
+    ArtifactSummary:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        produced_at_turn_id:
+          type: string
+          title: Produced At Turn Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        content:
+          $ref: '#/components/schemas/ArtifactContent'
+        diff:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ChangeEntry'
+            type: array
+          - type: 'null'
+          title: Diff
+      type: object
+      required:
+      - id
+      - workspace_id
+      - produced_at_turn_id
+      - created_at
+      - content
+      title: ArtifactSummary
+      description: "Server-materialized view of one document artifact.\n\nIdentity + the boundary content to display. Content is picked by\n`_build_artifact_summaries`:\n  * capture snapshots scoped to the reader cursor's ancestor chain\n    (so branches don't leak each other's pre-submit edits)\n  * fallback to the creation node (agent's initial draft) when\n    no capture exists on the branch\n\nRenderer reads `content.markdown` / `content.blocks` directly."
+    CanonicalMessageSpec:
+      properties:
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+          title: Role
+        content:
+          type: string
+          maxLength: 200000
+          title: Content
+        fidelity:
+          anyOf:
+          - type: string
+            enum:
+            - verbatim
+            - paraphrased
+            - summarized
+          - type: 'null'
+          title: Fidelity
+        reconstructed:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Reconstructed
+      additionalProperties: false
+      type: object
+      required:
+      - role
+      - content
+      title: CanonicalMessageSpec
+      description: One message in the verbatim conversation transcript.
+    CreateReviewChatTurnRequest:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        parent_turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Turn Id
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+      type: object
+      required:
+      - snapshot_id
+      title: CreateReviewChatTurnRequest
+      description: 'Renderer body for opening/extending a private review-chat thread.
+
+
+        `parent_turn_id` is null for the thread''s first message and the prior turn''s
+
+        id thereafter. `id` lets the client supply the turn id (optimistic UI),
+
+        mirroring CreateTurnRequest.'
+    RetrievalResult:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        retrieval:
+          anyOf:
+          - $ref: '#/components/schemas/GitRetrievalDetails'
+          - $ref: '#/components/schemas/FileRetrievalDetails'
+          title: Retrieval
+      type: object
+      required:
+      - adapter
+      - retrieval
+      title: RetrievalResult
+      description: Result of retrieving a source (how to actually fetch it)
+    GitHubSourceMetadata:
+      properties:
+        installation_id:
+          type: integer
+          title: Installation Id
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - installation_id
+      - commit_sha
+      title: GitHubSourceMetadata
+      description: Metadata for a GitHub source
+    SubagentSummary:
+      properties:
+        agentId:
+          type: string
+          title: Agentid
+        agentType:
+          type: string
+          title: Agenttype
+        parentPromptKey:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parentpromptkey
+        span:
+          $ref: '#/components/schemas/SessionSpan'
+        apiCalls:
+          type: integer
+          title: Apicalls
+        usage:
+          $ref: '#/components/schemas/TokenUsage'
+      additionalProperties: false
+      type: object
+      required:
+      - agentId
+      - agentType
+      - span
+      - apiCalls
+      - usage
+      title: SubagentSummary
+    RedeemHandoffResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: RedeemHandoffResponse
+    AccessTokenResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+          deprecated: true
+        rs256_token:
+          type: string
+          title: Rs256 Token
+        expires_at:
+          type: string
+          format: date-time
+          title: Expires At
+      type: object
+      required:
+      - token
+      - rs256_token
+      - expires_at
+      title: AccessTokenResponse
+    CacheBreak:
+      properties:
+        ts:
+          type: string
+          title: Ts
+        uncached:
+          type: integer
+          title: Uncached
+        total:
+          type: integer
+          title: Total
+        promptKey:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Promptkey
+        kind:
+          type: string
+          enum:
+          - main
+          - subagent
+          title: Kind
+        agentType:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agenttype
+      additionalProperties: false
+      type: object
+      required:
+      - ts
+      - uncached
+      - total
+      - kind
+      title: CacheBreak
+    ConnectedSourceSelection:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        selection:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceSelection'
+          - $ref: '#/components/schemas/SlackSourceSelection'
+          - $ref: '#/components/schemas/UploadedFileSourceSelection'
+          title: Selection
+      type: object
+      required:
+      - adapter
+      - selection
+      title: ConnectedSourceSelection
+    WorkspaceStateResponse:
+      properties:
+        turns:
+          items:
+            $ref: '#/components/schemas/TurnSummary'
+          type: array
+          title: Turns
+        artifacts:
+          items:
+            $ref: '#/components/schemas/ArtifactSummary'
+          type: array
+          title: Artifacts
+          default: []
+        snapshot_nodes:
+          items:
+            $ref: '#/components/schemas/SnapshotNode'
+          type: array
+          title: Snapshot Nodes
+          default: []
+        commit_references:
+          items:
+            $ref: '#/components/schemas/CommitReferenceSummary'
+          type: array
+          title: Commit References
+          default: []
+        current_turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Turn Id
+        current_snapshot_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Snapshot Id
+        member_cursors:
+          items:
+            $ref: '#/components/schemas/MemberCursor'
+          type: array
+          title: Member Cursors
+          default: []
+        is_public:
+          type: boolean
+          title: Is Public
+          default: false
+        sandbox_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sandbox Url
+        review_status:
+          type: string
+          title: Review Status
+          default: draft
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - turns
+      - current_turn_id
+      title: WorkspaceStateResponse
+      description: Single call gives the renderer everything needed to paint the workspace page.
+    TurnSummary:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        status:
+          type: string
+          title: Status
+        is_from_scott_push:
+          type: boolean
+          title: Is From Scott Push
+          default: false
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        assistant_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Text
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        completed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completed At
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        active_artifact_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Active Artifact Id
+        origin_snapshot_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Origin Snapshot Id
+        scott_push_agent:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Scott Push Agent
+      type: object
+      required:
+      - id
+      - workspace_id
+      - parent_id
+      - status
+      - user_message
+      - assistant_text
+      - created_at
+      - completed_at
+      title: TurnSummary
+      description: 'Renderer turn shape (GET /state). Strips LLM internals.
+
+
+        Only DAG annotation emitted is `active_artifact_id`. GitGraph
+
+        layout fields (effective_doc_parent_id, doc_child_count,
+
+        intermediate_count) are derived locally in
+
+        `WorkspacePage/query/normalize.ts` (TurnLayoutInfo).'
+    SnapshotNode:
+      properties:
+        id:
+          type: string
+          title: Id
+        document_artifact_id:
+          type: string
+          title: Document Artifact Id
+        parent_snapshot_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Snapshot Id
+        turn_id:
+          type: string
+          title: Turn Id
+        kind:
+          type: string
+          enum:
+          - node
+          - capture
+          title: Kind
+        status:
+          type: string
+          enum:
+          - draft
+          - committed
+          - discarded
+          title: Status
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        content:
+          $ref: '#/components/schemas/ArtifactContent'
+        diff:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ChangeEntry'
+            type: array
+          - type: 'null'
+          title: Diff
+        has_user_edits:
+          type: boolean
+          title: Has User Edits
+          default: false
+        suggestion:
+          anyOf:
+          - $ref: '#/components/schemas/Suggestion'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - document_artifact_id
+      - turn_id
+      - kind
+      - status
+      - created_at
+      - content
+      title: SnapshotNode
+    CommentSnapshot:
+      properties:
+        id:
+          type: string
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        author_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Author Display Name
+        content:
+          type: string
+          title: Content
+        anchor_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Anchor Text
+        resolved:
+          type: boolean
+          title: Resolved
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - content
+      - resolved
+      - created_at
+      title: CommentSnapshot
+      description: 'Comment projection for agent context — derived from `thread_comments`
+
+        joined with `threads` and the author''s user profile.
+
+
+        Replies share `parent_id` = the thread''s first comment id (so the agent
+
+        prompt''s `<comments>` block keeps its `reply_to` thread structure intact).
+
+        `anchor_text` carries the prosemirror range the thread anchors to (mirrored
+
+        from hocuspocus when the comment mark lands in the Y.Doc); null for
+
+        pre-anchor threads and threads whose anchor was lost to a concurrent edit.'
+    PromptSummary:
+      properties:
+        promptKey:
+          type: string
+          title: Promptkey
+        ts:
+          type: string
+          title: Ts
+        slashCommand:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Slashcommand
+        text:
+          type: string
+          title: Text
+        apiCalls:
+          type: integer
+          title: Apicalls
+        subagentCalls:
+          type: integer
+          title: Subagentcalls
+        usage:
+          $ref: '#/components/schemas/TokenUsage'
+        context:
+          items:
+            $ref: '#/components/schemas/PromptContextTurn'
+          type: array
+          title: Context
+      additionalProperties: false
+      type: object
+      required:
+      - promptKey
+      - ts
+      - text
+      - apiCalls
+      - subagentCalls
+      - usage
+      - context
+      title: PromptSummary
+    CreateTurnResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        handoff_code:
+          type: string
+          title: Handoff Code
+          description: Single-use code redeemable at /agent-loop/internal/agent-token/redeem for the agent-svc JWT bound to this turn. 60s TTL.
+      type: object
+      required:
+      - id
+      - handoff_code
+      title: CreateTurnResponse
+    CreateWorkspaceRequest:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        system_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Prompt
+        initial_doc_content:
+          type: string
+          title: Initial Doc Content
+          default: ''
+        initial_doc_label:
+          type: string
+          title: Initial Doc Label
+          default: Initial version
+        use_local_sandbox:
+          type: boolean
+          title: Use Local Sandbox
+          default: false
+        connected_sources:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ConnectedSourceSelection'
+            type: array
+          - type: 'null'
+          title: Connected Sources
+        scott_push:
+          anyOf:
+          - $ref: '#/components/schemas/ScottPushSpec'
+          - type: 'null'
+      type: object
+      required:
+      - name
+      title: CreateWorkspaceRequest
+    SnapshotInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - id
+      - content
+      title: SnapshotInfo
+    UpsertCursorRequest:
+      properties:
+        turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Turn Id
+        snapshot_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Snapshot Id
+      type: object
+      title: UpsertCursorRequest
+    UploadedFileSourceSelection:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+      type: object
+      required:
+      - file_id
+      title: UploadedFileSourceSelection
+      description: User's selection when connecting an uploaded file source
+    MemberCursor:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Turn Id
+      type: object
+      required:
+      - user_id
+      - display_name
+      - avatar_url
+      - turn_id
+      title: MemberCursor
+    Suggestion:
+      properties:
+        suggestion_id:
+          type: string
+          title: Suggestion Id
+        turn_id:
+          type: string
+          title: Turn Id
+        author:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Author
+        base_markdown:
+          type: string
+          title: Base Markdown
+        suggested_markdown:
+          type: string
+          title: Suggested Markdown
+        suggested_blocks:
+          items: {}
+          type: array
+          title: Suggested Blocks
+      type: object
+      required:
+      - suggestion_id
+      - turn_id
+      - base_markdown
+      - suggested_markdown
+      title: Suggestion
+      description: 'An unresolved agent suggestion sitting on a draft snapshot.
+
+
+        An agent turn writes this onto the focused draft instead of committing a
+
+        node; the human resolves it (accept/reject) before committing. One per
+
+        draft, last writer wins. The draft''s own `content` excludes it.'
+    ConnectedSource:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        linked_by_user_id:
+          type: string
+          title: Linked By User Id
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+        config:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceConfig'
+          - $ref: '#/components/schemas/SlackSourceConfig'
+          - $ref: '#/components/schemas/UploadedFileSourceConfig'
+          title: Config
+        metadata:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceMetadata'
+          - $ref: '#/components/schemas/SlackSourceMetadata'
+          - $ref: '#/components/schemas/UploadedFileSourceMetadata'
+          title: Metadata
+      type: object
+      required:
+      - linked_by_user_id
+      - adapter
+      - config
+      - metadata
+      title: ConnectedSource
+    CommitReferenceSummary:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        produced_at_turn_id:
+          type: string
+          title: Produced At Turn Id
+        repo:
+          type: string
+          title: Repo
+        branch:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Branch
+        commit_sha:
+          type: string
+          title: Commit Sha
+        short_sha:
+          type: string
+          title: Short Sha
+        commit_title:
+          type: string
+          title: Commit Title
+        commit_message:
+          type: string
+          title: Commit Message
+        commit_url:
+          type: string
+          title: Commit Url
+        author_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Author Name
+        author_email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Author Email
+        committed_at:
+          type: string
+          format: date-time
+          title: Committed At
+        files_changed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Files Changed
+        additions:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Additions
+        deletions:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Deletions
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - workspace_id
+      - produced_at_turn_id
+      - repo
+      - commit_sha
+      - short_sha
+      - commit_title
+      - commit_message
+      - commit_url
+      - committed_at
+      - created_at
+      title: CommitReferenceSummary
+      description: 'Server-materialized view of one code-commit reference attached to
+
+        a turn. Read-only; rows are immutable after a Scott push.
+
+
+        Renderer groups by `produced_at_turn_id`, parallel to `ArtifactSummary`.
+
+        Separate top-level list on `WorkspaceStateResponse` rather than a
+
+        discriminated union with `ArtifactSummary`, because orval handles
+
+        discriminated unions poorly per anti-duplication-pipeline.'
+    FileRetrievalDetails:
+      properties:
+        kind:
+          $ref: '#/components/schemas/RetrievalKind'
+          default: file
+        download_url:
+          type: string
+          title: Download Url
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - download_url
+      - filename
+      title: FileRetrievalDetails
+      description: Details for retrieving source via file download
+    GitHubSourceSelection:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceSelection
+      description: User's selection when connecting a GitHub source
+    SlackSourceMetadata:
+      properties:
+        team_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Name
+        channel_name:
+          type: string
+          title: Channel Name
+        is_private:
+          type: boolean
+          title: Is Private
+          default: false
+      type: object
+      required:
+      - channel_name
+      title: SlackSourceMetadata
+      description: Metadata for a Slack source
+    Turn:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        status:
+          type: string
+          title: Status
+        is_from_scott_push:
+          type: boolean
+          title: Is From Scott Push
+          default: false
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        assistant_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Text
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        completed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completed At
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        user_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Display Name
+        tool_calls:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Tool Calls
+        message_deltas:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Message Deltas
+        usage:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Usage
+      type: object
+      required:
+      - id
+      - workspace_id
+      - parent_id
+      - status
+      - user_message
+      - assistant_text
+      - created_at
+      - completed_at
+      title: Turn
+      description: 'Agent-service turn shape (GET /context). Includes LLM internals
+
+        so the agent can rebuild context across the parent_id chain.'
+    CursorResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        user_id:
+          type: string
+          title: User Id
+        turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Turn Id
+        current_snapshot_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Snapshot Id
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - workspace_id
+      - user_id
+      - turn_id
+      - updated_at
+      title: CursorResponse
+    ScottPushPayload:
+      properties:
+        project:
+          type: string
+          title: Project
+        sessionId:
+          type: string
+          title: Sessionid
+        cwd:
+          type: string
+          title: Cwd
+        schemaVersion:
+          type: integer
+          title: Schemaversion
+        generatedAt:
+          type: string
+          title: Generatedat
+        span:
+          $ref: '#/components/schemas/SessionSpan'
+        totals:
+          $ref: '#/components/schemas/ScottPushPayloadTotals'
+        prompts:
+          items:
+            $ref: '#/components/schemas/PromptSummary'
+          type: array
+          title: Prompts
+          default: []
+        subagents:
+          items:
+            $ref: '#/components/schemas/SubagentSummary'
+          type: array
+          title: Subagents
+          default: []
+        cacheBreaks:
+          items:
+            $ref: '#/components/schemas/CacheBreak'
+          type: array
+          title: Cachebreaks
+          default: []
+      additionalProperties: false
+      type: object
+      required:
+      - project
+      - sessionId
+      - cwd
+      - schemaVersion
+      - generatedAt
+      - span
+      - totals
+      title: ScottPushPayload
+      description: 'Full structured session capture produced by `scott push`.
+
+
+        Source of truth for the TS side is the orval-generated schema (derived
+
+        from this Pydantic model). Bumped via `schemaVersion` when the parser
+
+        changes shape.'
+    SessionSpan:
+      properties:
+        firstTs:
+          type: string
+          title: Firstts
+        lastTs:
+          type: string
+          title: Lastts
+        wallClockMs:
+          type: integer
+          title: Wallclockms
+        activeMs:
+          type: integer
+          title: Activems
+      additionalProperties: false
+      type: object
+      required:
+      - firstTs
+      - lastTs
+      - wallClockMs
+      - activeMs
+      title: SessionSpan
+    WakeWorkspaceResponse:
+      properties:
+        sandbox_url:
+          type: string
+          title: Sandbox Url
+      type: object
+      required:
+      - sandbox_url
+      title: WakeWorkspaceResponse
+    GitHubSourceConfig:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceConfig
+      description: Configuration for a GitHub source
+    ReviewChatThreadResponse:
+      properties:
+        turns:
+          items:
+            $ref: '#/components/schemas/ReviewChatThreadTurn'
+          type: array
+          title: Turns
+      type: object
+      required:
+      - turns
+      title: ReviewChatThreadResponse
+      description: 'The caller''s full private review-chat thread on one snapshot, oldest
+
+        first. Scoped to (workspace, snapshot, reviewer); another reviewer''s thread
+
+        is never included.'
+    SlackSourceConfig:
+      properties:
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        channel_id:
+          type: string
+          title: Channel Id
+      type: object
+      required:
+      - slack_team_id
+      - channel_id
+      title: SlackSourceConfig
+      description: Configuration for a Slack source
+    GitRetrievalDetails:
+      properties:
+        kind:
+          $ref: '#/components/schemas/RetrievalKind'
+          default: git
+        clone_url:
+          type: string
+          title: Clone Url
+        token:
+          type: string
+          title: Token
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - clone_url
+      - token
+      - repo
+      - branch
+      - commit_sha
+      title: GitRetrievalDetails
+      description: Details for retrieving source via git clone
+    WorkspaceContextInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        connected_sources:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ConnectedSource'
+            type: array
+          - type: 'null'
+          title: Connected Sources
+        connected_sources_fingerprint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Connected Sources Fingerprint
+      type: object
+      required:
+      - id
+      title: WorkspaceContextInfo
+    SlackSourceSelection:
+      properties:
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        channel_id:
+          type: string
+          title: Channel Id
+      type: object
+      required:
+      - slack_team_id
+      - channel_id
+      title: SlackSourceSelection
+      description: User's selection when connecting a Slack source
+    CreateTurnRequest:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        artifact_context:
+          items:
+            type: string
+          type: array
+          title: Artifact Context
+        parent_snapshot_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Snapshot Id
+      type: object
+      title: CreateTurnRequest
+    ReviewerContextTurn:
+      properties:
+        id:
+          type: string
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        user_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Display Name
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        assistant_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Text
+        message_deltas:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Message Deltas
+        usage:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Usage
+      type: object
+      required:
+      - id
+      - parent_id
+      - user_message
+      - assistant_text
+      title: ReviewerContextTurn
+      description: 'A snapshot-scoped thread turn for agent hydration. `parent_id` is the
+
+        linear chain pointer; user authorship is always the reviewer.'
+    WorkspaceSnapshotResponse:
+      properties:
+        workspace:
+          $ref: '#/components/schemas/WorkspaceConfig'
+        turns:
+          items:
+            $ref: '#/components/schemas/Turn'
+          type: array
+          title: Turns
+        selected_snapshot:
+          anyOf:
+          - $ref: '#/components/schemas/SnapshotNode'
+          - type: 'null'
+        comments:
+          items:
+            $ref: '#/components/schemas/CommentSnapshot'
+          type: array
+          title: Comments
+          default: []
+        artifacts:
+          items:
+            $ref: '#/components/schemas/ArtifactSummary'
+          type: array
+          title: Artifacts
+          default: []
+        commit_references:
+          items:
+            $ref: '#/components/schemas/CommitReferenceSummary'
+          type: array
+          title: Commit References
+          default: []
+      type: object
+      required:
+      - workspace
+      - turns
+      title: WorkspaceSnapshotResponse
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
+    UpdateWorkspaceRequest:
+      properties:
+        is_public:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Public
+        confirmed_make_public:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Confirmed Make Public
+          description: Required and must be true when changing a workspace from private to public to ensure user understands the implications.
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        pinned:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Pinned
+      type: object
+      title: UpdateWorkspaceRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

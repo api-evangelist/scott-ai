@@ -1,0 +1,428 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access probes API
+  version: 1.0.0
+tags:
+- name: probes
+paths:
+  /probes:
+    post:
+      tags:
+      - probes
+      summary: Create Probe
+      operationId: create_probe
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProbeBody'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProbeState'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - probes
+      summary: List Probes
+      operationId: list_probes
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ProbeStatus'
+          - type: 'null'
+          title: Status
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListProbesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /probes/{probe_id}:
+    get:
+      tags:
+      - probes
+      summary: Get Probe
+      operationId: get_probe
+      parameters:
+      - name: probe_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Probe Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProbeWithArtifacts'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /probes/{probe_id}/review:
+    post:
+      tags:
+      - probes
+      summary: Review Probe
+      operationId: review_probe
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: probe_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Probe Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewProbeBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProbeState'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ReviewProbeBody:
+      properties:
+        verdict:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Verdict
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+      type: object
+      required:
+      - verdict
+      title: ReviewProbeBody
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ListProbesResponse:
+      properties:
+        probes:
+          items:
+            $ref: '#/components/schemas/ProbeState'
+          type: array
+          title: Probes
+      type: object
+      required:
+      - probes
+      title: ListProbesResponse
+    ProbeStatus:
+      type: string
+      enum:
+      - pending-review
+      - approved
+      - rejected
+      title: ProbeStatus
+    CreateProbeArtifactsBody:
+      properties:
+        probe_md:
+          type: string
+          title: Probe Md
+        meta_json:
+          type: string
+          title: Meta Json
+        mutant_diff:
+          type: string
+          title: Mutant Diff
+        sentinel_py:
+          type: string
+          title: Sentinel Py
+      type: object
+      required:
+      - probe_md
+      - meta_json
+      - mutant_diff
+      - sentinel_py
+      title: CreateProbeArtifactsBody
+    ProbeWithArtifacts:
+      properties:
+        id:
+          type: string
+          title: Id
+        site:
+          type: string
+          title: Site
+        slot:
+          type: string
+          title: Slot
+        subsystem:
+          type: string
+          title: Subsystem
+        status:
+          $ref: '#/components/schemas/ProbeStatus'
+        mint_run:
+          type: string
+          title: Mint Run
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        reviewed_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewed By
+        reviewed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reviewed At
+        comments:
+          items:
+            $ref: '#/components/schemas/ProbeComment'
+          type: array
+          title: Comments
+        artifacts:
+          $ref: '#/components/schemas/ProbeArtifacts'
+      type: object
+      required:
+      - id
+      - site
+      - slot
+      - subsystem
+      - status
+      - mint_run
+      - created_at
+      - artifacts
+      title: ProbeWithArtifacts
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ProbeArtifacts:
+      properties:
+        probe_md:
+          type: string
+          title: Probe Md
+        meta_json:
+          type: string
+          title: Meta Json
+        mutant_diff:
+          type: string
+          title: Mutant Diff
+        sentinel_py:
+          type: string
+          title: Sentinel Py
+      type: object
+      required:
+      - probe_md
+      - meta_json
+      - mutant_diff
+      - sentinel_py
+      title: ProbeArtifacts
+    ProbeState:
+      properties:
+        id:
+          type: string
+          title: Id
+        site:
+          type: string
+          title: Site
+        slot:
+          type: string
+          title: Slot
+        subsystem:
+          type: string
+          title: Subsystem
+        status:
+          $ref: '#/components/schemas/ProbeStatus'
+        mint_run:
+          type: string
+          title: Mint Run
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        reviewed_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewed By
+        reviewed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reviewed At
+        comments:
+          items:
+            $ref: '#/components/schemas/ProbeComment'
+          type: array
+          title: Comments
+      type: object
+      required:
+      - id
+      - site
+      - slot
+      - subsystem
+      - status
+      - mint_run
+      - created_at
+      title: ProbeState
+    CreateProbeBody:
+      properties:
+        id:
+          type: string
+          title: Id
+        site:
+          type: string
+          title: Site
+        slot:
+          type: string
+          title: Slot
+        subsystem:
+          type: string
+          title: Subsystem
+        mint_run:
+          type: string
+          title: Mint Run
+        artifacts:
+          $ref: '#/components/schemas/CreateProbeArtifactsBody'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/ProbeStatus'
+          - type: 'null'
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - id
+      - site
+      - slot
+      - subsystem
+      - mint_run
+      - artifacts
+      title: CreateProbeBody
+    ProbeComment:
+      properties:
+        author:
+          type: string
+          title: Author
+        verdict:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Verdict
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+        at:
+          type: string
+          format: date-time
+          title: At
+      type: object
+      required:
+      - author
+      - verdict
+      - comment
+      - at
+      title: ProbeComment
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

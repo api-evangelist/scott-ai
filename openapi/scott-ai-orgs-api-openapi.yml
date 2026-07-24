@@ -1,0 +1,118 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access orgs API
+  version: 1.0.0
+tags:
+- name: orgs
+paths:
+  /orgs/{org_id}:
+    patch:
+      tags:
+      - orgs
+      summary: Update Org External Sharing
+      description: "Owners-only toggle of org-wide external sharing.\n\n- Non-owners (or non-members) get 403.\n- Missing org → 404.\n- Idempotent: when the value already matches the existing row, no audit-log row is written\n  and the existing row is returned unchanged."
+      operationId: update_org_external_sharing
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Org Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrgExternalSharingRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    UpdateOrgExternalSharingRequest:
+      properties:
+        external_sharing_enabled:
+          type: boolean
+          title: External Sharing Enabled
+      additionalProperties: false
+      type: object
+      required:
+      - external_sharing_enabled
+      title: UpdateOrgExternalSharingRequest
+      description: 'Typed body for the PATCH endpoint — refuses unknown fields so callers fail loudly when the
+
+        schema drifts rather than silently no-opping on a misspelled key.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    OrgResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        claimed_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Claimed Domain
+        external_sharing_enabled:
+          type: boolean
+          title: External Sharing Enabled
+      type: object
+      required:
+      - id
+      - name
+      - external_sharing_enabled
+      title: OrgResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

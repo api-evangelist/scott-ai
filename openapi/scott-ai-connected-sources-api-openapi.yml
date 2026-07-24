@@ -1,0 +1,670 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access connected-sources API
+  version: 1.0.0
+tags:
+- name: connected-sources
+paths:
+  /connected-sources/setup/start/github:
+    post:
+      tags:
+      - connected-sources
+      summary: Start Github Connected Source Setup
+      operationId: start_github_connected_source_setup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GitHubBeginSetupInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedSourceSetupStartResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /connected-sources/setup/start/slack:
+    post:
+      tags:
+      - connected-sources
+      summary: Start Slack Connected Source Setup
+      operationId: start_slack_connected_source_setup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlackBeginSetupInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedSourceSetupStartResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /connected-sources/setup/start/uploaded-file:
+    post:
+      tags:
+      - connected-sources
+      summary: Start Uploaded File Connected Source Setup
+      operationId: start_uploaded_file_connected_source_setup
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_start_uploaded_file_connected_source_setup'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedSourceSetupStartResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /connected-sources/available:
+    get:
+      tags:
+      - connected-sources
+      summary: List Available Connected Sources
+      operationId: list_available_connected_sources
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: adapter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/AdapterType'
+          - type: 'null'
+          title: Adapter
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAvailableConnectedSourcesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/connected-sources:
+    post:
+      tags:
+      - connected-sources
+      summary: Create Workspace Connected Source
+      operationId: attach_connected_source
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkspaceConnectedSourceRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedSource'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - connected-sources
+      summary: List Connected Sources
+      operationId: list_connected_sources
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectedSource'
+                title: Response List Connected Sources
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /workspaces/{workspace_id}/connected-sources/{connected_source_id}:
+    delete:
+      tags:
+      - connected-sources
+      summary: Remove Connected Source
+      operationId: remove_connected_source
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: connected_source_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Connected Source Id
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CreateWorkspaceConnectedSourceRequest:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        selection:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceSelection'
+          - $ref: '#/components/schemas/SlackSourceSelection'
+          - $ref: '#/components/schemas/UploadedFileSourceSelection'
+          title: Selection
+      type: object
+      required:
+      - adapter
+      - selection
+      title: CreateWorkspaceConnectedSourceRequest
+    UploadedFileSourceConfig:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+      type: object
+      required:
+      - file_id
+      title: UploadedFileSourceConfig
+      description: Configuration for an uploaded file source
+    GitHubRepoAvailableSource:
+      properties:
+        adapter:
+          type: string
+          const: github
+          title: Adapter
+          default: github
+        id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        full_name:
+          type: string
+          title: Full Name
+        private:
+          type: boolean
+          title: Private
+          default: true
+        branches:
+          items:
+            $ref: '#/components/schemas/GitHubRepoAvailableSourceBranch'
+          type: array
+          title: Branches
+      type: object
+      required:
+      - full_name
+      title: GitHubRepoAvailableSource
+    ListAvailableConnectedSourcesResponse:
+      properties:
+        items:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/GitHubRepoAvailableSource'
+            - $ref: '#/components/schemas/SlackChannelAvailableSource'
+            - $ref: '#/components/schemas/UploadedFileAvailableSource'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: ListAvailableConnectedSourcesResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UploadedFileAvailableSource:
+      properties:
+        adapter:
+          type: string
+          const: uploaded_file
+          title: Adapter
+          default: uploaded_file
+        file_id:
+          type: string
+          title: File Id
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - file_id
+      - filename
+      - created_at
+      title: UploadedFileAvailableSource
+    UploadedFileSourceMetadata:
+      properties:
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - filename
+      title: UploadedFileSourceMetadata
+      description: Metadata for an uploaded file source
+    SourceVisibility:
+      type: string
+      enum:
+      - private
+      - public
+      title: SourceVisibility
+      description: Visibility level of a source
+    GitHubBeginSetupInput:
+      properties:
+        redirect_to:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Redirect To
+      type: object
+      title: GitHubBeginSetupInput
+    GitHubRepoAvailableSourceBranch:
+      properties:
+        name:
+          type: string
+          title: Name
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - name
+      - commit_sha
+      title: GitHubRepoAvailableSourceBranch
+    GitHubSourceMetadata:
+      properties:
+        installation_id:
+          type: integer
+          title: Installation Id
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - installation_id
+      - commit_sha
+      title: GitHubSourceMetadata
+      description: Metadata for a GitHub source
+    OAuthBeginSetupResult:
+      properties:
+        setup_kind:
+          type: string
+          const: oauth
+          title: Setup Kind
+          default: oauth
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+      type: object
+      title: OAuthBeginSetupResult
+    SlackBeginSetupInput:
+      properties:
+        redirect_to:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Redirect To
+      type: object
+      title: SlackBeginSetupInput
+    SlackChannelAvailableSource:
+      properties:
+        adapter:
+          type: string
+          const: slack
+          title: Adapter
+          default: slack
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        team_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Name
+        channel_id:
+          type: string
+          title: Channel Id
+        channel_name:
+          type: string
+          title: Channel Name
+        is_private:
+          type: boolean
+          title: Is Private
+          default: false
+      type: object
+      required:
+      - slack_team_id
+      - channel_id
+      - channel_name
+      title: SlackChannelAvailableSource
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
+    UploadedFileSourceSelection:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+      type: object
+      required:
+      - file_id
+      title: UploadedFileSourceSelection
+      description: User's selection when connecting an uploaded file source
+    ConnectedSourceSetupStartResponse:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        setup_token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Setup Token
+        expires_in:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expires In
+        setup:
+          anyOf:
+          - $ref: '#/components/schemas/OAuthBeginSetupResult'
+          - $ref: '#/components/schemas/UploadBeginSetupResult'
+          title: Setup
+      type: object
+      required:
+      - adapter
+      - setup
+      title: ConnectedSourceSetupStartResponse
+    ConnectedSource:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        linked_by_user_id:
+          type: string
+          title: Linked By User Id
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+        config:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceConfig'
+          - $ref: '#/components/schemas/SlackSourceConfig'
+          - $ref: '#/components/schemas/UploadedFileSourceConfig'
+          title: Config
+        metadata:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceMetadata'
+          - $ref: '#/components/schemas/SlackSourceMetadata'
+          - $ref: '#/components/schemas/UploadedFileSourceMetadata'
+          title: Metadata
+      type: object
+      required:
+      - linked_by_user_id
+      - adapter
+      - config
+      - metadata
+      title: ConnectedSource
+    GitHubSourceSelection:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceSelection
+      description: User's selection when connecting a GitHub source
+    SlackSourceMetadata:
+      properties:
+        team_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Name
+        channel_name:
+          type: string
+          title: Channel Name
+        is_private:
+          type: boolean
+          title: Is Private
+          default: false
+      type: object
+      required:
+      - channel_name
+      title: SlackSourceMetadata
+      description: Metadata for a Slack source
+    UploadBeginSetupResult:
+      properties:
+        setup_kind:
+          type: string
+          const: upload
+          title: Setup Kind
+          default: upload
+        file_id:
+          type: string
+          title: File Id
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - file_id
+      - filename
+      title: UploadBeginSetupResult
+    GitHubSourceConfig:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceConfig
+      description: Configuration for a GitHub source
+    SlackSourceConfig:
+      properties:
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        channel_id:
+          type: string
+          title: Channel Id
+      type: object
+      required:
+      - slack_team_id
+      - channel_id
+      title: SlackSourceConfig
+      description: Configuration for a Slack source
+    SlackSourceSelection:
+      properties:
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        channel_id:
+          type: string
+          title: Channel Id
+      type: object
+      required:
+      - slack_team_id
+      - channel_id
+      title: SlackSourceSelection
+      description: User's selection when connecting a Slack source
+    Body_start_uploaded_file_connected_source_setup:
+      properties:
+        file:
+          type: string
+          contentMediaType: application/octet-stream
+          title: File
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+      type: object
+      required:
+      - file
+      title: Body_start_uploaded_file_connected_source_setup
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

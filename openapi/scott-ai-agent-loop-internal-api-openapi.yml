@@ -1,0 +1,257 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access agent-loop-internal API
+  version: 1.0.0
+tags:
+- name: agent-loop-internal
+paths:
+  /agent-loop/internal/workspaces/{workspace_id}/connected-sources/{connected_source_id}/retrieval-details:
+    get:
+      tags:
+      - agent-loop-internal
+      summary: Get Connected Source Retrieval Details
+      description: Per-turn agent-svc JWT (``turn-write`` OR ``review-chat-turn`` cap, ``workspace_id`` claim matches path).
+      operationId: get_connected_source_retrieval_details
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: connected_source_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Connected Source Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrievalResult'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/internal/agent-token/redeem:
+    post:
+      tags:
+      - agent-loop-internal
+      summary: Redeem Handoff Code
+      operationId: redeem_handoff_code
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RedeemHandoffRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RedeemHandoffResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/internal/sandbox/heartbeat:
+    post:
+      tags:
+      - agent-loop-internal
+      summary: Sandbox Heartbeat
+      operationId: sandbox_heartbeat
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Sandbox Heartbeat
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    RedeemHandoffResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: RedeemHandoffResponse
+    RetrievalKind:
+      type: string
+      enum:
+      - git
+      - file
+      title: RetrievalKind
+      description: Kind of retrieval method (git clone, file download, etc.)
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    GitRetrievalDetails:
+      properties:
+        kind:
+          $ref: '#/components/schemas/RetrievalKind'
+          default: git
+        clone_url:
+          type: string
+          title: Clone Url
+        token:
+          type: string
+          title: Token
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - clone_url
+      - token
+      - repo
+      - branch
+      - commit_sha
+      title: GitRetrievalDetails
+      description: Details for retrieving source via git clone
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RetrievalResult:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        retrieval:
+          anyOf:
+          - $ref: '#/components/schemas/GitRetrievalDetails'
+          - $ref: '#/components/schemas/FileRetrievalDetails'
+          title: Retrieval
+      type: object
+      required:
+      - adapter
+      - retrieval
+      title: RetrievalResult
+      description: Result of retrieving a source (how to actually fetch it)
+    RedeemHandoffRequest:
+      properties:
+        handoff_code:
+          type: string
+          title: Handoff Code
+      type: object
+      required:
+      - handoff_code
+      title: RedeemHandoffRequest
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
+    FileRetrievalDetails:
+      properties:
+        kind:
+          $ref: '#/components/schemas/RetrievalKind'
+          default: file
+        download_url:
+          type: string
+          title: Download Url
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - download_url
+      - filename
+      title: FileRetrievalDetails
+      description: Details for retrieving source via file download
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

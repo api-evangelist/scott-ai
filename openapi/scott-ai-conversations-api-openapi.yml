@@ -1,0 +1,686 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access conversations API
+  version: 1.0.0
+tags:
+- name: conversations
+paths:
+  /conversations/:
+    post:
+      tags:
+      - conversations
+      summary: Create Conversation
+      description: Create a new conversation
+      operationId: create_conversation_conversations__post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationCreateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - conversations
+      summary: List Conversations
+      description: List all conversations for the authenticated user (metadata only)
+      operationId: list_conversations_conversations__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConversationListResponse'
+                title: Response List Conversations Conversations  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conversations/{conversation_id}/resume:
+    post:
+      tags:
+      - conversations
+      summary: Resume Conversation
+      description: Resume an existing conversation - returns API key without creating new conversation
+      operationId: resume_conversation_conversations__conversation_id__resume_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationCreateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conversations/{conversation_id}/resume/prepare:
+    post:
+      tags:
+      - conversations
+      summary: Resume Prepare
+      description: Unpause a sandbox for session validation. Sets it as pending — proxy will route to it.
+      operationId: resume_prepare_conversations__conversation_id__resume_prepare_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumePreparationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conversations/{conversation_id}/resume/confirm:
+    post:
+      tags:
+      - conversations
+      summary: Resume Confirm
+      description: Graduate pending sandbox to active. Pause old active sandbox. Extend TTL.
+      operationId: resume_confirm_conversations__conversation_id__resume_confirm_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeConfirmationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conversations/{conversation_id}/resume/reject:
+    post:
+      tags:
+      - conversations
+      summary: Resume Reject
+      description: Client determined sessions are dead — clear pending sandbox. TTL will clean up the sandbox.
+      operationId: resume_reject_conversations__conversation_id__resume_reject_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeRejectionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conversations/active-session:
+    get:
+      tags:
+      - conversations
+      summary: Get Active Session
+      description: Check if the user has a live E2B sandbox and return the session info to reconnect.
+      operationId: get_active_session_conversations_active_session_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveSessionResponse'
+      security:
+      - HTTPBearer: []
+  /conversations/{conversation_id}:
+    get:
+      tags:
+      - conversations
+      summary: Get Conversation
+      description: Get a single conversation (metadata only, no messages)
+      operationId: get_conversation_conversations__conversation_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - conversations
+      summary: Update Conversation
+      description: Update conversation metadata (e.g., coordinator_session_id)
+      operationId: update_conversation_conversations__conversation_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conversations/{conversation_id}/messages:
+    get:
+      tags:
+      - conversations
+      summary: Get Conversation Messages
+      description: Get all messages for a conversation
+      operationId: get_conversation_messages_conversations__conversation_id__messages_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+                title: Response Get Conversation Messages Conversations  Conversation Id  Messages Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - conversations
+      summary: Append Messages
+      description: Append messages to a conversation
+      operationId: append_messages_conversations__conversation_id__messages_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageAppend'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Append Messages Conversations  Conversation Id  Messages Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conversations/{conversation_id}/messages/{message_id}:
+    patch:
+      tags:
+      - conversations
+      summary: Update Message
+      description: Update a specific message in a conversation (e.g., add document_id)
+      operationId: update_message_conversations__conversation_id__messages__message_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Conversation Id
+      - name: message_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Message Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Message Conversations  Conversation Id  Messages  Message Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ActiveSessionResponse:
+      properties:
+        active:
+          type: boolean
+          title: Active
+        conversation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conversation Id
+        document_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Id
+      type: object
+      required:
+      - active
+      title: ActiveSessionResponse
+      description: Response from active-session — tells browser if there's a live session to reconnect to
+    ResumeConfirmationResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        confirmed:
+          type: boolean
+          title: Confirmed
+      type: object
+      required:
+      - conversation_id
+      - confirmed
+      title: ResumeConfirmationResponse
+      description: Response from resume/confirm — sandbox is now the active one
+    ConversationCreateResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        anthropic_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Anthropic Key
+      type: object
+      required:
+      - conversation_id
+      title: ConversationCreateResponse
+      description: Response when creating a new conversation
+    ConversationUpdate:
+      properties:
+        coordinator_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coordinator Session Id
+      type: object
+      title: ConversationUpdate
+      description: For updating conversation metadata
+    MessageUpdate:
+      properties:
+        document_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Id
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+      type: object
+      title: MessageUpdate
+      description: For updating a specific message in a conversation
+    ConversationResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        user_id:
+          type: string
+          title: User Id
+        repo_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Path
+        repo_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Repo Paths
+        task:
+          type: string
+          title: Task
+        agent_configs:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Agent Configs
+        coordinator_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coordinator Session Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        is_browser:
+          type: boolean
+          title: Is Browser
+          readOnly: true
+      type: object
+      required:
+      - id
+      - user_id
+      - repo_path
+      - task
+      - agent_configs
+      - created_at
+      - updated_at
+      - is_browser
+      title: ConversationResponse
+      description: Metadata only - no messages
+    ResumePreparationResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        ready:
+          type: boolean
+          title: Ready
+      type: object
+      required:
+      - conversation_id
+      - ready
+      title: ResumePreparationResponse
+      description: Response from resume/prepare — sandbox is awake and ready for session validation
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ResumeRejectionResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        rejected:
+          type: boolean
+          title: Rejected
+      type: object
+      required:
+      - conversation_id
+      - rejected
+      title: ResumeRejectionResponse
+      description: Response from resume/reject — pending sandbox cleared
+    MessageAppend:
+      properties:
+        messages:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Messages
+      type: object
+      required:
+      - messages
+      title: MessageAppend
+      description: For appending messages to a conversation
+    ConversationCreate:
+      properties:
+        repo_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Path
+        repo_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Repo Paths
+        task:
+          type: string
+          title: Task
+        agent_configs:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Agent Configs
+      type: object
+      required:
+      - task
+      title: ConversationCreate
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ConversationListResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        task:
+          type: string
+          title: Task
+        repo_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Path
+        repo_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Repo Paths
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        message_count:
+          type: integer
+          title: Message Count
+          default: 0
+        is_browser:
+          type: boolean
+          title: Is Browser
+          readOnly: true
+      type: object
+      required:
+      - id
+      - task
+      - repo_path
+      - created_at
+      - updated_at
+      - is_browser
+      title: ConversationListResponse
+      description: Lightweight response for listing conversations
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,901 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access reviews API
+  version: 1.0.0
+tags:
+- name: reviews
+paths:
+  /agent-loop/workspaces/{workspace_id}/review-requests:
+    post:
+      tags:
+      - reviews
+      summary: Create Review Requests
+      description: Ask reviewers to review a node. One request per reviewer; idempotent per open (reviewer, snapshot).
+      operationId: create_review_requests
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReviewRequestsBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReviewRequestsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - reviews
+      summary: List Workspace Review Requests
+      description: List review requests for a workspace.
+      operationId: list_workspace_review_requests
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReviewRequestsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/review-requests/{request_id}:
+    delete:
+      tags:
+      - reviews
+      summary: Cancel Review Request
+      description: Cancel an open review request, then tell the reviewer it was withdrawn. Only the requester can do this.
+      operationId: cancel_review_request
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Request Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/review-requests/{request_id}/decisions:
+    post:
+      tags:
+      - reviews
+      summary: Submit Review Decision
+      description: Submit or change the reviewer's decision; the request closes and stays closed.
+      operationId: submit_review_decision
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Request Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitDecisionBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewRequestResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - reviews
+      summary: Retract Review Decision
+      description: Withdraw the reviewer's verdict; the request reopens and state reverts to in_progress/pending.
+      operationId: retract_review_decision
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Request Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewRequestResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/review-requests/{request_id}/move:
+    post:
+      tags:
+      - reviews
+      summary: Move Review Request
+      description: Move a never-engaged open request to another node; merges into an existing open ask there.
+      operationId: move_review_request
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Request Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveReviewRequestBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewRequestResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/review-requests/{request_id}/nudge:
+    post:
+      tags:
+      - reviews
+      summary: Nudge Review Request
+      description: 'Re-fire the ask for a pending request. Rate-limited; never changes review state.
+
+
+        Bound reviewers get the SCO-1348 in-app + email re-fire. A pending invitee has no bound user and
+
+        no inbox, so the invite email is re-sent instead (the only meaningful re-ping for that state).'
+      operationId: nudge_review_request
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Request Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NudgeReviewRequestResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/review-requests:
+    get:
+      tags:
+      - reviews
+      summary: List My Review Requests
+      description: 'Cross-workspace review request list — for inbox and queue pages.
+
+
+        role=reviewer  → requests where caller is the reviewer
+
+        role=requester → requests created by caller'
+      operationId: list_my_review_requests
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: role
+        in: query
+        required: false
+        schema:
+          type: string
+          description: '''reviewer'' or ''requester'''
+          default: reviewer
+          title: Role
+        description: '''reviewer'' or ''requester'''
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReviewRequestsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/reviews/summary:
+    get:
+      tags:
+      - reviews
+      summary: Get Workspace Reviews Summary
+      description: Per-node review-state counts for the tree chips. Only nodes with counting requests appear.
+      operationId: get_workspace_reviews_summary
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewSummaryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/reviews:
+    get:
+      tags:
+      - reviews
+      summary: Get Snapshot Reviews
+      description: Per-reviewer review state on one node. The Approvals tab and tree popover render this list.
+      operationId: get_snapshot_reviews
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotReviewsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/reviews/bring-forward:
+    get:
+      tags:
+      - reviews
+      summary: Get Bring Forward Candidates
+      description: Reviewers with upstream activity who are absent from this node, with suggested actions.
+      operationId: get_bring_forward_candidates
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BringForwardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    MoveReviewRequestBody:
+      properties:
+        target_snapshot_id:
+          type: string
+          title: Target Snapshot Id
+      type: object
+      required:
+      - target_snapshot_id
+      title: MoveReviewRequestBody
+    SubmitDecisionBody:
+      properties:
+        decision:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Decision
+      type: object
+      required:
+      - decision
+      title: SubmitDecisionBody
+    SnapshotReviewerEntry:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        reviewer_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewer Id
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        pending_invite_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pending Invite Id
+        state:
+          type: string
+          enum:
+          - pending
+          - in_progress
+          - approved
+          - rejected
+          title: State
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        latest_agent_counsel_turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Agent Counsel Turn Id
+        requested_at:
+          type: string
+          format: date-time
+          title: Requested At
+        engaged_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Engaged At
+        decided_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Decided At
+        last_activity_at:
+          type: string
+          format: date-time
+          title: Last Activity At
+        comment_count:
+          type: integer
+          title: Comment Count
+        comments:
+          items:
+            $ref: '#/components/schemas/ReviewCommentPreview'
+          type: array
+          title: Comments
+          default: []
+        prior_decisions:
+          items:
+            $ref: '#/components/schemas/PriorReviewDecision'
+          type: array
+          title: Prior Decisions
+          default: []
+      type: object
+      required:
+      - request_id
+      - reviewer_id
+      - display_name
+      - pending_invite_id
+      - state
+      - message
+      - requested_at
+      - engaged_at
+      - decided_at
+      - last_activity_at
+      - comment_count
+      title: SnapshotReviewerEntry
+    ReviewerInput:
+      properties:
+        reviewer_id:
+          type: string
+          title: Reviewer Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - reviewer_id
+      title: ReviewerInput
+    ReviewCommentPreview:
+      properties:
+        thread_id:
+          type: string
+          title: Thread Id
+        comment_id:
+          type: string
+          title: Comment Id
+        anchor_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Anchor Text
+        text:
+          type: string
+          title: Text
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        resolved:
+          type: boolean
+          title: Resolved
+      type: object
+      required:
+      - thread_id
+      - comment_id
+      - anchor_text
+      - text
+      - created_at
+      - resolved
+      title: ReviewCommentPreview
+    BringForwardEntry:
+      properties:
+        reviewer_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewer Id
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        pending_invite_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pending Invite Id
+        state:
+          type: string
+          enum:
+          - pending
+          - in_progress
+          - approved
+          - rejected
+          title: State
+        source_request_id:
+          type: string
+          title: Source Request Id
+        source_snapshot_id:
+          type: string
+          title: Source Snapshot Id
+        source_snapshot_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Snapshot Name
+        source_created_at:
+          type: string
+          format: date-time
+          title: Source Created At
+        nodes_behind:
+          type: integer
+          title: Nodes Behind
+        comment_count:
+          type: integer
+          title: Comment Count
+        comments:
+          items:
+            $ref: '#/components/schemas/ReviewCommentPreview'
+          type: array
+          title: Comments
+          default: []
+        suggested_action:
+          type: string
+          enum:
+          - re_request
+          - move
+          - ask_again
+          title: Suggested Action
+      type: object
+      required:
+      - reviewer_id
+      - display_name
+      - pending_invite_id
+      - state
+      - source_request_id
+      - source_snapshot_id
+      - source_snapshot_name
+      - source_created_at
+      - nodes_behind
+      - comment_count
+      - suggested_action
+      title: BringForwardEntry
+    ReviewSummaryResponse:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/ReviewSummaryNode'
+          type: array
+          title: Nodes
+      type: object
+      required:
+      - nodes
+      title: ReviewSummaryResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    BringForwardResponse:
+      properties:
+        reviewers:
+          items:
+            $ref: '#/components/schemas/BringForwardEntry'
+          type: array
+          title: Reviewers
+      type: object
+      required:
+      - reviewers
+      title: BringForwardResponse
+    PriorReviewDecision:
+      properties:
+        decision:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Decision
+        decided_at:
+          type: string
+          format: date-time
+          title: Decided At
+      type: object
+      required:
+      - decision
+      - decided_at
+      title: PriorReviewDecision
+    ReviewSummaryNode:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        counts:
+          $ref: '#/components/schemas/NodeReviewCounts'
+      type: object
+      required:
+      - snapshot_id
+      - counts
+      title: ReviewSummaryNode
+    NodeReviewCounts:
+      properties:
+        approved:
+          type: integer
+          title: Approved
+        in_progress:
+          type: integer
+          title: In Progress
+        rejected:
+          type: integer
+          title: Rejected
+        pending:
+          type: integer
+          title: Pending
+      type: object
+      required:
+      - approved
+      - in_progress
+      - rejected
+      - pending
+      title: NodeReviewCounts
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ReviewRequestResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        requester_id:
+          type: string
+          title: Requester Id
+        reviewer_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewer Id
+        pending_invite_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pending Invite Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        latest_agent_counsel_turn_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Agent Counsel Turn Id
+        status:
+          type: string
+          enum:
+          - open
+          - closed
+          - cancelled
+          title: Status
+        state:
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - in_progress
+            - approved
+            - rejected
+          - type: 'null'
+          title: State
+        engaged_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Engaged At
+        decision:
+          anyOf:
+          - type: string
+            enum:
+            - approved
+            - rejected
+          - type: 'null'
+          title: Decision
+        decided_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Decided At
+        prior_decisions:
+          items:
+            $ref: '#/components/schemas/PriorReviewDecision'
+          type: array
+          title: Prior Decisions
+          default: []
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        workspace_name:
+          type: string
+          title: Workspace Name
+        requester_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Requester Display Name
+        reviewer_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewer Display Name
+      type: object
+      required:
+      - id
+      - workspace_id
+      - snapshot_id
+      - requester_id
+      - reviewer_id
+      - pending_invite_id
+      - message
+      - status
+      - state
+      - engaged_at
+      - decision
+      - decided_at
+      - created_at
+      - updated_at
+      - workspace_name
+      - requester_display_name
+      - reviewer_display_name
+      title: ReviewRequestResponse
+    CreateReviewRequestsBody:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        reviewers:
+          items:
+            $ref: '#/components/schemas/ReviewerInput'
+          type: array
+          minItems: 1
+          title: Reviewers
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - snapshot_id
+      - reviewers
+      title: CreateReviewRequestsBody
+    NudgeReviewRequestResponse:
+      properties:
+        nudged:
+          type: boolean
+          title: Nudged
+        next_allowed_at:
+          type: string
+          format: date-time
+          title: Next Allowed At
+        review_request:
+          $ref: '#/components/schemas/ReviewRequestResponse'
+      type: object
+      required:
+      - nudged
+      - next_allowed_at
+      - review_request
+      title: NudgeReviewRequestResponse
+    ListReviewRequestsResponse:
+      properties:
+        review_requests:
+          items:
+            $ref: '#/components/schemas/ReviewRequestResponse'
+          type: array
+          title: Review Requests
+      type: object
+      required:
+      - review_requests
+      title: ListReviewRequestsResponse
+    SnapshotReviewsResponse:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        reviewers:
+          items:
+            $ref: '#/components/schemas/SnapshotReviewerEntry'
+          type: array
+          title: Reviewers
+      type: object
+      required:
+      - snapshot_id
+      - reviewers
+      title: SnapshotReviewsResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

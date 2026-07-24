@@ -1,0 +1,25 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access .well Known API
+  version: 1.0.0
+tags:
+- name: .well Known
+paths:
+  /.well-known/jwks.json:
+    get:
+      summary: Jwks
+      description: Public key endpoint for agent-service traffic token verification.
+      operationId: jwks__well_known_jwks_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - .well Known
+components:
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

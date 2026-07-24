@@ -1,0 +1,410 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access snapshots API
+  version: 1.0.0
+tags:
+- name: snapshots
+paths:
+  /agent-loop/workspaces/{workspace_id}/snapshots:
+    post:
+      tags:
+      - snapshots
+      summary: Create Snapshot
+      operationId: create_snapshot
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSnapshotRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/commit:
+    patch:
+      tags:
+      - snapshots
+      summary: Commit Snapshot
+      operationId: commit_snapshot
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommitSnapshotRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/discard:
+    patch:
+      tags:
+      - snapshots
+      summary: Discard Snapshot
+      operationId: discard_snapshot
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/has-user-edits:
+    patch:
+      tags:
+      - snapshots
+      summary: Set Snapshot Has User Edits
+      description: Set the has_user_edits flag (trunk-draft reset clears it to the empty visual state).
+      operationId: set_snapshot_has_user_edits
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetHasUserEditsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/suggestion/accept:
+    post:
+      tags:
+      - snapshots
+      summary: Accept Snapshot Suggestion
+      operationId: accept_snapshot_suggestion
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/suggestion/reject:
+    post:
+      tags:
+      - snapshots
+      summary: Reject Snapshot Suggestion
+      operationId: reject_snapshot_suggestion
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/rename:
+    patch:
+      tags:
+      - snapshots
+      summary: Rename Snapshot
+      operationId: rename_snapshot
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: workspace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workspace Id
+      - name: snapshot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Snapshot Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameSnapshotRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    SnapshotResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        document_artifact_id:
+          type: string
+          title: Document Artifact Id
+        parent_snapshot_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Snapshot Id
+        turn_id:
+          type: string
+          title: Turn Id
+        kind:
+          type: string
+          enum:
+          - node
+          - capture
+          title: Kind
+        status:
+          type: string
+          enum:
+          - draft
+          - committed
+          - discarded
+          title: Status
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        has_user_edits:
+          type: boolean
+          title: Has User Edits
+          default: false
+      type: object
+      required:
+      - id
+      - document_artifact_id
+      - parent_snapshot_id
+      - turn_id
+      - kind
+      - status
+      - name
+      - created_at
+      title: SnapshotResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    RenameSnapshotRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: RenameSnapshotRequest
+    CommitSnapshotRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        blocks:
+          anyOf:
+          - items: {}
+            type: array
+          - type: 'null'
+          title: Blocks
+        markdown:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Markdown
+      type: object
+      required:
+      - name
+      title: CommitSnapshotRequest
+    SetHasUserEditsRequest:
+      properties:
+        has_user_edits:
+          type: boolean
+          title: Has User Edits
+      type: object
+      required:
+      - has_user_edits
+      title: SetHasUserEditsRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CreateSnapshotRequest:
+      properties:
+        parent_snapshot_id:
+          type: string
+          title: Parent Snapshot Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      required:
+      - parent_snapshot_id
+      title: CreateSnapshotRequest
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

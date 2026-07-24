@@ -1,0 +1,109 @@
+openapi: 3.1.0
+info:
+  title: One-Shot access auth API
+  version: 1.0.0
+tags:
+- name: auth
+paths:
+  /auth/oauth/exchange:
+    post:
+      tags:
+      - auth
+      summary: Exchange Oauth Token Endpoint
+      description: 'Exchange a Stytch OAuth token for a session token and JWT.
+
+
+        Called by the browser app after Stytch redirects back with ?token=xxx.
+
+        Intentionally unauthenticated — this endpoint IS the authentication mechanism.
+
+        The Stytch secret key never leaves the server.'
+      operationId: exchange_oauth_token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthExchangeRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthExchangeResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    OAuthExchangeRequest:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: OAuthExchangeRequest
+    OAuthExchangeResponse:
+      properties:
+        session_token:
+          type: string
+          title: Session Token
+        session_jwt:
+          type: string
+          title: Session Jwt
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+      type: object
+      required:
+      - session_token
+      - session_jwt
+      - user_id
+      title: OAuthExchangeResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer
