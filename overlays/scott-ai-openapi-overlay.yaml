@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Scott (Juno Labs One-Shot API)
+  version: 1.0.0
+extends: openapi/scott-ai-openapi-original.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: scott-ai
+    x-apievangelist-company: Juno Labs Inc.
+    x-apievangelist-product: Scott
+    x-apievangelist-summary: >-
+      Planning workspace where engineering teams align on design intent before
+      coding agents build. REST API behind the browser app, CLI plugin, and
+      hosted MCP server.
+    x-api-base-url: https://api.tryscott.ai
+    x-authentication: bearer-jwt (Stytch OAuth exchange; RS256 JWKS)
+- target: $
+  update:
+    servers:
+    - url: https://api.tryscott.ai
+      description: Production (added by API Evangelist; absent from source spec)

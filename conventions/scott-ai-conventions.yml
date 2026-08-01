@@ -1,0 +1,57 @@
+generated: '2026-07-21'
+method: searched
+source:
+- openapi/scott-ai-openapi-original.json
+- https://docs.tryscott.ai/getting-started/concepts.md
+summary: >-
+  Cross-cutting request/response semantics for the Scott (Juno Labs) "One-Shot API".
+  REST + JSON over HTTPS at https://api.tryscott.ai, bearer-JWT authenticated, with
+  offset/limit pagination, natural-key upsert idempotency on Scott plugin pushes, and
+  Server-Sent Event streams for live workspace and notification updates.
+authentication:
+  style: bearer-jwt
+  scheme: HTTPBearer
+  header: 'Authorization: Bearer <jwt>'
+  token_source: >-
+    Session JWTs are minted by exchanging a Stytch OAuth token at
+    POST /auth/oauth/exchange; JWTs are signed RS256 and verifiable against
+    /.well-known/jwks.json (kid traffic-token-v1). Workspace-scoped agent tokens
+    are minted via POST /agent-loop/workspaces/{workspace_id}/access-token.
+  ref: authentication/scott-ai-authentication.yml
+idempotency:
+  supported: true
+  style: natural-key-upsert
+  detail: >-
+    POST /agent-loop/workspaces (create_workspace) is idempotent for Scott plugin
+    pushes: the same (captured_by_user_id, source_kind, source_id) tuple returns the
+    same planspace, replacing push-artifact metadata in place and appending scott_push
+    turns past the chain tip rather than duplicating. There is no Idempotency-Key
+    header; idempotency is keyed on the push source identity.
+pagination:
+  style: offset-limit
+  params: [offset, limit, page, page_size]
+field_expansion:
+  supported: false
+metadata:
+  supported: false
+request_tracing:
+  supported: unknown
+versioning:
+  api_version: 1.0.0
+  scheme: none-in-path
+  detail: >-
+    The API is unversioned in the path (api.tryscott.ai/<resource>); info.version is
+    1.0.0. CLI/plugin compatibility is negotiated via GET /cli-version.
+error_envelope:
+  shape: fastapi-http-validation-error
+  detail: >-
+    Validation failures return HTTP 422 with a JSON body {"detail":[{"loc":[...],
+    "msg":"...","type":"..."}]}. Not RFC 9457 problem+json.
+  ref: errors/scott-ai-problem-types.yml
+streaming:
+  style: server-sent-events
+  endpoints:
+  - GET /agent-loop/workspaces/{workspace_id}/events
+  - GET /notifications/stream
+rate_limit_signaling:
+  documented: false

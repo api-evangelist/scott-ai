@@ -1,7 +1,29 @@
 aid: scott-ai
 name: Scott Ai
-description: Scott Ai is a company surfaced as a portfolio company of y-combinator and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Scott (by Juno Labs Inc.) is a Y Combinator (F25) planning workspace for
+  engineering teams that build with coding agents. Teams sync recent local agent
+  sessions, push a coding-agent thread into a shareable "planspace", align on
+  design intent through Sync Chat, comments, reviews and approvals, then pull the
+  reviewed context back into execution. Scott ships a first-party CLI/plugin
+  (curl-installed) that wires a Scott skill, rule, and hosted MCP server into
+  Claude Code, Cursor, Codex, OpenCode and Gemini, plus a GitHub App that reviews
+  pull requests against planspace design intent. This profile enriches the
+  provider from its public REST API (api.tryscott.ai, 139 operations), docs, CLI,
+  MCP surface, and security posture.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://tryscott.ai/scott-logo.png
 url: https://raw.githubusercontent.com/api-evangelist/scott-ai/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,12 +33,384 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-apis: []
+- Coding Agents
+- AI
+- Developer Tools
+- Collaboration
+- Agentic Workflow
+- Model Context Protocol
+- Software Design
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: scott-ai:scott-ai-access-api
+  name: Scott Ai access API
+  description: The access API from Scott Ai — 1 operation(s) for access.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - access
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-access-api-openapi.yml
+- aid: scott-ai:scott-ai-agent-counsel-api
+  name: Scott Ai agent-counsel API
+  description: The agent-counsel API from Scott Ai — 4 operation(s) for agent-counsel.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - agent-counsel
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-agent-counsel-api-openapi.yml
+- aid: scott-ai:scott-ai-agent-counsel-internal-api
+  name: Scott Ai agent-counsel-internal API
+  description: >-
+    The agent-counsel-internal API from Scott Ai — 3 operation(s) for agent-counsel-internal.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - agent-counsel-internal
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-agent-counsel-internal-api-openapi.yml
+- aid: scott-ai:scott-ai-agent-loop-api
+  name: Scott Ai agent-loop API
+  description: The agent-loop API from Scott Ai — 16 operation(s) for agent-loop.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - agent-loop
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-agent-loop-api-openapi.yml
+- aid: scott-ai:scott-ai-agent-loop-internal-api
+  name: Scott Ai agent-loop-internal API
+  description: The agent-loop-internal API from Scott Ai — 3 operation(s) for agent-loop-internal.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - agent-loop-internal
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-agent-loop-internal-api-openapi.yml
+- aid: scott-ai:scott-ai-artifacts-api
+  name: Scott Ai artifacts API
+  description: The artifacts API from Scott Ai — 1 operation(s) for artifacts.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - artifacts
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-artifacts-api-openapi.yml
+- aid: scott-ai:scott-ai-auth-api
+  name: Scott Ai auth API
+  description: The auth API from Scott Ai — 1 operation(s) for auth.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - auth
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-auth-api-openapi.yml
+- aid: scott-ai:scott-ai-billing-api
+  name: Scott Ai billing API
+  description: The billing API from Scott Ai — 5 operation(s) for billing.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - billing
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-billing-api-openapi.yml
+- aid: scott-ai:scott-ai-cli-version-api
+  name: Scott Ai cli-version API
+  description: The cli-version API from Scott Ai — 1 operation(s) for cli-version.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - cli-version
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-cli-version-api-openapi.yml
+- aid: scott-ai:scott-ai-connected-sources-api
+  name: Scott Ai connected-sources API
+  description: The connected-sources API from Scott Ai — 6 operation(s) for connected-sources.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - connected-sources
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-connected-sources-api-openapi.yml
+- aid: scott-ai:scott-ai-conversations-api
+  name: Scott Ai conversations API
+  description: The conversations API from Scott Ai — 9 operation(s) for conversations.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - conversations
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-conversations-api-openapi.yml
+- aid: scott-ai:scott-ai-documents-api
+  name: Scott Ai documents API
+  description: The documents API from Scott Ai — 9 operation(s) for documents.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - documents
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-documents-api-openapi.yml
+- aid: scott-ai:scott-ai-e2b-api
+  name: Scott Ai e2b API
+  description: The e2b API from Scott Ai — 2 operation(s) for e2b.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - e2b
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-e2b-api-openapi.yml
+- aid: scott-ai:scott-ai-github-api
+  name: Scott Ai github API
+  description: The github API from Scott Ai — 1 operation(s) for github.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - github
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-github-api-openapi.yml
+- aid: scott-ai:scott-ai-github-links-api
+  name: Scott Ai github-links API
+  description: The github-links API from Scott Ai — 3 operation(s) for github-links.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - github-links
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-github-links-api-openapi.yml
+- aid: scott-ai:scott-ai-health-api
+  name: Scott Ai Health API
+  description: The Health API from Scott Ai — 2 operation(s) for health.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-health-api-openapi.yml
+- aid: scott-ai:scott-ai-integrations-api
+  name: Scott Ai integrations API
+  description: The integrations API from Scott Ai — 1 operation(s) for integrations.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - integrations
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-integrations-api-openapi.yml
+- aid: scott-ai:scott-ai-invites-api
+  name: Scott Ai invites API
+  description: The invites API from Scott Ai — 6 operation(s) for invites.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - invites
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-invites-api-openapi.yml
+- aid: scott-ai:scott-ai-issues-api
+  name: Scott Ai issues API
+  description: The issues API from Scott Ai — 1 operation(s) for issues.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - issues
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-issues-api-openapi.yml
+- aid: scott-ai:scott-ai-notifications-api
+  name: Scott Ai notifications API
+  description: The notifications API from Scott Ai — 5 operation(s) for notifications.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - notifications
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-notifications-api-openapi.yml
+- aid: scott-ai:scott-ai-one-shot-api-api
+  name: Scott Ai One Shot API API
+  description: The One Shot API API from Scott Ai — 1 operation(s) for one shot api.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - One Shot API
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-one-shot-api-api-openapi.yml
+- aid: scott-ai:scott-ai-orgs-api
+  name: Scott Ai orgs API
+  description: The orgs API from Scott Ai — 1 operation(s) for orgs.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - orgs
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-orgs-api-openapi.yml
+- aid: scott-ai:scott-ai-probes-api
+  name: Scott Ai probes API
+  description: The probes API from Scott Ai — 3 operation(s) for probes.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - probes
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-probes-api-openapi.yml
+- aid: scott-ai:scott-ai-reviews-api
+  name: Scott Ai reviews API
+  description: The reviews API from Scott Ai — 9 operation(s) for reviews.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - reviews
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-reviews-api-openapi.yml
+- aid: scott-ai:scott-ai-snapshots-api
+  name: Scott Ai snapshots API
+  description: The snapshots API from Scott Ai — 7 operation(s) for snapshots.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - snapshots
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-snapshots-api-openapi.yml
+- aid: scott-ai:scott-ai-sync-chat-api
+  name: Scott Ai sync-chat API
+  description: The sync-chat API from Scott Ai — 8 operation(s) for sync-chat.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - sync-chat
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-sync-chat-api-openapi.yml
+- aid: scott-ai:scott-ai-users-api
+  name: Scott Ai users API
+  description: The users API from Scott Ai — 8 operation(s) for users.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - users
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-users-api-openapi.yml
+- aid: scott-ai:scott-ai-waitlist-api
+  name: Scott Ai waitlist API
+  description: The waitlist API from Scott Ai — 1 operation(s) for waitlist.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - waitlist
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-waitlist-api-openapi.yml
+- aid: scott-ai:scott-ai-walkthroughs-api
+  name: Scott Ai walkthroughs API
+  description: The walkthroughs API from Scott Ai — 3 operation(s) for walkthroughs.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - walkthroughs
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-walkthroughs-api-openapi.yml
+- aid: scott-ai:scott-ai-well-known-api
+  name: Scott Ai .well Known API
+  description: The .well Known API from Scott Ai — 1 operation(s) for .well known.
+  humanURL: https://docs.tryscott.ai
+  baseURL: https://api.tryscott.ai
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/scott-ai-well-known-api-openapi.yml
+common:
+- type: DomainSecurity
+  url: security/scott-ai-domain-security.yml
+- type: Website
+  url: https://tryscott.ai
+- type: DeveloperPortal
+  url: https://docs.tryscott.ai
+- type: Documentation
+  url: https://docs.tryscott.ai
+- type: APIReference
+  url: https://api.tryscott.ai/openapi.json
+- type: GettingStarted
+  url: https://docs.tryscott.ai/getting-started/quickstart
+- type: Support
+  url: https://discord.gg/NBcp4uzqhW
+- type: TermsOfService
+  url: https://www.tryscott.ai/terms
+- type: PrivacyPolicy
+  url: https://www.tryscott.ai/privacy
+- type: SignUp
+  url: https://app.tryscott.ai
+- type: CLI
+  url: cli/scott-ai-cli.yml
+- type: MCPServer
+  url: mcp/scott-ai-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/scott-ai-llms.txt
+- type: Packages
+  url: packages/scott-ai-packages.yml
+- type: WellKnown
+  url: well-known/scott-ai-well-known.yml
+- type: SecurityTxt
+  url: well-known/scott-ai-security.txt
+- type: Authentication
+  url: authentication/scott-ai-authentication.yml
+- type: AgenticAccess
+  url: agentic-access/scott-ai-agentic-access.yml
+- type: Conventions
+  url: conventions/scott-ai-conventions.yml
+- type: Idempotency
+  url: conventions/scott-ai-conventions.yml
+- type: ErrorCatalog
+  url: errors/scott-ai-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/scott-ai-lifecycle.yml
+- type: Conformance
+  url: conformance/scott-ai-conformance.yml
+- type: DataModel
+  url: data-model/scott-ai-data-model.yml
+- type: VulnerabilityDisclosure
+  url: security/scott-ai-vulnerability-disclosure.yml
+- type: Security
+  url: https://tryscott.ai/.well-known/security.txt
+- type: TrustCenter
+  url: security/scott-ai-trust-center.yml
+- type: Compliance
+  url: https://tryscott.ai/security
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 16
+  pass: local-v1

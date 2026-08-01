@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/scott-ai-openapi-original.json
+skills:
+- file: scott-ai-push-thread-to-planspace.md
+  name: Push an agent thread into a Scott planspace
+  api: openapi/scott-ai-openapi-original.json
+  operations: [create_workspace, create_turn, create_snapshot, commit_snapshot]
+- file: scott-ai-pull-planspace-context.md
+  name: Pull reviewed planspace context into execution
+  api: openapi/scott-ai-openapi-original.json
+  operations: [list_workspaces, get_workspace_context, get_workspace_state]
+- file: scott-ai-request-review-and-approve.md
+  name: Request review on a snapshot and collect approvals
+  api: openapi/scott-ai-openapi-original.json
+  operations: [create_review_requests, list_workspace_review_requests, submit_review_decision, get_workspace_reviews_summary]

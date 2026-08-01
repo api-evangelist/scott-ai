@@ -1,0 +1,29 @@
+# Fetched from https://docs.tryscott.ai/llms.txt on 2026-07-21 (method: searched)
+
+# Scott AI
+
+## Docs
+
+- [Comments](https://docs.tryscott.ai/collaboration/comments.md): Use inline comments to gather specific team feedback before execution.
+- [For You](https://docs.tryscott.ai/collaboration/notifications.md): Your inbox for Sync Chat, reviews, mentions, invites, and team activity.
+- [Team pulse](https://docs.tryscott.ai/collaboration/pulse.md): How teams use Scott to see design intent, review health, and execution drift.
+- [Reviews and approvals](https://docs.tryscott.ai/collaboration/reviews.md): Request feedback and approval on a specific planspace document version.
+- [Sharing](https://docs.tryscott.ai/collaboration/sharing.md): Share planspaces for collaboration, review, or handoff.
+- [Scott agent plugin](https://docs.tryscott.ai/developer-tools/cli.md): Use Scott from your coding agent: sync, push, pull, and setup.
+- [Scott GitHub App](https://docs.tryscott.ai/developer-tools/github-app.md): Review pull requests against planspace design intent and keep execution context updated.
+- [Pull](https://docs.tryscott.ai/developer-tools/pull.md): Ask the Scott plugin to bring reviewed planspace context back into execution.
+- [Push](https://docs.tryscott.ai/developer-tools/push.md): Ask the Scott plugin to turn an active agent thread into a shareable planspace.
+- [PR design review](https://docs.tryscott.ai/developer-tools/scott-ci.md): Use the Scott GitHub App to link pull requests to planspaces and review implementation against design intent.
+- [Setup](https://docs.tryscott.ai/developer-tools/setup.md): Install and configure Scott for your local coding agents.
+- [Sync](https://docs.tryscott.ai/developer-tools/sync.md): Run scott sync to onboard Scott with recent local coding-agent history.
+- [Core concepts](https://docs.tryscott.ai/getting-started/concepts.md): The main ideas behind Scott: sync, planspaces, reviews, approvals, plugin handoff, and GitHub App feedback.
+- [Quickstart](https://docs.tryscott.ai/getting-started/quickstart.md): Install Scott, sync recent agent work, and learn the daily team workflow.
+- [Scott AI docs](https://docs.tryscott.ai/index.md): Sync agent work, share design intent, gather team feedback, and connect planspaces to code.
+- [Code context](https://docs.tryscott.ai/planspaces/connected-sources.md): Use the Scott GitHub App to make repository context available to Sync Chat and planspaces.
+- [Documents and versions](https://docs.tryscott.ai/planspaces/documents.md): How planspace documents evolve, get reviewed, and become durable design intent.
+- [Planspaces](https://docs.tryscott.ai/planspaces/overview.md): The shared UI where teams turn agent work into documents, feedback, reviews, and execution context.
+
+## Optional
+
+- [The Scott Method](https://tryscott.ai/method)
+- [App](https://tryscott.ai)

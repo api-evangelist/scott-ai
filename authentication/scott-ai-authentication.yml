@@ -1,0 +1,27 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/scott-ai-openapi-original.json
+docs: https://docs.tryscott.ai/getting-started/concepts.md
+summary:
+  types:
+  - http
+  http_schemes:
+  - bearer
+  token_format: jwt-rs256
+details: >-
+  All authenticated operations use an HTTP bearer JWT (Authorization: Bearer
+  <jwt>). Session tokens are minted by exchanging a Stytch OAuth token at
+  POST /auth/oauth/exchange (the exchange endpoint is itself unauthenticated and
+  is the authentication mechanism). JWTs are signed RS256 and verifiable against
+  https://api.tryscott.ai/.well-known/jwks.json (kid traffic-token-v1).
+  Short-lived workspace-scoped agent tokens are minted via
+  POST /agent-loop/workspaces/{workspace_id}/access-token and redeemed by
+  sandboxes via the internal handoff-code endpoint. There is no OAuth2/OIDC
+  securityScheme and no API-key scheme.
+schemes:
+- name: HTTPBearer
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  sources:
+  - openapi/scott-ai-openapi-original.json

@@ -1,0 +1,17 @@
+generated: '2026-07-21'
+method: searched
+source: https://tryscott.ai/security
+url: https://app.vanta.com/withjuno.dev/trust/wsfjgpgd3964nwxpqnuphh
+platform: Vanta
+organization: Juno Labs Inc. (withjuno.dev)
+certifications:
+- SOC 2
+evidence:
+- source: https://tryscott.ai/security
+  detail: /security redirects (307) to a Vanta-hosted trust center for withjuno.dev.
+- source: https://docs.tryscott.ai/getting-started/quickstart.md
+  detail: Quickstart states Scott is SOC 2 compliant; repository contents are not persisted (ephemeral sandboxes).
+notes: >-
+  Only SOC 2 is asserted from published material. Additional frameworks may be
+  listed on the Vanta trust center (JavaScript-rendered; not machine-readable at
+  fetch time) but are not claimed here to avoid fabrication.

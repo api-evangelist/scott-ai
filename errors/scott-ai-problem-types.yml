@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/scott-ai-openapi-original.json
+format: fastapi-http-validation-error
+notes: >-
+  The OpenAPI declares a single documented error class: HTTP 422 request-validation
+  errors on 121 operations, using the FastAPI HTTPValidationError envelope
+  ({"detail":[{"loc":[...],"msg":"...","type":"..."}]}) rather than RFC 9457
+  problem+json. Authentication/authorization failures (401/403) are enforced by the
+  HTTPBearer security scheme but are not enumerated as response objects in the spec.
+problems:
+- status: 422
+  title: Validation Error
+  schema: HTTPValidationError
+  applies_to_operations: 121
+  detail: Request body/query/path validation failed; see detail[] for per-field errors.

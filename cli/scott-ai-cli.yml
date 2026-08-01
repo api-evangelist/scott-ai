@@ -1,0 +1,31 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.tryscott.ai/developer-tools/cli.md
+name: scott
+summary: >-
+  First-party CLI and coding-agent plugin. Installs a Scott skill, rule, and
+  hosted MCP entry into your local coding agent so the agent can sync recent
+  local history, push the current thread into a shareable planspace, and pull
+  reviewed planspace context back into execution.
+install:
+- method: curl
+  command: curl -fsSL https://tryscott.ai/install | sh
+supported_agents: [claude, cursor, codex, opencode, gemini]
+commands:
+- name: scott sync
+  description: Upload recent local agent sessions and start Sync Chat.
+- name: scott push
+  description: Create a shareable planspace from the current agent thread.
+- name: scott pull
+  description: Load reviewed planspace context back into execution.
+- name: scott setup
+  description: Configure Scott for a specific coding agent (adds skill, rule, hosted MCP entry).
+  flags: ['--claude', '--cursor', '--codex', '--opencode', '--gemini']
+- name: scott login
+  description: Authenticate the CLI with your Scott account.
+- name: scott logout
+  description: Sign the CLI out.
+- name: scott remove
+  description: Remove Scott integration from an agent.
+  flags: ['--claude', '--mcp-only', '--skills-only']
+version_endpoint: https://api.tryscott.ai/cli-version

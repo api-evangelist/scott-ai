@@ -1,0 +1,25 @@
+generated: '2026-07-21'
+method: searched
+hosts:
+- host: https://api.tryscott.ai
+  documents:
+  - path: /.well-known/jwks.json
+    status: 200
+    file: scott-ai-jwks.json
+    note: RS256 signing keys for bearer JWTs (kid traffic-token-v1).
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+- host: https://tryscott.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: scott-ai-security.txt
+    note: RFC 9116; Contact security@tryscott.ai; Canonical www.tryscott.ai.

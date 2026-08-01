@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.tryscott.ai/developer-tools/cli.md
+notes: >-
+  Scott ships a first-party CLI ("scott") distributed as a self-contained
+  binary via a curl install script, not through a language package registry.
+  No first-party client SDK was found on npm, PyPI, Maven Central, NuGet,
+  pkg.go.dev, RubyGems, Packagist, or crates.io as of this pass.
+packages:
+- language: shell
+  registry: direct
+  name: scott
+  url: https://tryscott.ai/install
+  install: curl -fsSL https://tryscott.ai/install | sh
+  official: true
+  kind: cli

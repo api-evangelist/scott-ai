@@ -1,0 +1,27 @@
+generated: '2026-07-21'
+method: derived
+source:
+- openapi/scott-ai-openapi-original.json
+- https://docs.tryscott.ai/getting-started/quickstart.md
+- https://app.vanta.com/withjuno.dev/trust/wsfjgpgd3964nwxpqnuphh
+standards:
+- id: oauth2
+  conforms: false
+  evidence: No oauth2 securityScheme; auth is HTTP bearer JWT exchanged from Stytch OAuth.
+- id: oidc
+  conforms: false
+- id: jwt-rs256
+  conforms: true
+  evidence: RS256 JWTs published at /.well-known/jwks.json (kid traffic-token-v1).
+- id: rfc9116-security-txt
+  conforms: true
+  evidence: https://tryscott.ai/.well-known/security.txt (Contact, Expires, Canonical).
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: Errors use FastAPI HTTPValidationError envelope, not application/problem+json.
+- id: soc2
+  conforms: true
+  evidence: SOC 2 stated in quickstart docs; Vanta trust center at app.vanta.com/withjuno.dev.
+- id: pagination
+  conforms: true
+  evidence: offset/limit/page/page_size query parameters across list operations.

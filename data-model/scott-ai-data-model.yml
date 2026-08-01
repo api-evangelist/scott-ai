@@ -1,0 +1,76 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/scott-ai-openapi-original.json
+notes: >-
+  Entity-relationship graph derived from the API path hierarchy and request/response
+  schemas (116 paths, 213 schemas). "Workspace" is the planspace aggregate root that
+  most collaboration entities hang off of.
+entities:
+- name: Org
+  description: Tenant organization (external-sharing settings, member roster).
+  relationships:
+  - has_many: Workspace
+- name: User
+  description: A team member; profile, identity, onboarding, notifications.
+  relationships:
+  - has_many: Notification
+  - belongs_to: Org
+- name: Workspace
+  description: A planspace — the shared aggregate turning agent work into reviewable design intent.
+  relationships:
+  - belongs_to: Org
+  - has_many: Turn
+  - has_many: Document
+  - has_many: Snapshot
+  - has_many: ReviewRequest
+  - has_many: ConnectedSource
+  - has_many: Invite
+  - has_many: Member
+    via: workspace_id
+- name: Turn
+  description: A unit of agent-loop activity within a workspace (including scott_push turns).
+  relationships:
+  - belongs_to: Workspace
+    via: workspace_id
+- name: Document
+  description: A planspace document that evolves through versions and gathers comments.
+  relationships:
+  - belongs_to: Workspace
+  - has_many: DocumentVersion
+  - has_many: Comment
+- name: Snapshot
+  description: A committed/discarded snapshot of workspace state, reviewable and suggestible.
+  relationships:
+  - belongs_to: Workspace
+    via: workspace_id
+  - has_many: ReviewRequest
+    via: snapshot_id
+- name: ReviewRequest
+  description: A request for feedback/approval on a snapshot, resolved by decisions.
+  relationships:
+  - belongs_to: Workspace
+  - belongs_to: Snapshot
+    via: snapshot_id
+  - has_many: ReviewDecision
+- name: Conversation
+  description: An agent conversation with an ordered message chain, resumable.
+  relationships:
+  - has_many: Message
+- name: ConnectedSource
+  description: An attached context source (GitHub repo, Slack channel, uploaded file).
+  relationships:
+  - belongs_to: Workspace
+    via: workspace_id
+- name: Invite
+  description: A workspace membership invitation identified by token.
+  relationships:
+  - belongs_to: Workspace
+    via: workspace_id
+- name: Notification
+  description: A per-user inbox item (reviews, mentions, invites, activity).
+  relationships:
+  - belongs_to: User
+- name: Probe
+  description: A probe artifact with review state and comments.
+- name: Integration
+  description: A configured external integration (GitHub App, Slack, billing).

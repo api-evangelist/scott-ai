@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+status: published
+source: https://docs.tryscott.ai/developer-tools/setup.md
+server:
+  name: scott
+  transport: http
+  hosted: true
+  note: >-
+    Scott publishes a hosted MCP server that `scott setup` wires into the
+    coding agent (alongside a Scott skill and rule). It lets the agent sync
+    local history, push a thread into a planspace, and pull reviewed context.
+    Exact tool identifiers are not published; the capabilities below mirror the
+    documented agent-facing verbs and back onto the REST agent-loop operations.
+tools:
+- name: sync
+  description: Upload recent local agent sessions and start Sync Chat.
+  source_operation: openapi/scott-ai-openapi-original.json#create_sync_chat_turn
+- name: push
+  description: Turn the active agent thread into a shareable planspace (idempotent upsert).
+  source_operation: openapi/scott-ai-openapi-original.json#create_workspace
+- name: pull
+  description: Bring reviewed planspace context back into execution.
+  source_operation: openapi/scott-ai-openapi-original.json#get_workspace_context
