@@ -351,6 +351,8 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-well-known-api-openapi.yml
 common:
+- type: Overlay
+  url: overlays/scott-ai-openapi-overlay.yaml
 - type: DomainSecurity
   url: security/scott-ai-domain-security.yml
 - type: Website
