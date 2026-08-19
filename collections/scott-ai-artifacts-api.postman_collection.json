@@ -1,0 +1,208 @@
+{
+  "item": [
+    {
+      "id": "ed417a4b-6fd8-4ec6-8142-a4c15c7a007b",
+      "name": "artifacts",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "04d6658b-5692-4b77-b769-8a0cdd105298",
+          "name": "Create Document Artifact",
+          "request": {
+            "name": "Create Document Artifact",
+            "description": {
+              "content": "Land an agent `write_document` turn — as a suggestion or a committed node.\n\nDispatched per actor by ``_suggestions_enabled_for``:\n\n  * **enabled** (allowlisted user, or any non-prod env) -> suggestion\n    flow (``_land_suggestion``); no node minted.\n  * **disabled** (prod, non-allowlisted) -> pre-Phase-1 flow\n    (``_land_committed_node``); mint a committed node.\n\nBoth share the dual-auth contract from ``require_turn_access_from_body``.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "workspaces",
+                ":workspace_id",
+                "document-artifacts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "workspace_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"<string>\",\n  \"turn_id\": \"<string>\",\n  \"initial_blocks\": [],\n  \"initial_markdown\": \"<string>\",\n  \"label\": \"<string>\",\n  \"diff\": [\n    {\n      \"changeType\": \"<string>\",\n      \"concept\": \"<string>\",\n      \"summary\": \"<string>\",\n      \"sectionHeading\": \"<string>\"\n    },\n    {\n      \"changeType\": \"<string>\",\n      \"concept\": \"<string>\",\n      \"summary\": \"<string>\",\n      \"sectionHeading\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "bfbf2102-8471-4653-bc2a-24c21843441d",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "workspaces",
+                    ":workspace_id",
+                    "document-artifacts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "workspace_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"<string>\",\n  \"turn_id\": \"<string>\",\n  \"initial_blocks\": [],\n  \"initial_markdown\": \"<string>\",\n  \"label\": \"<string>\",\n  \"diff\": [\n    {\n      \"changeType\": \"modified\",\n      \"concept\": \"string\",\n      \"summary\": \"string\",\n      \"sectionHeading\": \"string\"\n    },\n    {\n      \"changeType\": \"added\",\n      \"concept\": \"string\",\n      \"summary\": \"string\",\n      \"sectionHeading\": \"string\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"workspace_id\": \"string\",\n  \"name\": \"string\",\n  \"produced_at_turn_id\": \"string\",\n  \"created_at\": \"2019-09-07T07:02:25.312Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cdfb9c70-b6b6-47b9-8ff9-d595cfc04449",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "workspaces",
+                    ":workspace_id",
+                    "document-artifacts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "workspace_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"<string>\",\n  \"turn_id\": \"<string>\",\n  \"initial_blocks\": [],\n  \"initial_markdown\": \"<string>\",\n  \"label\": \"<string>\",\n  \"diff\": [\n    {\n      \"changeType\": \"modified\",\n      \"concept\": \"string\",\n      \"summary\": \"string\",\n      \"sectionHeading\": \"string\"\n    },\n    {\n      \"changeType\": \"added\",\n      \"concept\": \"string\",\n      \"summary\": \"string\",\n      \"sectionHeading\": \"string\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "41c99a7f-96bf-4cd9-ba72-c06362217b78",
+    "name": "One-Shot access artifacts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

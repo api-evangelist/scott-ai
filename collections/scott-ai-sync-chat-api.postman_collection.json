@@ -1,0 +1,1337 @@
+{
+  "item": [
+    {
+      "id": "3220a469-8607-407b-9970-35adca320fec",
+      "name": "sync-chat",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "318b7ca6-a2a6-4419-bae9-3c7d157bf600",
+          "name": "List Sync Chat Turns",
+          "request": {
+            "name": "List Sync Chat Turns",
+            "description": {
+              "content": "List the caller's sync-chat thread (renderer-facing).\n\nScoped to the authenticated user; oldest first so the UI repaints the\nconversation on reload and chains the next message onto the last.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "turns"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "101399ce-899c-4bc5-b993-33fc4f8b77e7",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "turns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"turns\": [\n    {\n      \"id\": \"string\",\n      \"parent_id\": \"string\",\n      \"status\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"created_at\": \"1976-08-26T03:47:45.115Z\"\n    },\n    {\n      \"id\": \"string\",\n      \"parent_id\": \"string\",\n      \"status\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"created_at\": \"2004-03-09T01:06:47.275Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "aa8cab40-4288-44dd-85cb-7deeba0d1a0f",
+          "name": "Create Sync Chat Turn",
+          "request": {
+            "name": "Create Sync Chat Turn",
+            "description": {
+              "content": "Open or extend the caller's sync-chat thread.\n\nRenderer-facing (Stytch session gates the call; the thread is the\ncaller's own). Writes a pending sync_chat_turns row, mints a handoff JWT\ncarrying caps=['sync-chat-turn'] bound to this turn, stores it in Redis,\nand returns the handoff code the renderer forwards to agent-service.\nNo workspace or snapshot coupling.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "turns"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"parent_turn_id\": \"<string>\",\n  \"user_message\": \"<string>\",\n  \"id\": \"<string>\",\n  \"connected_sources\": [\n    {\n      \"adapter\": \"<string>\",\n      \"selection\": {\n        \"repo\": \"<string>\",\n        \"branch\": \"<string>\"\n      }\n    },\n    {\n      \"adapter\": \"<string>\",\n      \"selection\": {\n        \"repo\": \"<string>\",\n        \"branch\": \"<string>\"\n      }\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "8926a9ee-4e5f-4823-8114-42907218c387",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "turns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"parent_turn_id\": \"<string>\",\n  \"user_message\": \"<string>\",\n  \"id\": \"<string>\",\n  \"connected_sources\": [\n    {\n      \"adapter\": \"slack\",\n      \"selection\": {\n        \"repo\": \"string\",\n        \"branch\": \"string\"\n      }\n    },\n    {\n      \"adapter\": \"github\",\n      \"selection\": {\n        \"repo\": \"string\",\n        \"branch\": \"string\"\n      }\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"turn_id\": \"string\",\n  \"handoff_code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "981399f2-2889-4048-a6c2-3b9fe13440b2",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "turns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"parent_turn_id\": \"<string>\",\n  \"user_message\": \"<string>\",\n  \"id\": \"<string>\",\n  \"connected_sources\": [\n    {\n      \"adapter\": \"slack\",\n      \"selection\": {\n        \"repo\": \"string\",\n        \"branch\": \"string\"\n      }\n    },\n    {\n      \"adapter\": \"github\",\n      \"selection\": {\n        \"repo\": \"string\",\n        \"branch\": \"string\"\n      }\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f00b8fd3-1fad-4f08-a829-e8ba2dd2b7cc",
+          "name": "Start Sync Chat Review",
+          "request": {
+            "name": "Start Sync Chat Review",
+            "description": {
+              "content": "Ensure a post-`scott sync` review turn is in flight, and dispatch it.\n\nCalled by both the CLI (after an upload) and the /sync page (on an empty or\nstale thread), so it is idempotent: if a review turn is already pending or\nstreaming at the thread tip, it re-nudges that turn instead of stacking a\nduplicate. A fresh review is only created once the previous one has settled,\nso a later sync reflects the newly uploaded sessions.\n\nDispatch is best-effort. The pending row is the durable work item; on a\nmissed dispatch reconcile_sync_chat_turns re-dispatches it, so this returns\n200 (the review is queued) rather than 503.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "start-review"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "627c35c5-7ef9-4889-9170-f63a94939bbd",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "start-review"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"turn_id\": \"string\",\n  \"handoff_code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "914d694f-5bc7-46ae-b842-b6ca127248f8",
+          "name": "Get Sync Chat Context",
+          "request": {
+            "name": "Get Sync Chat Context",
+            "description": {
+              "content": "Per-user corpus-digest context for a sync-chat turn (agent-service-facing).\n\nAuthed by the sync-chat-turn JWT. The JWT's user_id scopes the entire\nresponse; request inputs cannot widen it. Returns:\n  - corpus digest: the user's scott-push sessions from the last 14 days\n    with stats and key messages, recency-ordered (newest first, limit 30)\n  - GitHub install state: so the assistant knows whether to nudge\n  - thread ancestry: root to from_turn_id (same as review-chat context)",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "context"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "from_turn_id",
+                  "value": "<string>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c350e242-f0d1-4b3c-8b8a-eeefa8e63dec",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "from_turn_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"digest\": [\n    {\n      \"workspace_id\": \"string\",\n      \"name\": \"string\",\n      \"captured_at\": \"1962-11-02T15:35:18.105Z\",\n      \"description\": \"string\",\n      \"stats\": {},\n      \"git_remote\": \"string\",\n      \"git_branch\": \"string\"\n    },\n    {\n      \"workspace_id\": \"string\",\n      \"name\": \"string\",\n      \"captured_at\": \"2014-08-08T01:49:25.833Z\",\n      \"description\": \"string\",\n      \"stats\": {},\n      \"git_remote\": \"string\",\n      \"git_branch\": \"string\"\n    }\n  ],\n  \"github_installs\": [\n    {\n      \"installation_id\": 7389,\n      \"account_login\": \"string\"\n    },\n    {\n      \"installation_id\": 1317,\n      \"account_login\": \"string\"\n    }\n  ],\n  \"turns\": [\n    {\n      \"id\": \"string\",\n      \"parent_id\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"user_id\": \"string\",\n      \"message_deltas\": {},\n      \"usage\": {}\n    },\n    {\n      \"id\": \"string\",\n      \"parent_id\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"user_id\": \"string\",\n      \"message_deltas\": {},\n      \"usage\": {}\n    }\n  ],\n  \"connected_sources_fingerprint\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a5252f7e-ac73-4e7e-8402-fc34c7851c46",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "from_turn_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7baee51c-400c-4c44-aeca-478a0541b30c",
+          "name": "Sync Chat Connected Source Retrieval Details",
+          "request": {
+            "name": "Sync Chat Connected Source Retrieval Details",
+            "description": {
+              "content": "Mint clone + token retrieval details for a sync-chat connected source.\n\nThe agent holds the in-memory ConnectedSource from /context and posts it\nback here to clone the repo mid-turn. Re-resolving from its config/metadata\nonly mints a token for a repo the user's own install already reaches, so no\npersistence or workspace coupling is required (sync-chat is per-user).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "connected-sources",
+                "retrieval-details"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"linked_by_user_id\": \"<string>\",\n  \"adapter\": \"<string>\",\n  \"config\": {\n    \"repo\": \"<string>\",\n    \"branch\": \"<string>\"\n  },\n  \"metadata\": {\n    \"installation_id\": \"<integer>\",\n    \"commit_sha\": \"<string>\"\n  },\n  \"id\": \"<string>\",\n  \"visibility\": \"private\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ee42795c-ed2f-4207-9353-37fcba36f380",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "connected-sources",
+                    "retrieval-details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"linked_by_user_id\": \"<string>\",\n  \"adapter\": \"github\",\n  \"config\": {\n    \"repo\": \"string\",\n    \"branch\": \"string\"\n  },\n  \"metadata\": {\n    \"installation_id\": 2288,\n    \"commit_sha\": \"string\"\n  },\n  \"id\": \"<string>\",\n  \"visibility\": \"private\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"adapter\": \"uploaded_file\",\n  \"retrieval\": {\n    \"clone_url\": \"string\",\n    \"token\": \"string\",\n    \"repo\": \"string\",\n    \"branch\": \"string\",\n    \"commit_sha\": \"string\",\n    \"kind\": \"git\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1c50af49-7682-42dd-be8f-0602bb49dc66",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "connected-sources",
+                    "retrieval-details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"linked_by_user_id\": \"<string>\",\n  \"adapter\": \"github\",\n  \"config\": {\n    \"repo\": \"string\",\n    \"branch\": \"string\"\n  },\n  \"metadata\": {\n    \"installation_id\": 2288,\n    \"commit_sha\": \"string\"\n  },\n  \"id\": \"<string>\",\n  \"visibility\": \"private\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5ae88c49-29e9-4c60-a273-bd2230564589",
+          "name": "Get Sync Chat Session Transcript",
+          "request": {
+            "name": "Get Sync Chat Session Transcript",
+            "description": {
+              "content": "Full transcript of one of the caller's own push sessions (agent-facing).\n\nThe JWT's user_id scopes the query; a workspace_id not authored by this\nuser returns an empty transcript rather than another user's turns. This is\nthe data plane behind Sync Chat's read_session_transcript tool.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "sessions",
+                ":workspace_id",
+                "transcript"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "200",
+                  "description": "Maximum number of imported session turns to return, ordered oldest first."
+                },
+                {
+                  "disabled": false,
+                  "key": "include_message_deltas",
+                  "value": "true",
+                  "description": "Include stored replay message_deltas alongside user/assistant text."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "workspace_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "db7a7bdd-9d1f-40e5-aabe-fb011044163a",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "sessions",
+                    ":workspace_id",
+                    "transcript"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "200"
+                    },
+                    {
+                      "key": "include_message_deltas",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "workspace_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"workspace_id\": \"string\",\n  \"turns\": [\n    {\n      \"turn_id\": \"string\",\n      \"created_at\": \"1963-03-26T02:29:09.032Z\",\n      \"status\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"parent_id\": \"string\",\n      \"completed_at\": \"1976-12-11T07:29:11.714Z\",\n      \"message_deltas\": {}\n    },\n    {\n      \"turn_id\": \"string\",\n      \"created_at\": \"1987-08-08T09:44:34.710Z\",\n      \"status\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"parent_id\": \"string\",\n      \"completed_at\": \"1966-03-15T19:09:41.944Z\",\n      \"message_deltas\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2c8f0bc0-43ac-450f-ad69-67b4beb31a72",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "sessions",
+                    ":workspace_id",
+                    "transcript"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "200"
+                    },
+                    {
+                      "key": "include_message_deltas",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "workspace_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8b042390-e64e-4e64-97f5-eae43520dc9b",
+          "name": "Update Sync Chat Turn",
+          "request": {
+            "name": "Update Sync Chat Turn",
+            "description": {
+              "content": "Persist agent output onto a sync-chat turn (agent-service-facing).\n\nThe JWT is bound to this turn_id (caps=['sync-chat-turn']); the service\ncross-checks user ownership before writing. Same body shape as the\ncontributor PATCH /turns/{id}. No cursor advance: sync-chat is off the DAG.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "turns",
+                ":turn_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "turn_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"<string>\",\n  \"assistant_text\": \"<string>\",\n  \"tool_calls\": {},\n  \"message_deltas\": {},\n  \"usage\": {},\n  \"error\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0077cc64-4d3f-4bbe-8cd4-d1f7adcdcf69",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "turns",
+                    ":turn_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "turn_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\",\n  \"assistant_text\": \"<string>\",\n  \"tool_calls\": {},\n  \"message_deltas\": {},\n  \"usage\": {},\n  \"error\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": \"string\",\n  \"key_1\": false,\n  \"key_2\": \"string\",\n  \"key_3\": 1130\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "746104a4-4663-4d35-bc17-1ca318261cd3",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "turns",
+                    ":turn_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "turn_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\",\n  \"assistant_text\": \"<string>\",\n  \"tool_calls\": {},\n  \"message_deltas\": {},\n  \"usage\": {},\n  \"error\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cab4767b-b1a7-4444-8aaf-ac64c1d1128f",
+          "name": "Sync Chat Pin Workspace",
+          "request": {
+            "name": "Sync Chat Pin Workspace",
+            "description": {
+              "content": "Pin or unpin one of the caller's own push planspaces (agent-service-facing).\n\nBoth endpoints are strictly user-scoped: a sync-chat turn can pin or write up\nONLY the caller's own push planspaces. A workspace_id that is not one of the\ncaller's own scott_push_artifacts (matched on captured_by_user_id == user_id)\nreturns 403.\n\nAuthed by the sync-chat-turn JWT; the JWT's user_id is the only identity that\nmatters. The request body cannot widen scope.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "pin"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"workspace_id\": \"<string>\",\n  \"pinned\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "795dd1fa-55f6-4ae2-a414-09a0447729f9",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "pin"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"workspace_id\": \"<string>\",\n  \"pinned\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": 1078.457368364285,\n  \"key_1\": 3432,\n  \"key_2\": 788.2614973970481\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f09d53e0-1630-4ba7-9ac4-970f52a342df",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "pin"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"workspace_id\": \"<string>\",\n  \"pinned\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d29ff230-8ed5-4a4e-b13a-b320ea1a61b7",
+          "name": "Sync Chat Write Up Workspace",
+          "request": {
+            "name": "Sync Chat Write Up Workspace",
+            "description": {
+              "content": "Trigger a tailored write-up on one of the caller's own push planspaces.\n\nBoth endpoints are strictly user-scoped: a sync-chat turn can pin or write up\nONLY the caller's own push planspaces. A workspace_id that is not one of the\ncaller's own scott_push_artifacts (matched on captured_by_user_id == user_id)\nreturns 403.\n\nAppends a single pending synthesis turn off the planspace's scott-push chain\ntip (the planspace was bulk-uploaded with synthesize=false), then dispatches\nit to agent-service after commit, the same way push-ingest synthesis fans out.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "sync-chat",
+                "write-up"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"workspace_id\": \"<string>\",\n  \"intent\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "f6f2f35a-fc06-4f6d-bd59-a039ae621dcf",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "write-up"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"workspace_id\": \"<string>\",\n  \"intent\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5004e793-dee8-4154-8209-b2797428c038",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "sync-chat",
+                    "write-up"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"workspace_id\": \"<string>\",\n  \"intent\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "c5008f0e-738d-4a25-8a66-3f5226feabcf",
+    "name": "One-Shot access sync-chat API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

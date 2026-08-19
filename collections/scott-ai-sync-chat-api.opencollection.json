@@ -1,0 +1,218 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access sync-chat API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "sync-chat",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Sync Chat Turns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/turns",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List the caller's sync-chat thread (renderer-facing).\n\nScoped to the authenticated user; oldest first so the UI repaints the\nconversation on reload and chains the next message onto the last."
+        },
+        {
+          "info": {
+            "name": "Create Sync Chat Turn",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/turns",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Open or extend the caller's sync-chat thread.\n\nRenderer-facing (Stytch session gates the call; the thread is the\ncaller's own). Writes a pending sync_chat_turns row, mints a handoff JWT\ncarrying caps=['sync-chat-turn'] bound to this turn, stores it in Redis,\nand returns the handoff code the renderer forwards to agent-service.\nNo workspace or snapshot coupling."
+        },
+        {
+          "info": {
+            "name": "Start Sync Chat Review",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/start-review",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Ensure a post-`scott sync` review turn is in flight, and dispatch it.\n\nCalled by both the CLI (after an upload) and the /sync page (on an empty or\nstale thread), so it is idempotent: if a review turn is already pending or\nstreaming at the thread tip, it re-nudges that turn instead of stacking a\nduplicate. A fresh review is only created once the previous one has settled,\nso a later sync reflects the newly uploaded sessions.\n\nDispatch is best-effort. The pending row is the durable work item; on a\n"
+        },
+        {
+          "info": {
+            "name": "Get Sync Chat Context",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/context",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "from_turn_id",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Per-user corpus-digest context for a sync-chat turn (agent-service-facing).\n\nAuthed by the sync-chat-turn JWT. The JWT's user_id scopes the entire\nresponse; request inputs cannot widen it. Returns:\n  - corpus digest: the user's scott-push sessions from the last 14 days\n    with stats and key messages, recency-ordered (newest first, limit 30)\n  - GitHub install state: so the assistant knows whether to nudge\n  - thread ancestry: root to from_turn_id (same as review-chat context)"
+        },
+        {
+          "info": {
+            "name": "Sync Chat Connected Source Retrieval Details",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/connected-sources/retrieval-details",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Mint clone + token retrieval details for a sync-chat connected source.\n\nThe agent holds the in-memory ConnectedSource from /context and posts it\nback here to clone the repo mid-turn. Re-resolving from its config/metadata\nonly mints a token for a repo the user's own install already reaches, so no\npersistence or workspace coupling is required (sync-chat is per-user)."
+        },
+        {
+          "info": {
+            "name": "Get Sync Chat Session Transcript",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/sessions/:workspace_id/transcript",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of imported session turns to return, ordered oldest first."
+              },
+              {
+                "name": "include_message_deltas",
+                "value": "",
+                "type": "query",
+                "description": "Include stored replay message_deltas alongside user/assistant text."
+              }
+            ]
+          },
+          "docs": "Full transcript of one of the caller's own push sessions (agent-facing).\n\nThe JWT's user_id scopes the query; a workspace_id not authored by this\nuser returns an empty transcript rather than another user's turns. This is\nthe data plane behind Sync Chat's read_session_transcript tool."
+        },
+        {
+          "info": {
+            "name": "Update Sync Chat Turn",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/turns/:turn_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "turn_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Persist agent output onto a sync-chat turn (agent-service-facing).\n\nThe JWT is bound to this turn_id (caps=['sync-chat-turn']); the service\ncross-checks user ownership before writing. Same body shape as the\ncontributor PATCH /turns/{id}. No cursor advance: sync-chat is off the DAG."
+        },
+        {
+          "info": {
+            "name": "Sync Chat Pin Workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/pin",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Pin or unpin one of the caller's own push planspaces (agent-service-facing).\n\nBoth endpoints are strictly user-scoped: a sync-chat turn can pin or write up\nONLY the caller's own push planspaces. A workspace_id that is not one of the\ncaller's own scott_push_artifacts (matched on captured_by_user_id == user_id)\nreturns 403.\n\nAuthed by the sync-chat-turn JWT; the JWT's user_id is the only identity that\nmatters. The request body cannot widen scope."
+        },
+        {
+          "info": {
+            "name": "Sync Chat Write Up Workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/sync-chat/write-up",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger a tailored write-up on one of the caller's own push planspaces.\n\nBoth endpoints are strictly user-scoped: a sync-chat turn can pin or write up\nONLY the caller's own push planspaces. A workspace_id that is not one of the\ncaller's own scott_push_artifacts (matched on captured_by_user_id == user_id)\nreturns 403.\n\nAppends a single pending synthesis turn off the planspace's scott-push chain\ntip (the planspace was bulk-uploaded with synthesize=false), then dispatches\nit to agent-service after "
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

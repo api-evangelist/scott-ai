@@ -1,0 +1,631 @@
+{
+  "item": [
+    {
+      "id": "16170a7d-f182-4e2f-9483-08a417041a7d",
+      "name": "probes",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b508a01a-0983-4bd1-ba0e-827aadc0cbf9",
+          "name": "Create Probe",
+          "request": {
+            "name": "Create Probe",
+            "description": {},
+            "url": {
+              "path": [
+                "probes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"<string>\",\n  \"site\": \"<string>\",\n  \"slot\": \"<string>\",\n  \"subsystem\": \"<string>\",\n  \"mint_run\": \"<string>\",\n  \"artifacts\": {\n    \"probe_md\": \"<string>\",\n    \"meta_json\": \"<string>\",\n    \"mutant_diff\": \"<string>\",\n    \"sentinel_py\": \"<string>\"\n  },\n  \"status\": \"<string>\",\n  \"created_at\": \"<dateTime>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "e0c75d9b-16a0-4640-8257-166ad9363683",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"<string>\",\n  \"site\": \"<string>\",\n  \"slot\": \"<string>\",\n  \"subsystem\": \"<string>\",\n  \"mint_run\": \"<string>\",\n  \"artifacts\": {\n    \"probe_md\": \"string\",\n    \"meta_json\": \"string\",\n    \"mutant_diff\": \"string\",\n    \"sentinel_py\": \"string\"\n  },\n  \"status\": \"pending-review\",\n  \"created_at\": \"<dateTime>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"site\": \"string\",\n  \"slot\": \"string\",\n  \"subsystem\": \"string\",\n  \"status\": \"pending-review\",\n  \"mint_run\": \"string\",\n  \"created_at\": \"1960-09-11T02:29:13.360Z\",\n  \"reviewed_by\": \"string\",\n  \"reviewed_at\": \"1994-04-13T21:25:31.951Z\",\n  \"comments\": [\n    {\n      \"author\": \"string\",\n      \"verdict\": \"approved\",\n      \"comment\": \"string\",\n      \"at\": \"2006-04-14T07:21:03.192Z\"\n    },\n    {\n      \"author\": \"string\",\n      \"verdict\": \"rejected\",\n      \"comment\": \"string\",\n      \"at\": \"1987-05-10T16:28:13.354Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5b38de48-bc91-4e69-b214-068f9518554a",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"<string>\",\n  \"site\": \"<string>\",\n  \"slot\": \"<string>\",\n  \"subsystem\": \"<string>\",\n  \"mint_run\": \"<string>\",\n  \"artifacts\": {\n    \"probe_md\": \"string\",\n    \"meta_json\": \"string\",\n    \"mutant_diff\": \"string\",\n    \"sentinel_py\": \"string\"\n  },\n  \"status\": \"pending-review\",\n  \"created_at\": \"<dateTime>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5b3d0725-2f4c-4372-b03a-e49210928e2c",
+          "name": "List Probes",
+          "request": {
+            "name": "List Probes",
+            "description": {},
+            "url": {
+              "path": [
+                "probes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5befae3f-d39c-47a9-b608-a1c7557f61aa",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "rejected"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"probes\": [\n    {\n      \"id\": \"string\",\n      \"site\": \"string\",\n      \"slot\": \"string\",\n      \"subsystem\": \"string\",\n      \"status\": \"rejected\",\n      \"mint_run\": \"string\",\n      \"created_at\": \"2019-08-30T09:11:54.777Z\",\n      \"reviewed_by\": \"string\",\n      \"reviewed_at\": \"1972-09-27T11:31:40.970Z\",\n      \"comments\": [\n        {\n          \"author\": \"string\",\n          \"verdict\": \"rejected\",\n          \"comment\": \"string\",\n          \"at\": \"2019-12-06T02:59:27.218Z\"\n        },\n        {\n          \"author\": \"string\",\n          \"verdict\": \"rejected\",\n          \"comment\": \"string\",\n          \"at\": \"1964-06-08T20:04:29.228Z\"\n        }\n      ]\n    },\n    {\n      \"id\": \"string\",\n      \"site\": \"string\",\n      \"slot\": \"string\",\n      \"subsystem\": \"string\",\n      \"status\": \"pending-review\",\n      \"mint_run\": \"string\",\n      \"created_at\": \"1953-02-02T06:16:33.838Z\",\n      \"reviewed_by\": \"string\",\n      \"reviewed_at\": \"1962-08-21T19:45:41.244Z\",\n      \"comments\": [\n        {\n          \"author\": \"string\",\n          \"verdict\": \"rejected\",\n          \"comment\": \"string\",\n          \"at\": \"1971-05-17T17:53:13.644Z\"\n        },\n        {\n          \"author\": \"string\",\n          \"verdict\": \"approved\",\n          \"comment\": \"string\",\n          \"at\": \"2009-05-17T05:15:10.310Z\"\n        }\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "40a41650-c2e8-461b-aad3-2d2aa570902c",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "rejected"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5787bf32-a995-429d-8cc8-8acca2de701b",
+          "name": "Get Probe",
+          "request": {
+            "name": "Get Probe",
+            "description": {},
+            "url": {
+              "path": [
+                "probes",
+                ":probe_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "probe_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "8dd3d913-b96c-4e08-bad4-ef413d11a209",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes",
+                    ":probe_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "probe_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"site\": \"string\",\n  \"slot\": \"string\",\n  \"subsystem\": \"string\",\n  \"status\": \"pending-review\",\n  \"mint_run\": \"string\",\n  \"created_at\": \"2002-07-09T07:58:30.084Z\",\n  \"artifacts\": {\n    \"probe_md\": \"string\",\n    \"meta_json\": \"string\",\n    \"mutant_diff\": \"string\",\n    \"sentinel_py\": \"string\"\n  },\n  \"reviewed_by\": \"string\",\n  \"reviewed_at\": \"1962-04-05T20:08:25.738Z\",\n  \"comments\": [\n    {\n      \"author\": \"string\",\n      \"verdict\": \"rejected\",\n      \"comment\": \"string\",\n      \"at\": \"1973-05-21T22:10:59.071Z\"\n    },\n    {\n      \"author\": \"string\",\n      \"verdict\": \"approved\",\n      \"comment\": \"string\",\n      \"at\": \"2002-06-11T01:49:45.754Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "83656d70-a500-4692-b99c-614385c84f20",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes",
+                    ":probe_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "probe_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "915e5516-a98a-4564-9e35-99cfefb86285",
+          "name": "Review Probe",
+          "request": {
+            "name": "Review Probe",
+            "description": {},
+            "url": {
+              "path": [
+                "probes",
+                ":probe_id",
+                "review"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "probe_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verdict\": \"<string>\",\n  \"comment\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0788f75a-268a-4af1-9555-c1b994655658",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes",
+                    ":probe_id",
+                    "review"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "probe_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"verdict\": \"<string>\",\n  \"comment\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"site\": \"string\",\n  \"slot\": \"string\",\n  \"subsystem\": \"string\",\n  \"status\": \"pending-review\",\n  \"mint_run\": \"string\",\n  \"created_at\": \"1960-09-11T02:29:13.360Z\",\n  \"reviewed_by\": \"string\",\n  \"reviewed_at\": \"1994-04-13T21:25:31.951Z\",\n  \"comments\": [\n    {\n      \"author\": \"string\",\n      \"verdict\": \"approved\",\n      \"comment\": \"string\",\n      \"at\": \"2006-04-14T07:21:03.192Z\"\n    },\n    {\n      \"author\": \"string\",\n      \"verdict\": \"rejected\",\n      \"comment\": \"string\",\n      \"at\": \"1987-05-10T16:28:13.354Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "83cdad07-dcc3-487e-bd2c-7f50966da33d",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "probes",
+                    ":probe_id",
+                    "review"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "probe_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"verdict\": \"<string>\",\n  \"comment\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "5e19b797-d25f-49b8-9864-ff0af64f47ed",
+    "name": "One-Shot access probes API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

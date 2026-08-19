@@ -1,0 +1,492 @@
+{
+  "item": [
+    {
+      "id": "b194c087-4c62-43e8-8a92-3245db9cda72",
+      "name": "agent-counsel-internal",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "46e6442c-17da-4af3-988e-75c2517e1f0b",
+          "name": "Finish Agent Counsel Review",
+          "request": {
+            "name": "Finish Agent Counsel Review",
+            "description": {},
+            "url": {
+              "path": [
+                "agent-loop",
+                "internal",
+                "agent-counsel",
+                "finish"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b0f05868-5ce8-4cc9-8a2f-c977005fcfa2",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "internal",
+                    "agent-counsel",
+                    "finish"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"workspace_id\": \"string\",\n  \"snapshot_id\": \"string\",\n  \"requester_id\": \"string\",\n  \"reviewer_id\": \"string\",\n  \"pending_invite_id\": \"string\",\n  \"message\": \"string\",\n  \"status\": \"closed\",\n  \"state\": \"rejected\",\n  \"engaged_at\": \"1955-03-08T05:09:53.212Z\",\n  \"decision\": \"rejected\",\n  \"decided_at\": \"1992-05-03T20:52:47.628Z\",\n  \"created_at\": \"2008-05-09T14:21:12.516Z\",\n  \"updated_at\": \"1970-05-02T20:23:39.726Z\",\n  \"latest_agent_counsel_turn_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "729ccccc-cf84-4d9c-8e02-867d0dab8938",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "internal",
+                    "agent-counsel",
+                    "finish"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2034cfcf-26db-44dd-97c4-8e541f02b60d",
+          "name": "Add Agent Counsel Comment",
+          "request": {
+            "name": "Add Agent Counsel Comment",
+            "description": {
+              "content": "Delegated quote-anchored comment write for an agent-counsel reviewer.\n\nAgent-service calls this with its agent JWT instead of writing to hocuspocus\ndirectly; fastapi signs the HMAC envelope and relays. The author is the\nreviewer named in the verified JWT — never request input — so the agent cannot\ncomment as anyone else. Authorized by the cap plus an open ReviewRequest for\n(reviewer_id, snapshot_id), matching the context route; refuses once the review\nis finished or cancelled.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "internal",
+                "agent-counsel",
+                "comment"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote\": \"<string>\",\n  \"body\": \"<string>\",\n  \"context_before\": \"<string>\",\n  \"context_after\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a940c26d-275b-4f6d-8f9e-296483c0c25b",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "internal",
+                    "agent-counsel",
+                    "comment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quote\": \"<string>\",\n  \"body\": \"<string>\",\n  \"context_before\": \"<string>\",\n  \"context_after\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"thread_id\": \"string\",\n  \"resolved_anchor_text\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1ca9a832-1b64-43c2-8023-0c355057a4b0",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "internal",
+                    "agent-counsel",
+                    "comment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quote\": \"<string>\",\n  \"body\": \"<string>\",\n  \"context_before\": \"<string>\",\n  \"context_after\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b7f43226-47c0-400c-9be7-f73dc4c93cb7",
+          "name": "Get Agent Counsel Context",
+          "request": {
+            "name": "Get Agent Counsel Context",
+            "description": {
+              "content": "Snapshot-scoped context for an agent-service agent-counsel turn (the branch loader).\n\nAgent-service-facing (caps=['agent-counsel-turn']). The reviewer (=user_id) and\nsnapshot_id come from the verified JWT, never request input. Authorization is\nthe cap plus an open ReviewRequest for (reviewer_id, snapshot_id); never workspace\nmembership, since synthetic reviewers are not members. Returns the one snapshot's\ncontent, the workspace identity + connected sources, and the comments on that\nsnapshot. ``turns`` is empty: agent counsel is a single fire-and-forget pass with no\nprivate thread to walk.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agent-loop",
+                "workspaces",
+                ":workspace_id",
+                "agent-counsel",
+                "context"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "workspace_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "897826e0-e618-4031-ae52-fd2543127b0f",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "workspaces",
+                    ":workspace_id",
+                    "agent-counsel",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "workspace_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"snapshot\": {\n    \"id\": \"string\",\n    \"content\": \"string\",\n    \"name\": \"string\"\n  },\n  \"workspace\": {\n    \"id\": \"string\",\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"connected_sources\": [\n      {\n        \"linked_by_user_id\": \"string\",\n        \"adapter\": \"slack\",\n        \"config\": {\n          \"repo\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"branch\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"metadata\": {\n          \"installation_id\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"commit_sha\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"id\": \"string\",\n        \"visibility\": \"private\"\n      },\n      {\n        \"linked_by_user_id\": \"string\",\n        \"adapter\": \"github\",\n        \"config\": {\n          \"repo\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"branch\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"metadata\": {\n          \"installation_id\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"commit_sha\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"id\": \"string\",\n        \"visibility\": \"private\"\n      }\n    ],\n    \"connected_sources_fingerprint\": \"string\"\n  },\n  \"turns\": [\n    {\n      \"id\": \"string\",\n      \"parent_id\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"user_id\": \"string\",\n      \"user_display_name\": \"string\",\n      \"message_deltas\": {},\n      \"usage\": {}\n    },\n    {\n      \"id\": \"string\",\n      \"parent_id\": \"string\",\n      \"user_message\": \"string\",\n      \"assistant_text\": \"string\",\n      \"user_id\": \"string\",\n      \"user_display_name\": \"string\",\n      \"message_deltas\": {},\n      \"usage\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d34c04b2-836a-4ec1-a1e8-6f1651b658fe",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agent-loop",
+                    "workspaces",
+                    ":workspace_id",
+                    "agent-counsel",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "workspace_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "disabled": false,
+                    "key": "authorization",
+                    "value": "string",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\",\n      \"input\": {},\n      \"ctx\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "25e72b87-d704-403d-9f15-e4416c664e57",
+    "name": "One-Shot access agent-counsel-internal API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

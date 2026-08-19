@@ -1,0 +1,77 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access walkthroughs API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "walkthroughs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Pending Walkthrough",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/walkthroughs/pending",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Return the next pending walkthrough name for the current user, or null."
+        },
+        {
+          "info": {
+            "name": "Complete Walkthrough",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/walkthroughs/:name/complete",
+            "params": [
+              {
+                "name": "name",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Complete Walkthrough"
+        },
+        {
+          "info": {
+            "name": "Dismiss Walkthrough",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/walkthroughs/:name/dismiss",
+            "params": [
+              {
+                "name": "name",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Dismiss Walkthrough"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

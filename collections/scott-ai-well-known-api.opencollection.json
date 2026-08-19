@@ -1,0 +1,29 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access .well Known API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": ".well Known",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Jwks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/.well-known/jwks.json"
+          },
+          "docs": "Public key endpoint for agent-service traffic token verification."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

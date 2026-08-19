@@ -1,0 +1,110 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access agent-counsel API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "agent-counsel",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Request Agent Counsel",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/agent-counsel",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Request Agent Counsel"
+        },
+        {
+          "info": {
+            "name": "Finish Agent Counsel Review",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/internal/agent-counsel/finish",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Finish Agent Counsel Review"
+        },
+        {
+          "info": {
+            "name": "Add Agent Counsel Comment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/internal/agent-counsel/comment",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Delegated quote-anchored comment write for an agent-counsel reviewer.\n\nAgent-service calls this with its agent JWT instead of writing to hocuspocus\ndirectly; fastapi signs the HMAC envelope and relays. The author is the\nreviewer named in the verified JWT — never request input — so the agent cannot\ncomment as anyone else. Authorized by the cap plus an open ReviewRequest for\n(reviewer_id, snapshot_id), matching the context route; refuses once the review\nis finished or cancelled."
+        },
+        {
+          "info": {
+            "name": "Get Agent Counsel Context",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/agent-counsel/context",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Snapshot-scoped context for an agent-service agent-counsel turn (the branch loader).\n\nAgent-service-facing (caps=['agent-counsel-turn']). The reviewer (=user_id) and\nsnapshot_id come from the verified JWT, never request input. Authorization is\nthe cap plus an open ReviewRequest for (reviewer_id, snapshot_id); never workspace\nmembership, since synthetic reviewers are not members. Returns the one snapshot's\ncontent, the workspace identity + connected sources, and the comments on that\nsnapshot. ``t"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

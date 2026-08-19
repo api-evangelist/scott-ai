@@ -1,0 +1,37 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "access",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Check Access",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/access/check",
+            "params": [
+              {
+                "name": "email",
+                "value": "",
+                "type": "query",
+                "description": "Email to check"
+              }
+            ]
+          },
+          "docs": "Public (no auth) — called before login to gate browser app access."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

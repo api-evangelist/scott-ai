@@ -1,0 +1,46 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access artifacts API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "artifacts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Document Artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/workspaces/:workspace_id/document-artifacts",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Land an agent `write_document` turn — as a suggestion or a committed node.\n\nDispatched per actor by ``_suggestions_enabled_for``:\n\n  * **enabled** (allowlisted user, or any non-prod env) -> suggestion\n    flow (``_land_suggestion``); no node minted.\n  * **disabled** (prod, non-allowlisted) -> pre-Phase-1 flow\n    (``_land_committed_node``); mint a committed node.\n\nBoth share the dual-auth contract from ``require_turn_access_from_body``."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

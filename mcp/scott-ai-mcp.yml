@@ -6,11 +6,9 @@ server:
   name: scott
   transport: http
   hosted: true
-  note: >-
-    Scott publishes a hosted MCP server that `scott setup` wires into the
-    coding agent (alongside a Scott skill and rule). It lets the agent sync
-    local history, push a thread into a planspace, and pull reviewed context.
-    Exact tool identifiers are not published; the capabilities below mirror the
+  note: Scott publishes a hosted MCP server that `scott setup` wires into the coding agent (alongside
+    a Scott skill and rule). It lets the agent sync local history, push a thread into a planspace, and
+    pull reviewed context. Exact tool identifiers are not published; the capabilities below mirror the
     documented agent-facing verbs and back onto the REST agent-loop operations.
 tools:
 - name: sync
@@ -22,3 +20,9 @@ tools:
 - name: pull
   description: Bring reviewed planspace context back into execution.
   source_operation: openapi/scott-ai-openapi-original.json#get_workspace_context
+deployment:
+  mode: remote
+  verified: searched
+  tools: 3
+  checked: '2026-08-12'
+  source: catalog MCP census

@@ -1,0 +1,502 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access agent-loop API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "agent-loop",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Workspaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List all workspaces the current user is a member of, ordered by most recent turn activity."
+        },
+        {
+          "info": {
+            "name": "Create Workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/workspaces",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new workspace OR (for Scott pushes) upsert one keyed on\n`(captured_by_user_id, source_kind, source_id)`.\n\nTwo flows:\n  - No `scott_push`: classic workspace creation. Single transaction.\n  - With `scott_push`: idempotent. Same (user, source_kind, source_id)\n    returns the same planspace. Push artifact metadata is replaced in\n    place; scott_push turns are APPENDED past the existing chain tip\n    (never deleted). Non-scott_push turns the user added in the Scott\n    UI are never touched "
+        },
+        {
+          "info": {
+            "name": "Update Workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update workspace settings."
+        },
+        {
+          "info": {
+            "name": "Delete Workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete workspace and all its turns (cascade)."
+        },
+        {
+          "info": {
+            "name": "Create Turn",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/turns",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Write-ahead: create a pending turn before agent starts running."
+        },
+        {
+          "info": {
+            "name": "Update Turn",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/agent-loop/turns/:turn_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "turn_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Single completion call — updates turn with all results at once.\n\nDual-auth (see ``require_turn_access``): a per-turn agent-svc JWT bound to\nthis ``turn_id`` is the agent-service path; Stytch session is the user\npath. Both routes resolve to ``actor.user_id`` for cursor advances and\ndownstream attribution."
+        },
+        {
+          "info": {
+            "name": "Get Workspace State",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/state",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Single call: all turns with DAG annotations + cursor position.\nAnonymous access allowed for public workspaces (cursor/member tracking skipped).\nPure read — no E2B calls. Frontend calls /wake separately to ensure the sandbox is running."
+        },
+        {
+          "info": {
+            "name": "Workspace Event Stream",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/events",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "token",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "SSE stream of state-change events for workspace members.\n\nStrict-membership only: the agent-service shared-secret principal is\nrejected so the bypass in ``assert_workspace_access`` can't be reused\nto subscribe to arbitrary workspaces."
+        },
+        {
+          "info": {
+            "name": "Wake Workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/wake",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Ensure the sandbox is running. Returns its current URL.\n\nFor Electron workspaces returns 'electron' immediately (no E2B calls).\nFor E2B workspaces: health-checks the shared sandbox and recreates it if unhealthy."
+        },
+        {
+          "info": {
+            "name": "Get Workspace Context",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/context",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "from_turn_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "snapshot_id",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Walk parent_id chain and optionally bind the response to one document node."
+        },
+        {
+          "info": {
+            "name": "List Review Chat Turns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/review-chat/turns",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "snapshot_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List the caller's private review-chat thread on a snapshot (renderer-facing).\n\nWorkspace membership gates the call; the thread is scoped to the\nauthenticated reviewer, so one reviewer never sees another's thread and the\ncontributor sees none. Turns come back oldest-first so the Chat tab repaints\nthe conversation on reload and chains the next message onto the last. The\nagent-facing context GET is the wrong surface here: it needs the review-chat\nJWT the renderer never holds and rebuilds one focal "
+        },
+        {
+          "info": {
+            "name": "Create Review Chat Turn",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/review-chat/turns",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Open or extend the caller's private review-chat thread on a snapshot.\n\nRenderer-facing (workspace membership gates the call; the thread is the\ncaller's own). Writes a pending review_chat_turns row, then mints a handoff\nJWT carrying caps=['review-chat-turn'] plus the snapshot_id claim that flips\nagent-service into the read-only review sandbox. The claim — never a body\nflag — is the source of truth for the turn kind. Returns the handoff code\nthe renderer forwards to agent-service."
+        },
+        {
+          "info": {
+            "name": "Get Review Chat Context",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/review-chat/context",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "from_turn_id",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Snapshot-scoped context for an agent-service review-chat turn.\n\nAgent-service-facing (caps=['review-chat-turn']). The JWT's snapshot_id and\nuser_id (the reviewer) scope the entire response; request inputs cannot\nwiden it. Returns the one snapshot's content, workspace identity + connected\nsources, comments on that snapshot only, and this private thread's ancestry.\nDeliberately never touches the workspace /context walk."
+        },
+        {
+          "info": {
+            "name": "Update Review Chat Turn",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/agent-loop/review-chat/turns/:turn_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "turn_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Persist agent output onto a review-chat turn (agent-service-facing).\n\nThe JWT is bound to this ``turn_id`` (caps=['review-chat-turn']); the\nservice cross-checks workspace + reviewer ownership before writing. Same\nbody shape as the contributor PATCH /turns/{id}. No cursor advance — review\nchat is off the DAG."
+        },
+        {
+          "info": {
+            "name": "Mint Access Token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/access-token",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Issue a short-lived JWT for direct frontend → agent-service communication."
+        },
+        {
+          "info": {
+            "name": "Get Connected Source Retrieval Details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/internal/workspaces/:workspace_id/connected-sources/:connected_source_id/retrieval-details",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "connected_source_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Per-turn agent-svc JWT (``turn-write`` OR ``review-chat-turn`` cap, ``workspace_id`` claim matches path)."
+        },
+        {
+          "info": {
+            "name": "Redeem Handoff Code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/internal/agent-token/redeem",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Redeem Handoff Code"
+        },
+        {
+          "info": {
+            "name": "Sandbox Heartbeat",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/internal/sandbox/heartbeat",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Sandbox Heartbeat"
+        },
+        {
+          "info": {
+            "name": "Get Cursor",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/cursor",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get current cursor position for this user in the workspace."
+        },
+        {
+          "info": {
+            "name": "Upsert Cursor",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/agent-loop/workspaces/:workspace_id/cursor",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Upsert workspace cursor — tracks where this user is in the Turn DAG."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

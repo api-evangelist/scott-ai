@@ -1,0 +1,85 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access agent-loop-internal API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "agent-loop-internal",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Connected Source Retrieval Details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/agent-loop/internal/workspaces/:workspace_id/connected-sources/:connected_source_id/retrieval-details",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "connected_source_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Per-turn agent-svc JWT (``turn-write`` OR ``review-chat-turn`` cap, ``workspace_id`` claim matches path)."
+        },
+        {
+          "info": {
+            "name": "Redeem Handoff Code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/internal/agent-token/redeem",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Redeem Handoff Code"
+        },
+        {
+          "info": {
+            "name": "Sandbox Heartbeat",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/agent-loop/internal/sandbox/heartbeat",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Sandbox Heartbeat"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

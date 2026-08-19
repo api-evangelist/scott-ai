@@ -1,0 +1,108 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access github-links API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "github-links",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Linkable Nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/github/workspaces/:workspace_id/linkable-nodes",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List Linkable Nodes"
+        },
+        {
+          "info": {
+            "name": "List Workspace Pr Links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/github/workspaces/:workspace_id/pr-links",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List Workspace Pr Links"
+        },
+        {
+          "info": {
+            "name": "Get Pr Links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/github/pr-links",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pr_number",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get Pr Links"
+        },
+        {
+          "info": {
+            "name": "Write Pr Links",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/github/pr-links",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Write Pr Links"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

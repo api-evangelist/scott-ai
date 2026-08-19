@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access waitlist API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "waitlist",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Join Waitlist",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/waitlist",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add an email to the waitlist. Intentionally unauthenticated.\n\nIdempotent: duplicate email returns the existing entry."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

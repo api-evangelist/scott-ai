@@ -1,0 +1,105 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access billing API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "billing",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Checkout Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/billing/checkout-session",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a Stripe checkout session for subscription purchase.\nRequires authentication via Stytch session token."
+        },
+        {
+          "info": {
+            "name": "Get Subscription Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/billing/subscription-status",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Check subscription status by email or session ID.\nRequires authentication via Stytch session token."
+        },
+        {
+          "info": {
+            "name": "Create Customer Portal Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/billing/customer-portal",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a Stripe Customer Portal session for subscription management.\nAllows users to update payment methods, cancel subscriptions, view invoices, etc.\nRequires authentication via Stytch session token."
+        },
+        {
+          "info": {
+            "name": "Get Usage Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/billing/usage-status",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get the user's current conversation usage status.\nReturns plan tier, current usage count, limit, and reset date.\nFree tier: 3 conversations per day, resets daily\nPremium tier: unlimited conversations"
+        },
+        {
+          "info": {
+            "name": "Get Turn Usage Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/billing/turn-usage-status",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Hourly rolling-window message usage status for workspace turns."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access auth API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "auth",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Exchange Oauth Token Endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/oauth/exchange",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Exchange a Stytch OAuth token for a session token and JWT.\n\nCalled by the browser app after Stytch redirects back with ?token=xxx.\nIntentionally unauthenticated — this endpoint IS the authentication mechanism.\nThe Stytch secret key never leaves the server."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

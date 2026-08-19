@@ -1,0 +1,67 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access e2b API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "e2b",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Stop Sandbox",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/e2b/stop-sandbox/:sandbox_id",
+            "params": [
+              {
+                "name": "sandbox_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "include_events",
+                "value": "",
+                "type": "query",
+                "description": "Fetch sandbox events from E2B API"
+              }
+            ]
+          },
+          "docs": "Stop Sandbox"
+        },
+        {
+          "info": {
+            "name": "Health Check Sandbox",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/e2b/agent-service-health",
+            "params": [
+              {
+                "name": "sandbox_url",
+                "value": "",
+                "type": "query",
+                "description": "Base URL of sandbox"
+              },
+              {
+                "name": "timeout",
+                "value": "",
+                "type": "query",
+                "description": "Request timeout in seconds"
+              }
+            ]
+          },
+          "docs": "Health Check Sandbox"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

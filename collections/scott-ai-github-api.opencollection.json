@@ -1,0 +1,41 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "One-Shot access github API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "github",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Github Pull Request Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/github/pull-request",
+            "params": [
+              {
+                "name": "url",
+                "value": "",
+                "type": "query",
+                "description": "github.com pull-request URL"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get Github Pull Request Status"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
