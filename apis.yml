@@ -37,6 +37,15 @@ modified: '2026-07-21'
 tags:
 - Company
 - Coding Agents
+- Artificial Intelligence
+- Developer Tools
+- Collaboration
+- Agentic Workflow
+- MCP
+- Software Design
+tags_raw:
+- Company
+- Coding Agents
 - AI
 - Developer Tools
 - Collaboration
@@ -55,6 +64,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Access
+  tags_raw:
   - access
   properties:
   - type: OpenAPI
@@ -106,6 +117,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Artifacts
+  tags_raw:
   - artifacts
   properties:
   - type: OpenAPI
@@ -116,6 +129,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Authentication
+  tags_raw:
   - auth
   properties:
   - type: OpenAPI
@@ -126,6 +141,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Billing
+  tags_raw:
   - billing
   properties:
   - type: OpenAPI
@@ -156,6 +173,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Conversations
+  tags_raw:
   - conversations
   properties:
   - type: OpenAPI
@@ -166,6 +185,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Documents
+  tags_raw:
   - documents
   properties:
   - type: OpenAPI
@@ -186,6 +207,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - GitHub
+  tags_raw:
   - github
   properties:
   - type: OpenAPI
@@ -216,6 +239,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Integration
+  tags_raw:
   - integrations
   properties:
   - type: OpenAPI
@@ -226,6 +251,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Invites
+  tags_raw:
   - invites
   properties:
   - type: OpenAPI
@@ -236,6 +263,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Issues
+  tags_raw:
   - issues
   properties:
   - type: OpenAPI
@@ -246,6 +275,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Notification
+  tags_raw:
   - notifications
   properties:
   - type: OpenAPI
@@ -266,6 +297,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Organization
+  tags_raw:
   - orgs
   properties:
   - type: OpenAPI
@@ -286,6 +319,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Reviews
+  tags_raw:
   - reviews
   properties:
   - type: OpenAPI
@@ -296,6 +331,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Snapshots
+  tags_raw:
   - snapshots
   properties:
   - type: OpenAPI
@@ -316,6 +353,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - User
+  tags_raw:
   - users
   properties:
   - type: OpenAPI
@@ -326,6 +365,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Waitlist
+  tags_raw:
   - waitlist
   properties:
   - type: OpenAPI
@@ -336,6 +377,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Walkthroughs
+  tags_raw:
   - walkthroughs
   properties:
   - type: OpenAPI
