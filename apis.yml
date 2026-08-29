@@ -11,6 +11,18 @@ description: >-
   pull requests against planspace design intent. This profile enriches the
   provider from its public REST API (api.tryscott.ai, 139 operations), docs, CLI,
   MCP surface, and security posture.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
