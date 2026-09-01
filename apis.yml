@@ -309,7 +309,7 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
-  - orgs
+  - Organization
   tags_raw:
   - orgs
   properties:
@@ -377,7 +377,7 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
-  - waitlist
+  - Waitlist
   tags_raw:
   - waitlist
   properties:
@@ -389,7 +389,7 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
-  - walkthroughs
+  - Walkthroughs
   tags_raw:
   - walkthroughs
   properties:
