@@ -25,15 +25,16 @@ deliveryModel:
   method: derived
 accessModel:
   pricing: unknown
-  onboarding: self-serve
+  onboarding: unknown
   trial: false
   try_now: false
   public: false
-  label: Self-serve signup
-  confidence: medium
+  label: Unknown
+  confidence: low
   source:
   - authentication
-  generated: '2026-07-22'
+  - security
+  generated: '2026-09-03'
   method: derived
 image: https://tryscott.ai/scott-logo.png
 url: https://raw.githubusercontent.com/api-evangelist/scott-ai/refs/heads/main/apis.yml
@@ -406,6 +407,9 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-well-known-api-openapi.yml
 common:
+- type: CapabilityMap
+  url: capabilities/scott-ai-capability-edges.yml
+  name: Scott Ai Business Capability Map
 - type: Overlay
   url: overlays/scott-ai-openapi-overlay.yaml
 - type: DomainSecurity
