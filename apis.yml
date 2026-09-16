@@ -1,16 +1,13 @@
 aid: scott-ai
 name: Scott Ai
-description: >-
-  Scott (by Juno Labs Inc.) is a Y Combinator (F25) planning workspace for
-  engineering teams that build with coding agents. Teams sync recent local agent
-  sessions, push a coding-agent thread into a shareable "planspace", align on
-  design intent through Sync Chat, comments, reviews and approvals, then pull the
-  reviewed context back into execution. Scott ships a first-party CLI/plugin
-  (curl-installed) that wires a Scott skill, rule, and hosted MCP server into
-  Claude Code, Cursor, Codex, OpenCode and Gemini, plus a GitHub App that reviews
-  pull requests against planspace design intent. This profile enriches the
-  provider from its public REST API (api.tryscott.ai, 139 operations), docs, CLI,
-  MCP surface, and security posture.
+description: Scott (by Juno Labs Inc.) is a Y Combinator (F25) planning workspace for engineering teams
+  that build with coding agents. Teams sync recent local agent sessions, push a coding-agent thread into
+  a shareable "planspace", align on design intent through Sync Chat, comments, reviews and approvals,
+  then pull the reviewed context back into execution. Scott ships a first-party CLI/plugin (curl-installed)
+  that wires a Scott skill, rule, and hosted MCP server into Claude Code, Cursor, Codex, OpenCode and
+  Gemini, plus a GitHub App that reviews pull requests against planspace design intent. This profile enriches
+  the provider from its public REST API (api.tryscott.ai, 139 operations), docs, CLI, MCP surface, and
+  security posture.
 deliveryModel:
   model: saas
   open_source: false
@@ -46,7 +43,7 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-09-16'
 tags:
 - Company
 - Coding Agents
@@ -95,8 +92,7 @@ apis:
     url: openapi/scott-ai-agent-counsel-api-openapi.yml
 - aid: scott-ai:scott-ai-agent-counsel-internal-api
   name: Scott Ai agent-counsel-internal API
-  description: >-
-    The agent-counsel-internal API from Scott Ai — 3 operation(s) for agent-counsel-internal.
+  description: The agent-counsel-internal API from Scott Ai — 3 operation(s) for agent-counsel-internal.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
@@ -295,7 +291,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-notifications-api-openapi.yml
 - aid: scott-ai:scott-ai-one-shot-api-api
-  name: Scott Ai One Shot API API
+  name: Scott Ai One Shot API
   description: The One Shot API API from Scott Ai — 1 operation(s) for one shot api.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
