@@ -318,6 +318,8 @@ apis:
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
   tags:
+  - Probes
+  tags_raw:
   - probes
   properties:
   - type: OpenAPI
