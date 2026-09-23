@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access users API
+  title: One-Shot Users API
   version: 1.0.0
 tags:
-- name: users
+- name: Users
 paths:
   /users/me:
     get:
       tags:
-      - users
+      - Users
       summary: Get My Profile
       description: 'Get own UserProfile, auto-creating it on first call (upsert).
 
@@ -30,7 +30,7 @@ paths:
       - HTTPBearer: []
     put:
       tags:
-      - users
+      - Users
       summary: Update My Profile
       description: Update own display_name and/or avatar_url.
       operationId: update_my_profile
@@ -58,7 +58,7 @@ paths:
   /users/me/identity:
     get:
       tags:
-      - users
+      - Users
       summary: Get My Identity
       description: 'Return the authenticated user''s Stytch id + email with no side effects.
 
@@ -83,7 +83,7 @@ paths:
   /users/me/onboarding-options:
     get:
       tags:
-      - users
+      - Users
       summary: Get Onboarding Options
       description: 'Return the data the frontend needs to choose an onboarding UX.
 
@@ -104,7 +104,7 @@ paths:
   /users/me/complete-onboarding:
     post:
       tags:
-      - users
+      - Users
       summary: Complete Onboarding
       description: 'Mark onboarding complete and place the user in exactly one org.
 
@@ -147,7 +147,7 @@ paths:
   /users/search:
     get:
       tags:
-      - users
+      - Users
       summary: Search Users
       description: Search users by email or display name, filtered to the caller's email domain.
       operationId: search_users
@@ -178,7 +178,7 @@ paths:
   /users/{user_id}:
     get:
       tags:
-      - users
+      - Users
       summary: Get User Profile
       description: Get public profile of any user by their user_id.
       operationId: get_user_profile
@@ -207,7 +207,7 @@ paths:
   /workspaces/{workspace_id}/members:
     get:
       tags:
-      - users
+      - Users
       summary: List Workspace Members
       description: List all members of a workspace with their profiles.
       operationId: list_workspace_members
@@ -235,7 +235,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - users
+      - Users
       summary: Add Workspace Member
       description: Directly add a same-org user to a workspace (owner only, no invite round trip).
       operationId: add_workspace_member
@@ -270,7 +270,7 @@ paths:
   /workspaces/{workspace_id}/members/{target_user_id}:
     patch:
       tags:
-      - users
+      - Users
       summary: Update Member Role
       description: Change a member's role (owner only).
       operationId: update_member_role
@@ -312,7 +312,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - users
+      - Users
       summary: Remove Workspace Member
       description: Remove a member from a workspace. Owners and editors may remove members; only owners may remove an owner.
       operationId: remove_workspace_member
@@ -348,23 +348,11 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ListWorkspaceMembersResponse:
+    WorkspaceMemberResponse:
       properties:
-        members:
-          items:
-            $ref: '#/components/schemas/WorkspaceMemberResponse'
-          type: array
-          title: Members
-      type: object
-      required:
-      - members
-      title: ListWorkspaceMembersResponse
-    AddWorkspaceMemberRequest:
-      properties:
-        email:
+        user_id:
           type: string
-          maxLength: 254
-          title: Email
+          title: User Id
         role:
           type: string
           enum:
@@ -373,11 +361,34 @@ components:
           - viewer
           - commenter
           title: Role
-          default: editor
+        joined_at:
+          type: string
+          format: date-time
+          title: Joined At
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
       type: object
       required:
+      - user_id
+      - role
+      - joined_at
+      - display_name
+      - avatar_url
       - email
-      title: AddWorkspaceMemberRequest
+      title: WorkspaceMemberResponse
     ValidationError:
       properties:
         loc:
@@ -404,60 +415,6 @@ components:
       - msg
       - type
       title: ValidationError
-    CompleteOnboardingResponse:
-      properties:
-        profile:
-          $ref: '#/components/schemas/UserProfileResponse'
-        current_org:
-          $ref: '#/components/schemas/OrgRefDTO'
-      type: object
-      required:
-      - profile
-      - current_org
-      title: CompleteOnboardingResponse
-    _SoloOnboarding:
-      properties:
-        kind:
-          type: string
-          const: solo
-          title: Kind
-      type: object
-      required:
-      - kind
-      title: _SoloOnboarding
-    UserProfileResponse:
-      properties:
-        user_id:
-          type: string
-          title: User Id
-        display_name:
-          type: string
-          title: Display Name
-        avatar_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Avatar Url
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-        needs_onboarding:
-          type: boolean
-          title: Needs Onboarding
-          default: false
-        current_org:
-          anyOf:
-          - $ref: '#/components/schemas/CurrentOrg'
-          - type: 'null'
-      type: object
-      required:
-      - user_id
-      - display_name
-      - avatar_url
-      - email
-      title: UserProfileResponse
     UpdateMemberRoleRequest:
       properties:
         role:
@@ -511,23 +468,54 @@ components:
       description: 'The viewer''s own org — adds the fields the renderer needs to render settings
 
         without a second round-trip: the toggle value plus the viewer''s role for owner-gated UI.'
-    WorkspaceMemberResponse:
+    OrgRefDTO:
       properties:
-        user_id:
+        id:
           type: string
-          title: User Id
-        role:
+          title: Id
+        name:
           type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-        joined_at:
+          title: Name
+        claimed_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Claimed Domain
+        is_personal:
+          type: boolean
+          title: Is Personal
+          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
+          readOnly: true
+      type: object
+      required:
+      - id
+      - name
+      - is_personal
+      title: OrgRefDTO
+      description: Lightweight {id, name, is_personal} pointer used by settings and onboarding flows.
+    CompleteOnboardingResponse:
+      properties:
+        profile:
+          $ref: '#/components/schemas/UserProfileResponse'
+        current_org:
+          $ref: '#/components/schemas/OrgRefDTO'
+      type: object
+      required:
+      - profile
+      - current_org
+      title: CompleteOnboardingResponse
+    _SoloOnboarding:
+      properties:
+        kind:
           type: string
-          format: date-time
-          title: Joined At
+          const: solo
+          title: Kind
+      type: object
+      required:
+      - kind
+      title: _SoloOnboarding
+    UpdateProfileRequest:
+      properties:
         display_name:
           anyOf:
           - type: string
@@ -538,20 +526,8 @@ components:
           - type: string
           - type: 'null'
           title: Avatar Url
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
       type: object
-      required:
-      - user_id
-      - role
-      - joined_at
-      - display_name
-      - avatar_url
-      - email
-      title: WorkspaceMemberResponse
+      title: UpdateProfileRequest
     OnboardingOptionsResponse:
       properties:
         has_completed_onboarding:
@@ -571,6 +547,58 @@ components:
       - current_org
       - matching_org
       title: OnboardingOptionsResponse
+    UserProfileResponse:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        display_name:
+          type: string
+          title: Display Name
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        needs_onboarding:
+          type: boolean
+          title: Needs Onboarding
+          default: false
+        current_org:
+          anyOf:
+          - $ref: '#/components/schemas/CurrentOrg'
+          - type: 'null'
+      type: object
+      required:
+      - user_id
+      - display_name
+      - avatar_url
+      - email
+      title: UserProfileResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    _TeamOnboarding:
+      properties:
+        kind:
+          type: string
+          const: team
+          title: Kind
+      type: object
+      required:
+      - kind
+      title: _TeamOnboarding
     UserIdentityResponse:
       properties:
         user_id:
@@ -605,64 +633,36 @@ components:
       required:
       - users
       title: UserSearchResponse
-    HTTPValidationError:
+    ListWorkspaceMembersResponse:
       properties:
-        detail:
+        members:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/WorkspaceMemberResponse'
           type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    _TeamOnboarding:
-      properties:
-        kind:
-          type: string
-          const: team
-          title: Kind
+          title: Members
       type: object
       required:
-      - kind
-      title: _TeamOnboarding
-    OrgRefDTO:
+      - members
+      title: ListWorkspaceMembersResponse
+    AddWorkspaceMemberRequest:
       properties:
-        id:
+        email:
           type: string
-          title: Id
-        name:
+          maxLength: 254
+          title: Email
+        role:
           type: string
-          title: Name
-        claimed_domain:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Claimed Domain
-        is_personal:
-          type: boolean
-          title: Is Personal
-          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
-          readOnly: true
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+          default: editor
       type: object
       required:
-      - id
-      - name
-      - is_personal
-      title: OrgRefDTO
-      description: Lightweight {id, name, is_personal} pointer used by settings and onboarding flows.
-    UpdateProfileRequest:
-      properties:
-        display_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Display Name
-        avatar_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Avatar Url
-      type: object
-      title: UpdateProfileRequest
+      - email
+      title: AddWorkspaceMemberRequest
   securitySchemes:
     HTTPBearer:
       type: http

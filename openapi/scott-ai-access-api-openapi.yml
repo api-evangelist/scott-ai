@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access API
+  title: One-Shot Access API
   version: 1.0.0
 tags:
-- name: access
+- name: Access
 paths:
   /access/check:
     get:
       tags:
-      - access
+      - Access
       summary: Check Access
       description: Public (no auth) — called before login to gate browser app access.
       operationId: check_access_access_check_get

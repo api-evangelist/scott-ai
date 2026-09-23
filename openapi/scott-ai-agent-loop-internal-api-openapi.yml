@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access agent-loop-internal API
+  title: One-Shot Agent Loop Internal API
   version: 1.0.0
 tags:
 - name: agent-loop-internal
@@ -112,22 +112,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    RedeemHandoffResponse:
-      properties:
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - token
-      title: RedeemHandoffResponse
-    RetrievalKind:
-      type: string
-      enum:
-      - git
-      - file
-      title: RetrievalKind
-      description: Kind of retrieval method (git clone, file download, etc.)
     ValidationError:
       properties:
         loc:
@@ -183,47 +167,13 @@ components:
       - commit_sha
       title: GitRetrievalDetails
       description: Details for retrieving source via git clone
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    RetrievalResult:
-      properties:
-        adapter:
-          $ref: '#/components/schemas/AdapterType'
-        retrieval:
-          anyOf:
-          - $ref: '#/components/schemas/GitRetrievalDetails'
-          - $ref: '#/components/schemas/FileRetrievalDetails'
-          title: Retrieval
-      type: object
-      required:
-      - adapter
-      - retrieval
-      title: RetrievalResult
-      description: Result of retrieving a source (how to actually fetch it)
-    RedeemHandoffRequest:
-      properties:
-        handoff_code:
-          type: string
-          title: Handoff Code
-      type: object
-      required:
-      - handoff_code
-      title: RedeemHandoffRequest
-    AdapterType:
+    RetrievalKind:
       type: string
       enum:
-      - github
-      - slack
-      - uploaded_file
-      title: AdapterType
-      description: Type of source adapter (github, uploaded_file, etc.)
+      - git
+      - file
+      title: RetrievalKind
+      description: Kind of retrieval method (git clone, file download, etc.)
     FileRetrievalDetails:
       properties:
         kind:
@@ -251,6 +201,56 @@ components:
       - filename
       title: FileRetrievalDetails
       description: Details for retrieving source via file download
+    RetrievalResult:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        retrieval:
+          anyOf:
+          - $ref: '#/components/schemas/GitRetrievalDetails'
+          - $ref: '#/components/schemas/FileRetrievalDetails'
+          title: Retrieval
+      type: object
+      required:
+      - adapter
+      - retrieval
+      title: RetrievalResult
+      description: Result of retrieving a source (how to actually fetch it)
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RedeemHandoffRequest:
+      properties:
+        handoff_code:
+          type: string
+          title: Handoff Code
+      type: object
+      required:
+      - handoff_code
+      title: RedeemHandoffRequest
+    RedeemHandoffResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: RedeemHandoffResponse
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
   securitySchemes:
     HTTPBearer:
       type: http

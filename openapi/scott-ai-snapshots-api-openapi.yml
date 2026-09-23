@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access snapshots API
+  title: One-Shot Snapshots API
   version: 1.0.0
 tags:
-- name: snapshots
+- name: Snapshots
 paths:
   /agent-loop/workspaces/{workspace_id}/snapshots:
     post:
       tags:
-      - snapshots
+      - Snapshots
       summary: Create Snapshot
       operationId: create_snapshot
       security:
@@ -42,7 +42,7 @@ paths:
   /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/commit:
     patch:
       tags:
-      - snapshots
+      - Snapshots
       summary: Commit Snapshot
       operationId: commit_snapshot
       security:
@@ -82,7 +82,7 @@ paths:
   /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/discard:
     patch:
       tags:
-      - snapshots
+      - Snapshots
       summary: Discard Snapshot
       operationId: discard_snapshot
       security:
@@ -116,7 +116,7 @@ paths:
   /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/has-user-edits:
     patch:
       tags:
-      - snapshots
+      - Snapshots
       summary: Set Snapshot Has User Edits
       description: Set the has_user_edits flag (trunk-draft reset clears it to the empty visual state).
       operationId: set_snapshot_has_user_edits
@@ -157,7 +157,7 @@ paths:
   /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/suggestion/accept:
     post:
       tags:
-      - snapshots
+      - Snapshots
       summary: Accept Snapshot Suggestion
       operationId: accept_snapshot_suggestion
       security:
@@ -191,7 +191,7 @@ paths:
   /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/suggestion/reject:
     post:
       tags:
-      - snapshots
+      - Snapshots
       summary: Reject Snapshot Suggestion
       operationId: reject_snapshot_suggestion
       security:
@@ -225,7 +225,7 @@ paths:
   /agent-loop/workspaces/{workspace_id}/snapshots/{snapshot_id}/rename:
     patch:
       tags:
-      - snapshots
+      - Snapshots
       summary: Rename Snapshot
       operationId: rename_snapshot
       security:
@@ -264,6 +264,32 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     SnapshotResponse:
       properties:
         id:
@@ -317,41 +343,6 @@ components:
       - name
       - created_at
       title: SnapshotResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    RenameSnapshotRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-      type: object
-      required:
-      - name
-      title: RenameSnapshotRequest
     CommitSnapshotRequest:
       properties:
         name:
@@ -381,15 +372,6 @@ components:
       required:
       - has_user_edits
       title: SetHasUserEditsRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     CreateSnapshotRequest:
       properties:
         parent_snapshot_id:
@@ -404,6 +386,24 @@ components:
       required:
       - parent_snapshot_id
       title: CreateSnapshotRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RenameSnapshotRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: RenameSnapshotRequest
   securitySchemes:
     HTTPBearer:
       type: http

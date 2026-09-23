@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access notifications API
+  title: One-Shot Notifications API
   version: 1.0.0
 tags:
-- name: notifications
+- name: Notifications
 paths:
   /notifications:
     get:
       tags:
-      - notifications
+      - Notifications
       summary: List Notifications
       description: Paginated notification list for the current user, with actor display name.
       operationId: list_notifications
@@ -52,7 +52,7 @@ paths:
   /notifications/unread-count:
     get:
       tags:
-      - notifications
+      - Notifications
       summary: Get Unread Count
       description: Fast count of unread notifications for the current user.
       operationId: get_unread_count
@@ -68,7 +68,7 @@ paths:
   /notifications/{notification_id}/read:
     post:
       tags:
-      - notifications
+      - Notifications
       summary: Mark Notification Read
       description: 'Mark a single notification as read.
 
@@ -102,7 +102,7 @@ paths:
   /notifications/read-all:
     post:
       tags:
-      - notifications
+      - Notifications
       summary: Mark All Read
       description: 'Mark all unread notifications as read for the current user.
 
@@ -123,7 +123,7 @@ paths:
   /notifications/stream:
     get:
       tags:
-      - notifications
+      - Notifications
       summary: Notification Stream
       description: 'SSE stream: polls DB every 3s for new notifications. Heartbeat every 15s.'
       operationId: notification_stream
@@ -137,15 +137,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    UnreadCountResponse:
-      properties:
-        count:
-          type: integer
-          title: Count
-      type: object
-      required:
-      - count
-      title: UnreadCountResponse
     ValidationError:
       properties:
         loc:
@@ -172,6 +163,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     NotificationResponse:
       properties:
         id:
@@ -229,6 +229,26 @@ components:
       - read_at
       - created_at
       title: NotificationResponse
+    UnreadCountResponse:
+      properties:
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - count
+      title: UnreadCountResponse
+    ListNotificationsResponse:
+      properties:
+        notifications:
+          items:
+            $ref: '#/components/schemas/NotificationResponse'
+          type: array
+          title: Notifications
+      type: object
+      required:
+      - notifications
+      title: ListNotificationsResponse
     NotificationType:
       type: string
       enum:
@@ -244,26 +264,6 @@ components:
       - comment_reply
       title: NotificationType
       description: Types of in-app notifications.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ListNotificationsResponse:
-      properties:
-        notifications:
-          items:
-            $ref: '#/components/schemas/NotificationResponse'
-          type: array
-          title: Notifications
-      type: object
-      required:
-      - notifications
-      title: ListNotificationsResponse
   securitySchemes:
     HTTPBearer:
       type: http

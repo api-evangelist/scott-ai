@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access invites API
+  title: One-Shot Invites API
   version: 1.0.0
 tags:
-- name: invites
+- name: Invites
 paths:
   /invites/{token}:
     get:
       tags:
-      - invites
+      - Invites
       summary: Get Workspace Invite By Token
       description: Resolve an invite token to its workspace_id. Used by the router to detect already-accepted invites.
       operationId: get_workspace_invite_by_token
@@ -37,7 +37,7 @@ paths:
   /workspaces/{workspace_id}/invites:
     post:
       tags:
-      - invites
+      - Invites
       summary: Create Workspace Invite
       description: Create a magic-link invite for a workspace. Returns the token.
       operationId: create_workspace_invite
@@ -71,7 +71,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
-      - invites
+      - Invites
       summary: List Workspace Invites
       description: List pending (not accepted, not expired) invites for a workspace.
       operationId: list_workspace_invites
@@ -100,7 +100,7 @@ paths:
   /workspaces/{workspace_id}/invites/{invite_id}:
     delete:
       tags:
-      - invites
+      - Invites
       summary: Revoke Workspace Invite
       description: Revoke (delete) a pending invite. Owners and editors may revoke any invite.
       operationId: revoke_workspace_invite
@@ -136,7 +136,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     patch:
       tags:
-      - invites
+      - Invites
       summary: Update Workspace Invite
       description: Update the role and/or message of a pending invite in place.
       operationId: update_workspace_invite
@@ -177,7 +177,7 @@ paths:
   /workspaces/{workspace_id}/my-pending-invite:
     get:
       tags:
-      - invites
+      - Invites
       summary: Get My Pending Workspace Invite
       description: Return the authenticated user's pending invite for a workspace, identified by email match.
       operationId: get_my_pending_workspace_invite
@@ -206,7 +206,7 @@ paths:
   /workspaces/{workspace_id}/my-pending-invite/accept:
     post:
       tags:
-      - invites
+      - Invites
       summary: Accept My Pending Workspace Invite
       description: Accept the authenticated user's pending invite for a workspace, identified by email match.
       operationId: accept_my_pending_workspace_invite
@@ -235,7 +235,7 @@ paths:
   /invites/{token}/accept:
     post:
       tags:
-      - invites
+      - Invites
       summary: Accept Workspace Invite
       description: Accept a magic-link invite. Adds the authenticated user as a workspace member.
       operationId: accept_workspace_invite
@@ -263,38 +263,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ReviewMetadata:
-      properties:
-        snapshot_id:
-          type: string
-          title: Snapshot Id
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      additionalProperties: false
-      type: object
-      required:
-      - snapshot_id
-      title: ReviewMetadata
-      description: 'Optional review request metadata for combined invite + review flow.
-
-
-        snapshot_id anchors the request to the node being shared; the reviewer
-
-        binds in on invite acceptance.'
-    ListWorkspaceInvitesResponse:
-      properties:
-        invites:
-          items:
-            $ref: '#/components/schemas/InviteResponse'
-          type: array
-          title: Invites
-      type: object
-      required:
-      - invites
-      title: ListWorkspaceInvitesResponse
     ValidationError:
       properties:
         loc:
@@ -321,85 +289,6 @@ components:
       - msg
       - type
       title: ValidationError
-    MyPendingInviteResponse:
-      properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-        role:
-          type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-      type: object
-      required:
-      - workspace_id
-      - role
-      title: MyPendingInviteResponse
-      description: Pending-invite preview for the authenticated user, scoped to a workspace.
-    UpdateInviteRequest:
-      properties:
-        role:
-          anyOf:
-          - type: string
-            enum:
-            - owner
-            - editor
-            - viewer
-            - commenter
-          - type: 'null'
-          title: Role
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      additionalProperties: false
-      type: object
-      title: UpdateInviteRequest
-    InvitePreviewResponse:
-      properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-      type: object
-      required:
-      - workspace_id
-      title: InvitePreviewResponse
-    CreateInviteRequest:
-      properties:
-        invitee_email:
-          type: string
-          title: Invitee Email
-        role:
-          type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-          default: editor
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        notify_people:
-          type: boolean
-          title: Notify People
-          default: true
-        review:
-          anyOf:
-          - $ref: '#/components/schemas/ReviewMetadata'
-          - type: 'null'
-      type: object
-      required:
-      - invitee_email
-      title: CreateInviteRequest
     InviteResponse:
       properties:
         id:
@@ -455,6 +344,54 @@ components:
       - created_at
       - accepted_at
       title: InviteResponse
+    MyPendingInviteResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+      type: object
+      required:
+      - workspace_id
+      - role
+      title: MyPendingInviteResponse
+      description: Pending-invite preview for the authenticated user, scoped to a workspace.
+    InvitePreviewResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+      type: object
+      required:
+      - workspace_id
+      title: InvitePreviewResponse
+    UpdateInviteRequest:
+      properties:
+        role:
+          anyOf:
+          - type: string
+            enum:
+            - owner
+            - editor
+            - viewer
+            - commenter
+          - type: 'null'
+          title: Role
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      additionalProperties: false
+      type: object
+      title: UpdateInviteRequest
     AcceptInviteResponse:
       properties:
         workspace_id:
@@ -478,6 +415,17 @@ components:
       - role
       title: AcceptInviteResponse
       description: Accept result; `review` is set iff the invite carried a review request (SCO-1353).
+    ListWorkspaceInvitesResponse:
+      properties:
+        invites:
+          items:
+            $ref: '#/components/schemas/InviteResponse'
+          type: array
+          title: Invites
+      type: object
+      required:
+      - invites
+      title: ListWorkspaceInvitesResponse
     HTTPValidationError:
       properties:
         detail:
@@ -487,6 +435,27 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ReviewMetadata:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      additionalProperties: false
+      type: object
+      required:
+      - snapshot_id
+      title: ReviewMetadata
+      description: 'Optional review request metadata for combined invite + review flow.
+
+
+        snapshot_id anchors the request to the node being shared; the reviewer
+
+        binds in on invite acceptance.'
     AcceptInviteReviewHint:
       properties:
         review_request_id:
@@ -501,6 +470,37 @@ components:
       - snapshot_id
       title: AcceptInviteReviewHint
       description: Node-anchored routing hint set when an accepted invite carried a review request.
+    CreateInviteRequest:
+      properties:
+        invitee_email:
+          type: string
+          title: Invitee Email
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+          default: editor
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        notify_people:
+          type: boolean
+          title: Notify People
+          default: true
+        review:
+          anyOf:
+          - $ref: '#/components/schemas/ReviewMetadata'
+          - type: 'null'
+      type: object
+      required:
+      - invitee_email
+      title: CreateInviteRequest
   securitySchemes:
     HTTPBearer:
       type: http

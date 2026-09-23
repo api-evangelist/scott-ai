@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access conversations API
+  title: One-Shot Conversations API
   version: 1.0.0
 tags:
-- name: conversations
+- name: Conversations
 paths:
   /conversations/:
     post:
       tags:
-      - conversations
+      - Conversations
       summary: Create Conversation
       description: Create a new conversation
       operationId: create_conversation_conversations__post
@@ -35,7 +35,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
-      - conversations
+      - Conversations
       summary: List Conversations
       description: List all conversations for the authenticated user (metadata only)
       operationId: list_conversations_conversations__get
@@ -68,7 +68,7 @@ paths:
   /conversations/{conversation_id}/resume:
     post:
       tags:
-      - conversations
+      - Conversations
       summary: Resume Conversation
       description: Resume an existing conversation - returns API key without creating new conversation
       operationId: resume_conversation_conversations__conversation_id__resume_post
@@ -98,7 +98,7 @@ paths:
   /conversations/{conversation_id}/resume/prepare:
     post:
       tags:
-      - conversations
+      - Conversations
       summary: Resume Prepare
       description: Unpause a sandbox for session validation. Sets it as pending — proxy will route to it.
       operationId: resume_prepare_conversations__conversation_id__resume_prepare_post
@@ -128,7 +128,7 @@ paths:
   /conversations/{conversation_id}/resume/confirm:
     post:
       tags:
-      - conversations
+      - Conversations
       summary: Resume Confirm
       description: Graduate pending sandbox to active. Pause old active sandbox. Extend TTL.
       operationId: resume_confirm_conversations__conversation_id__resume_confirm_post
@@ -158,7 +158,7 @@ paths:
   /conversations/{conversation_id}/resume/reject:
     post:
       tags:
-      - conversations
+      - Conversations
       summary: Resume Reject
       description: Client determined sessions are dead — clear pending sandbox. TTL will clean up the sandbox.
       operationId: resume_reject_conversations__conversation_id__resume_reject_post
@@ -188,7 +188,7 @@ paths:
   /conversations/active-session:
     get:
       tags:
-      - conversations
+      - Conversations
       summary: Get Active Session
       description: Check if the user has a live E2B sandbox and return the session info to reconnect.
       operationId: get_active_session_conversations_active_session_get
@@ -204,7 +204,7 @@ paths:
   /conversations/{conversation_id}:
     get:
       tags:
-      - conversations
+      - Conversations
       summary: Get Conversation
       description: Get a single conversation (metadata only, no messages)
       operationId: get_conversation_conversations__conversation_id__get
@@ -233,7 +233,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     patch:
       tags:
-      - conversations
+      - Conversations
       summary: Update Conversation
       description: Update conversation metadata (e.g., coordinator_session_id)
       operationId: update_conversation_conversations__conversation_id__patch
@@ -269,7 +269,7 @@ paths:
   /conversations/{conversation_id}/messages:
     get:
       tags:
-      - conversations
+      - Conversations
       summary: Get Conversation Messages
       description: Get all messages for a conversation
       operationId: get_conversation_messages_conversations__conversation_id__messages_get
@@ -315,7 +315,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - conversations
+      - Conversations
       summary: Append Messages
       description: Append messages to a conversation
       operationId: append_messages_conversations__conversation_id__messages_post
@@ -353,7 +353,7 @@ paths:
   /conversations/{conversation_id}/messages/{message_id}:
     patch:
       tags:
-      - conversations
+      - Conversations
       summary: Update Message
       description: Update a specific message in a conversation (e.g., add document_id)
       operationId: update_message_conversations__conversation_id__messages__message_id__patch
@@ -396,40 +396,61 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ActiveSessionResponse:
+    ValidationError:
       properties:
-        active:
-          type: boolean
-          title: Active
-        conversation_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Conversation Id
-        document_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Document Id
-      type: object
-      required:
-      - active
-      title: ActiveSessionResponse
-      description: Response from active-session — tells browser if there's a live session to reconnect to
-    ResumeConfirmationResponse:
-      properties:
-        conversation_id:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Conversation Id
-        confirmed:
-          type: boolean
-          title: Confirmed
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
-      - conversation_id
-      - confirmed
-      title: ResumeConfirmationResponse
-      description: Response from resume/confirm — sandbox is now the active one
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ConversationCreate:
+      properties:
+        repo_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Path
+        repo_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Repo Paths
+        task:
+          type: string
+          title: Task
+        agent_configs:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Agent Configs
+      type: object
+      required:
+      - task
+      title: ConversationCreate
     ConversationCreateResponse:
       properties:
         conversation_id:
@@ -445,16 +466,20 @@ components:
       - conversation_id
       title: ConversationCreateResponse
       description: Response when creating a new conversation
-    ConversationUpdate:
+    ResumeRejectionResponse:
       properties:
-        coordinator_session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Coordinator Session Id
+        conversation_id:
+          type: string
+          title: Conversation Id
+        rejected:
+          type: boolean
+          title: Rejected
       type: object
-      title: ConversationUpdate
-      description: For updating conversation metadata
+      required:
+      - conversation_id
+      - rejected
+      title: ResumeRejectionResponse
+      description: Response from resume/reject — pending sandbox cleared
     MessageUpdate:
       properties:
         document_id:
@@ -470,6 +495,19 @@ components:
       type: object
       title: MessageUpdate
       description: For updating a specific message in a conversation
+    MessageAppend:
+      properties:
+        messages:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Messages
+      type: object
+      required:
+      - messages
+      title: MessageAppend
+      description: For appending messages to a conversation
     ConversationResponse:
       properties:
         id:
@@ -528,102 +566,16 @@ components:
       - is_browser
       title: ConversationResponse
       description: Metadata only - no messages
-    ResumePreparationResponse:
+    ConversationUpdate:
       properties:
-        conversation_id:
-          type: string
-          title: Conversation Id
-        ready:
-          type: boolean
-          title: Ready
-      type: object
-      required:
-      - conversation_id
-      - ready
-      title: ResumePreparationResponse
-      description: Response from resume/prepare — sandbox is awake and ready for session validation
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ResumeRejectionResponse:
-      properties:
-        conversation_id:
-          type: string
-          title: Conversation Id
-        rejected:
-          type: boolean
-          title: Rejected
-      type: object
-      required:
-      - conversation_id
-      - rejected
-      title: ResumeRejectionResponse
-      description: Response from resume/reject — pending sandbox cleared
-    MessageAppend:
-      properties:
-        messages:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Messages
-      type: object
-      required:
-      - messages
-      title: MessageAppend
-      description: For appending messages to a conversation
-    ConversationCreate:
-      properties:
-        repo_path:
+        coordinator_session_id:
           anyOf:
           - type: string
           - type: 'null'
-          title: Repo Path
-        repo_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Repo Paths
-        task:
-          type: string
-          title: Task
-        agent_configs:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Agent Configs
+          title: Coordinator Session Id
       type: object
-      required:
-      - task
-      title: ConversationCreate
+      title: ConversationUpdate
+      description: For updating conversation metadata
     HTTPValidationError:
       properties:
         detail:
@@ -633,6 +585,26 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ActiveSessionResponse:
+      properties:
+        active:
+          type: boolean
+          title: Active
+        conversation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conversation Id
+        document_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Id
+      type: object
+      required:
+      - active
+      title: ActiveSessionResponse
+      description: Response from active-session — tells browser if there's a live session to reconnect to
     ConversationListResponse:
       properties:
         id:
@@ -680,6 +652,34 @@ components:
       - is_browser
       title: ConversationListResponse
       description: Lightweight response for listing conversations
+    ResumePreparationResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        ready:
+          type: boolean
+          title: Ready
+      type: object
+      required:
+      - conversation_id
+      - ready
+      title: ResumePreparationResponse
+      description: Response from resume/prepare — sandbox is awake and ready for session validation
+    ResumeConfirmationResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        confirmed:
+          type: boolean
+          title: Confirmed
+      type: object
+      required:
+      - conversation_id
+      - confirmed
+      title: ResumeConfirmationResponse
+      description: Response from resume/confirm — sandbox is now the active one
   securitySchemes:
     HTTPBearer:
       type: http

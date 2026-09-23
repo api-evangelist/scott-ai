@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access github-links API
+  title: One-Shot Github Links API
   version: 1.0.0
 tags:
 - name: github-links
@@ -123,59 +123,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    LinkableNodesResponse:
-      properties:
-        nodes:
-          items:
-            $ref: '#/components/schemas/LinkableNode'
-          type: array
-          title: Nodes
-      type: object
-      required:
-      - nodes
-      title: LinkableNodesResponse
-    WriteLinksResponse:
-      properties:
-        linked_snapshot_ids:
-          items:
-            type: string
-          type: array
-          title: Linked Snapshot Ids
-        comment_patched:
-          type: boolean
-          title: Comment Patched
-      type: object
-      required:
-      - linked_snapshot_ids
-      - comment_patched
-      title: WriteLinksResponse
-    WorkspacePrLink:
-      properties:
-        pr_number:
-          type: integer
-          title: Pr Number
-        repo_full_name:
-          type: string
-          title: Repo Full Name
-        pr_html_url:
-          type: string
-          title: Pr Html Url
-        linked_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Linked At
-        linked_by_user_id:
-          type: string
-          title: Linked By User Id
-      type: object
-      required:
-      - pr_number
-      - repo_full_name
-      - pr_html_url
-      - linked_at
-      - linked_by_user_id
-      title: WorkspacePrLink
     ValidationError:
       properties:
         loc:
@@ -202,17 +149,32 @@ components:
       - msg
       - type
       title: ValidationError
-    PrLinksResponse:
+    WriteLinksResponse:
       properties:
-        snapshot_ids:
+        linked_snapshot_ids:
           items:
             type: string
           type: array
-          title: Snapshot Ids
+          title: Linked Snapshot Ids
+        comment_patched:
+          type: boolean
+          title: Comment Patched
       type: object
       required:
-      - snapshot_ids
-      title: PrLinksResponse
+      - linked_snapshot_ids
+      - comment_patched
+      title: WriteLinksResponse
+    LinkableNodesResponse:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/LinkableNode'
+          type: array
+          title: Nodes
+      type: object
+      required:
+      - nodes
+      title: LinkableNodesResponse
     LinkableNode:
       properties:
         snapshot_id:
@@ -265,15 +227,6 @@ components:
       - workspace_id
       - snapshot_ids
       title: WriteLinksRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     WorkspacePrLinksResponse:
       properties:
         links:
@@ -287,6 +240,53 @@ components:
       required:
       - links
       title: WorkspacePrLinksResponse
+    WorkspacePrLink:
+      properties:
+        pr_number:
+          type: integer
+          title: Pr Number
+        repo_full_name:
+          type: string
+          title: Repo Full Name
+        pr_html_url:
+          type: string
+          title: Pr Html Url
+        linked_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Linked At
+        linked_by_user_id:
+          type: string
+          title: Linked By User Id
+      type: object
+      required:
+      - pr_number
+      - repo_full_name
+      - pr_html_url
+      - linked_at
+      - linked_by_user_id
+      title: WorkspacePrLink
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PrLinksResponse:
+      properties:
+        snapshot_ids:
+          items:
+            type: string
+          type: array
+          title: Snapshot Ids
+      type: object
+      required:
+      - snapshot_ids
+      title: PrLinksResponse
   securitySchemes:
     HTTPBearer:
       type: http

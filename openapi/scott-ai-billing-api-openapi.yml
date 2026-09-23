@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access billing API
+  title: One-Shot Billing API
   version: 1.0.0
 tags:
-- name: billing
+- name: Billing
 paths:
   /billing/checkout-session:
     post:
       tags:
-      - billing
+      - Billing
       summary: Create Checkout Session
       description: 'Create a Stripe checkout session for subscription purchase.
 
@@ -38,7 +38,7 @@ paths:
   /billing/subscription-status:
     post:
       tags:
-      - billing
+      - Billing
       summary: Get Subscription Status
       description: 'Check subscription status by email or session ID.
 
@@ -68,7 +68,7 @@ paths:
   /billing/customer-portal:
     post:
       tags:
-      - billing
+      - Billing
       summary: Create Customer Portal Session
       description: 'Create a Stripe Customer Portal session for subscription management.
 
@@ -100,7 +100,7 @@ paths:
   /billing/usage-status:
     get:
       tags:
-      - billing
+      - Billing
       summary: Get Usage Status
       description: 'Get the user''s current conversation usage status.
 
@@ -122,7 +122,7 @@ paths:
   /billing/turn-usage-status:
     get:
       tags:
-      - billing
+      - Billing
       summary: Get Turn Usage Status
       description: Hourly rolling-window message usage status for workspace turns.
       operationId: get_turn_usage_status_billing_turn_usage_status_get
@@ -137,6 +137,32 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     CheckoutSessionRequest:
       properties:
         priceId:
@@ -160,38 +186,6 @@ components:
       required:
       - priceId
       title: CheckoutSessionRequest
-    CheckoutSessionResponse:
-      properties:
-        url:
-          type: string
-          title: Url
-      type: object
-      required:
-      - url
-      title: CheckoutSessionResponse
-    CustomerPortalRequest:
-      properties:
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-      type: object
-      title: CustomerPortalRequest
-    SubscriptionStatusRequest:
-      properties:
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-        sessionId:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Sessionid
-      type: object
-      title: SubscriptionStatusRequest
     UsageStatusResponse:
       properties:
         plan_tier:
@@ -219,61 +213,6 @@ components:
       - day_start_date
       - resets_at
       title: UsageStatusResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    TurnUsageStatusResponse:
-      properties:
-        plan_tier:
-          type: string
-          title: Plan Tier
-        message_count:
-          type: integer
-          title: Message Count
-        limit:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Limit
-        is_throttled:
-          type: boolean
-          title: Is Throttled
-        window_resets_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Window Resets At
-      type: object
-      required:
-      - plan_tier
-      - message_count
-      - limit
-      - is_throttled
-      - window_resets_at
-      title: TurnUsageStatusResponse
     SubscriptionStatusResponse:
       properties:
         status:
@@ -312,6 +251,38 @@ components:
       - status
       - plan
       title: SubscriptionStatusResponse
+    CustomerPortalRequest:
+      properties:
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+      type: object
+      title: CustomerPortalRequest
+    SubscriptionStatusRequest:
+      properties:
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        sessionId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sessionid
+      type: object
+      title: SubscriptionStatusRequest
+    CheckoutSessionResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: CheckoutSessionResponse
     HTTPValidationError:
       properties:
         detail:
@@ -321,6 +292,35 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    TurnUsageStatusResponse:
+      properties:
+        plan_tier:
+          type: string
+          title: Plan Tier
+        message_count:
+          type: integer
+          title: Message Count
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+        is_throttled:
+          type: boolean
+          title: Is Throttled
+        window_resets_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Window Resets At
+      type: object
+      required:
+      - plan_tier
+      - message_count
+      - limit
+      - is_throttled
+      - window_resets_at
+      title: TurnUsageStatusResponse
     CustomerPortalResponse:
       properties:
         url:

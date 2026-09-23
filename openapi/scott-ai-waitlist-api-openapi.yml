@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access waitlist API
+  title: One-Shot Waitlist API
   version: 1.0.0
 tags:
-- name: waitlist
+- name: Waitlist
 paths:
   /waitlist:
     post:
       tags:
-      - waitlist
+      - Waitlist
       summary: Join Waitlist
       description: 'Add an email to the waitlist. Intentionally unauthenticated.
 
@@ -107,15 +107,6 @@ components:
       - email
       - origin
       title: WaitlistCreate
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     WaitlistResponse:
       properties:
         id:
@@ -169,6 +160,15 @@ components:
       - e_message
       - created_at
       title: WaitlistResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

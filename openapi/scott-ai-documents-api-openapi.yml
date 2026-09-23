@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access documents API
+  title: One-Shot Documents API
   version: 1.0.0
 tags:
-- name: documents
+- name: Documents
 paths:
   /documents/:
     post:
       tags:
-      - documents
+      - Documents
       summary: Create Document
       description: Create a new document
       operationId: create_document_documents__post
@@ -35,7 +35,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
-      - documents
+      - Documents
       summary: List Documents
       description: List documents for the authenticated user
       operationId: list_documents_documents__get
@@ -85,7 +85,7 @@ paths:
   /documents/{document_id}:
     get:
       tags:
-      - documents
+      - Documents
       summary: Get Document
       description: Get a specific document
       operationId: get_document_documents__document_id__get
@@ -114,7 +114,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     patch:
       tags:
-      - documents
+      - Documents
       summary: Update Document
       description: Update a document
       operationId: update_document_documents__document_id__patch
@@ -149,7 +149,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - documents
+      - Documents
       summary: Delete Document
       description: Delete a document
       operationId: delete_document_documents__document_id__delete
@@ -178,7 +178,7 @@ paths:
   /documents/{document_id}/versions:
     post:
       tags:
-      - documents
+      - Documents
       summary: Create Document Version
       description: Create a new version of a document with revised content
       operationId: create_document_version_documents__document_id__versions_post
@@ -214,7 +214,7 @@ paths:
   /documents/{document_id}/coordinator-context:
     get:
       tags:
-      - documents
+      - Documents
       summary: Get Document Coordinator Context
       description: Get coordinator context (API key + session ID) for document revision
       operationId: get_document_coordinator_context_documents__document_id__coordinator_context_get
@@ -244,7 +244,7 @@ paths:
   /documents/{document_id}/comments:
     get:
       tags:
-      - documents
+      - Documents
       summary: Get Document Comments
       description: Get all comment threads for a document
       operationId: get_document_comments_documents__document_id__comments_get
@@ -276,7 +276,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - documents
+      - Documents
       summary: Create Comment
       description: Create a new comment or reply
       operationId: create_comment_documents__document_id__comments_post
@@ -312,7 +312,7 @@ paths:
   /documents/{document_id}/comments/{comment_id}:
     patch:
       tags:
-      - documents
+      - Documents
       summary: Update Comment
       description: Update a comment
       operationId: update_comment_documents__document_id__comments__comment_id__patch
@@ -354,7 +354,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - documents
+      - Documents
       summary: Delete Comment
       description: Delete a comment and its replies
       operationId: delete_comment_documents__document_id__comments__comment_id__delete
@@ -390,7 +390,7 @@ paths:
   /documents/images:
     post:
       tags:
-      - documents
+      - Documents
       summary: Upload Document Image
       operationId: upload_document_image_documents_images_post
       security:
@@ -432,7 +432,7 @@ paths:
   /documents/images/{file_id}:
     get:
       tags:
-      - documents
+      - Documents
       summary: Resolve Document Image
       operationId: resolve_document_image_documents_images__file_id__get
       security:
@@ -460,7 +460,7 @@ paths:
   /workspaces/{workspace_id}/document-images:
     post:
       tags:
-      - documents
+      - Documents
       summary: Upload Agent Document Image
       operationId: upload_agent_document_image_workspaces__workspace_id__document_images_post
       parameters:
@@ -499,120 +499,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    Body_upload_agent_document_image_workspaces__workspace_id__document_images_post:
-      properties:
-        file:
-          type: string
-          contentMediaType: application/octet-stream
-          title: File
-      type: object
-      required:
-      - file
-      title: Body_upload_agent_document_image_workspaces__workspace_id__document_images_post
-    CommentUpdate:
-      properties:
-        content:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content
-        resolved:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Resolved
-      type: object
-      title: CommentUpdate
-    DocumentListResponse:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        title:
-          type: string
-          title: Title
-        content:
-          type: string
-          title: Content
-        conversation_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Conversation Id
-        parent_document_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Parent Document Id
-        child_document_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Child Document Id
-        version_number:
-          type: integer
-          title: Version Number
-          default: 1
-        coordinator_session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Coordinator Session Id
-        is_public:
-          type: boolean
-          title: Is Public
-        shared_with:
-          items:
-            type: string
-          type: array
-          title: Shared With
-        doc_metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Doc Metadata
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        comment_count:
-          type: integer
-          title: Comment Count
-          default: 0
-      type: object
-      required:
-      - id
-      - title
-      - content
-      - conversation_id
-      - is_public
-      - shared_with
-      - doc_metadata
-      - created_at
-      - updated_at
-      title: DocumentListResponse
-    ResolvedImageResponse:
-      properties:
-        url:
-          type: string
-          title: Url
-        expires_in:
-          type: integer
-          title: Expires In
-      type: object
-      required:
-      - url
-      - expires_in
-      title: ResolvedImageResponse
     ValidationError:
       properties:
         loc:
@@ -639,108 +525,29 @@ components:
       - msg
       - type
       title: ValidationError
-    CommentThreadResponse:
+    Body_upload_agent_document_image_workspaces__workspace_id__document_images_post:
       properties:
-        id:
+        file:
           type: string
-          format: uuid
-          title: Id
-        document_id:
-          type: string
-          format: uuid
-          title: Document Id
-        user_id:
-          type: string
-          title: User Id
-        start_line:
-          type: integer
-          title: Start Line
-        end_line:
-          type: integer
-          title: End Line
-        content:
-          type: string
-          title: Content
-        resolved:
-          type: boolean
-          title: Resolved
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        replies:
-          items:
-            $ref: '#/components/schemas/CommentResponse'
-          type: array
-          title: Replies
-          default: []
+          contentMediaType: application/octet-stream
+          title: File
       type: object
       required:
-      - id
-      - document_id
-      - user_id
-      - start_line
-      - end_line
-      - content
-      - resolved
-      - created_at
-      - updated_at
-      title: CommentThreadResponse
-      description: Top-level comment with nested replies
-    DocumentUpdate:
+      - file
+      title: Body_upload_agent_document_image_workspaces__workspace_id__document_images_post
+    ResolvedImageResponse:
       properties:
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        content:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content
-        is_public:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Public
-        shared_with:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Shared With
-        doc_metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Doc Metadata
-        document_session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Document Session Id
-      type: object
-      title: DocumentUpdate
-    DocumentImageResponse:
-      properties:
-        file_id:
-          type: string
-          title: File Id
         url:
           type: string
           title: Url
+        expires_in:
+          type: integer
+          title: Expires In
       type: object
       required:
-      - file_id
       - url
-      title: DocumentImageResponse
+      - expires_in
+      title: ResolvedImageResponse
     CoordinatorContextResponse:
       properties:
         anthropic_key:
@@ -763,21 +570,19 @@ components:
       - conversation_id
       title: CoordinatorContextResponse
       description: Context needed to resume coordinator for document revision
-    Body_upload_document_image_documents_images_post:
+    CommentResponse:
       properties:
-        file:
+        id:
           type: string
-          contentMediaType: application/octet-stream
-          title: File
-      type: object
-      required:
-      - file
-      title: Body_upload_document_image_documents_images_post
-    CommentCreate:
-      properties:
-        content:
+          format: uuid
+          title: Id
+        document_id:
           type: string
-          title: Content
+          format: uuid
+          title: Document Id
+        user_id:
+          type: string
+          title: User Id
         parent_id:
           anyOf:
           - type: string
@@ -787,89 +592,40 @@ components:
         start_line:
           anyOf:
           - type: integer
-            minimum: 1.0
           - type: 'null'
           title: Start Line
         end_line:
           anyOf:
           - type: integer
-            minimum: 1.0
           - type: 'null'
           title: End Line
-      type: object
-      required:
-      - content
-      title: CommentCreate
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    DocumentCreate:
-      properties:
-        title:
-          type: string
-          title: Title
         content:
           type: string
           title: Content
-        conversation_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Conversation Id
-        parent_document_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Parent Document Id
-        child_document_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Child Document Id
-        version_number:
-          type: integer
-          title: Version Number
-          default: 1
-        coordinator_session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Coordinator Session Id
-        document_session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Document Session Id
-        is_public:
+        resolved:
           type: boolean
-          title: Is Public
-          default: false
-        shared_with:
-          items:
-            type: string
-          type: array
-          title: Shared With
-          default: []
-        doc_metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Doc Metadata
+          title: Resolved
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
       type: object
       required:
-      - title
+      - id
+      - document_id
+      - user_id
+      - parent_id
+      - start_line
+      - end_line
       - content
-      title: DocumentCreate
+      - resolved
+      - created_at
+      - updated_at
+      title: CommentResponse
     DocumentResponse:
       properties:
         id:
@@ -952,7 +708,144 @@ components:
       - created_at
       - updated_at
       title: DocumentResponse
-    CommentResponse:
+    DocumentImageResponse:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - file_id
+      - url
+      title: DocumentImageResponse
+    DocumentVersionCreate:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - content
+      title: DocumentVersionCreate
+      description: Schema for creating a new document version
+    DocumentUpdate:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        is_public:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Public
+        shared_with:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Shared With
+        doc_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Doc Metadata
+        document_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Session Id
+      type: object
+      title: DocumentUpdate
+    DocumentListResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        title:
+          type: string
+          title: Title
+        content:
+          type: string
+          title: Content
+        conversation_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Conversation Id
+        parent_document_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Parent Document Id
+        child_document_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Child Document Id
+        version_number:
+          type: integer
+          title: Version Number
+          default: 1
+        coordinator_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coordinator Session Id
+        is_public:
+          type: boolean
+          title: Is Public
+        shared_with:
+          items:
+            type: string
+          type: array
+          title: Shared With
+        doc_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Doc Metadata
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        comment_count:
+          type: integer
+          title: Comment Count
+          default: 0
+      type: object
+      required:
+      - id
+      - title
+      - content
+      - conversation_id
+      - is_public
+      - shared_with
+      - doc_metadata
+      - created_at
+      - updated_at
+      title: DocumentListResponse
+    CommentThreadResponse:
       properties:
         id:
           type: string
@@ -965,21 +858,11 @@ components:
         user_id:
           type: string
           title: User Id
-        parent_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Parent Id
         start_line:
-          anyOf:
-          - type: integer
-          - type: 'null'
+          type: integer
           title: Start Line
         end_line:
-          anyOf:
-          - type: integer
-          - type: 'null'
+          type: integer
           title: End Line
         content:
           type: string
@@ -995,29 +878,146 @@ components:
           type: string
           format: date-time
           title: Updated At
+        replies:
+          items:
+            $ref: '#/components/schemas/CommentResponse'
+          type: array
+          title: Replies
+          default: []
       type: object
       required:
       - id
       - document_id
       - user_id
-      - parent_id
       - start_line
       - end_line
       - content
       - resolved
       - created_at
       - updated_at
-      title: CommentResponse
-    DocumentVersionCreate:
+      title: CommentThreadResponse
+      description: Top-level comment with nested replies
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CommentCreate:
       properties:
         content:
           type: string
           title: Content
+        parent_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Parent Id
+        start_line:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Start Line
+        end_line:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: End Line
       type: object
       required:
       - content
-      title: DocumentVersionCreate
-      description: Schema for creating a new document version
+      title: CommentCreate
+    CommentUpdate:
+      properties:
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        resolved:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Resolved
+      type: object
+      title: CommentUpdate
+    DocumentCreate:
+      properties:
+        title:
+          type: string
+          title: Title
+        content:
+          type: string
+          title: Content
+        conversation_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Conversation Id
+        parent_document_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Parent Document Id
+        child_document_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Child Document Id
+        version_number:
+          type: integer
+          title: Version Number
+          default: 1
+        coordinator_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coordinator Session Id
+        document_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Session Id
+        is_public:
+          type: boolean
+          title: Is Public
+          default: false
+        shared_with:
+          items:
+            type: string
+          type: array
+          title: Shared With
+          default: []
+        doc_metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Doc Metadata
+      type: object
+      required:
+      - title
+      - content
+      title: DocumentCreate
+    Body_upload_document_image_documents_images_post:
+      properties:
+        file:
+          type: string
+          contentMediaType: application/octet-stream
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_document_image_documents_images_post
   securitySchemes:
     HTTPBearer:
       type: http

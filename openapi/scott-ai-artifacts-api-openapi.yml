@@ -1,16 +1,31 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access artifacts API
+  title: One-Shot Artifacts API
   version: 1.0.0
 tags:
-- name: artifacts
+- name: Artifacts
 paths:
   /workspaces/{workspace_id}/document-artifacts:
     post:
       tags:
-      - artifacts
+      - Artifacts
       summary: Create Document Artifact
-      description: "Land an agent `write_document` turn — as a suggestion or a committed node.\n\nDispatched per actor by ``_suggestions_enabled_for``:\n\n  * **enabled** (allowlisted user, or any non-prod env) -> suggestion\n    flow (``_land_suggestion``); no node minted.\n  * **disabled** (prod, non-allowlisted) -> pre-Phase-1 flow\n    (``_land_committed_node``); mint a committed node.\n\nBoth share the dual-auth contract from ``require_turn_access_from_body``."
+      description: 'Land an agent `write_document` turn — as a suggestion or a committed node.
+
+
+        Dispatched per actor by ``_suggestions_enabled_for``:
+
+
+        * **enabled** (allowlisted user, or any non-prod env) -> suggestion
+
+        flow (``_land_suggestion``); no node minted.
+
+        * **disabled** (prod, non-allowlisted) -> pre-Phase-1 flow
+
+        (``_land_committed_node``); mint a committed node.
+
+
+        Both share the dual-auth contract from ``require_turn_access_from_body``.'
       operationId: create_document_artifact_workspaces__workspace_id__document_artifacts_post
       parameters:
       - name: workspace_id
@@ -48,6 +63,32 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     ChangeEntry:
       properties:
         changeType:
@@ -126,41 +167,6 @@ components:
         boundary as `<workspace_id>:<document_artifact_id>`; not stored in
 
         the schema.'
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     CreateDocumentArtifactResponse:
       properties:
         id:
@@ -192,6 +198,15 @@ components:
       description: 'Same shape as the document-only fields of `ArtifactSummary`,
 
         declared here to keep the write endpoint self-contained.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http

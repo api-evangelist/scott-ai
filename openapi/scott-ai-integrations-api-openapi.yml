@@ -1,14 +1,14 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: One-Shot access integrations API
+  title: One-Shot Integrations API
   version: 1.0.0
 tags:
-- name: integrations
+- name: Integrations
 paths:
   /integrations:
     get:
       tags:
-      - integrations
+      - Integrations
       summary: List Integrations
       operationId: list_integrations
       security:
@@ -63,13 +63,6 @@ components:
       - msg
       - type
       title: ValidationError
-    IntegrationType:
-      type: string
-      enum:
-      - github
-      - slack
-      title: IntegrationType
-      description: Type of OAuth integration that produces a third-party install.
     SlackInstall:
       properties:
         integration_type:
@@ -93,28 +86,6 @@ components:
       - slack_team_id
       - status
       title: SlackInstall
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ListIntegrationsResponse:
-      properties:
-        items:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/GitHubInstall'
-            - $ref: '#/components/schemas/SlackInstall'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: ListIntegrationsResponse
     GitHubInstall:
       properties:
         integration_type:
@@ -138,6 +109,35 @@ components:
       - installation_id
       - status
       title: GitHubInstall
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ListIntegrationsResponse:
+      properties:
+        items:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/GitHubInstall'
+            - $ref: '#/components/schemas/SlackInstall'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: ListIntegrationsResponse
+    IntegrationType:
+      type: string
+      enum:
+      - github
+      - slack
+      title: IntegrationType
+      description: Type of OAuth integration that produces a third-party install.
   securitySchemes:
     HTTPBearer:
       type: http
