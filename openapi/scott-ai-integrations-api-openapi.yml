@@ -63,29 +63,26 @@ components:
       - msg
       - type
       title: ValidationError
-    SlackInstall:
+    ListIntegrationsResponse:
       properties:
-        integration_type:
-          type: string
-          const: slack
-          title: Integration Type
-          default: slack
-        slack_team_id:
-          type: string
-          title: Slack Team Id
-        team_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Team Name
-        status:
-          type: string
-          title: Status
+        items:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/GitHubInstall'
+            - $ref: '#/components/schemas/SlackInstall'
+          type: array
+          title: Items
       type: object
       required:
-      - slack_team_id
-      - status
-      title: SlackInstall
+      - items
+      title: ListIntegrationsResponse
+    IntegrationType:
+      type: string
+      enum:
+      - github
+      - slack
+      title: IntegrationType
+      description: Type of OAuth integration that produces a third-party install.
     GitHubInstall:
       properties:
         integration_type:
@@ -118,26 +115,29 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    ListIntegrationsResponse:
+    SlackInstall:
       properties:
-        items:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/GitHubInstall'
-            - $ref: '#/components/schemas/SlackInstall'
-          type: array
-          title: Items
+        integration_type:
+          type: string
+          const: slack
+          title: Integration Type
+          default: slack
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        team_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Name
+        status:
+          type: string
+          title: Status
       type: object
       required:
-      - items
-      title: ListIntegrationsResponse
-    IntegrationType:
-      type: string
-      enum:
-      - github
-      - slack
-      title: IntegrationType
-      description: Type of OAuth integration that produces a third-party install.
+      - slack_team_id
+      - status
+      title: SlackInstall
   securitySchemes:
     HTTPBearer:
       type: http

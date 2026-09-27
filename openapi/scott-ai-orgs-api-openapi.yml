@@ -77,28 +77,6 @@ components:
       - msg
       - type
       title: ValidationError
-    OrgResponse:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        claimed_domain:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Claimed Domain
-        external_sharing_enabled:
-          type: boolean
-          title: External Sharing Enabled
-      type: object
-      required:
-      - id
-      - name
-      - external_sharing_enabled
-      title: OrgResponse
     HTTPValidationError:
       properties:
         detail:
@@ -121,6 +99,28 @@ components:
       description: 'Typed body for the PATCH endpoint — refuses unknown fields so callers fail loudly when the
 
         schema drifts rather than silently no-opping on a misspelled key.'
+    OrgResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        claimed_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Claimed Domain
+        external_sharing_enabled:
+          type: boolean
+          title: External Sharing Enabled
+      type: object
+      required:
+      - id
+      - name
+      - external_sharing_enabled
+      title: OrgResponse
   securitySchemes:
     HTTPBearer:
       type: http

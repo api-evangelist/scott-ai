@@ -422,6 +422,53 @@ components:
       - msg
       - type
       title: ValidationError
+    ConversationListResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        task:
+          type: string
+          title: Task
+        repo_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Path
+        repo_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Repo Paths
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        message_count:
+          type: integer
+          title: Message Count
+          default: 0
+        is_browser:
+          type: boolean
+          title: Is Browser
+          readOnly: true
+      type: object
+      required:
+      - id
+      - task
+      - repo_path
+      - created_at
+      - updated_at
+      - is_browser
+      title: ConversationListResponse
+      description: Lightweight response for listing conversations
     ConversationCreate:
       properties:
         repo_path:
@@ -451,50 +498,40 @@ components:
       required:
       - task
       title: ConversationCreate
-    ConversationCreateResponse:
+    ActiveSessionResponse:
       properties:
+        active:
+          type: boolean
+          title: Active
         conversation_id:
-          type: string
-          title: Conversation Id
-        anthropic_key:
           anyOf:
           - type: string
           - type: 'null'
-          title: Anthropic Key
-      type: object
-      required:
-      - conversation_id
-      title: ConversationCreateResponse
-      description: Response when creating a new conversation
-    ResumeRejectionResponse:
-      properties:
-        conversation_id:
-          type: string
           title: Conversation Id
-        rejected:
-          type: boolean
-          title: Rejected
-      type: object
-      required:
-      - conversation_id
-      - rejected
-      title: ResumeRejectionResponse
-      description: Response from resume/reject — pending sandbox cleared
-    MessageUpdate:
-      properties:
         document_id:
           anyOf:
           - type: string
           - type: 'null'
           title: Document Id
-        content:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content
       type: object
-      title: MessageUpdate
-      description: For updating a specific message in a conversation
+      required:
+      - active
+      title: ActiveSessionResponse
+      description: Response from active-session — tells browser if there's a live session to reconnect to
+    ResumePreparationResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        ready:
+          type: boolean
+          title: Ready
+      type: object
+      required:
+      - conversation_id
+      - ready
+      title: ResumePreparationResponse
+      description: Response from resume/prepare — sandbox is awake and ready for session validation
     MessageAppend:
       properties:
         messages:
@@ -566,106 +603,6 @@ components:
       - is_browser
       title: ConversationResponse
       description: Metadata only - no messages
-    ConversationUpdate:
-      properties:
-        coordinator_session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Coordinator Session Id
-      type: object
-      title: ConversationUpdate
-      description: For updating conversation metadata
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ActiveSessionResponse:
-      properties:
-        active:
-          type: boolean
-          title: Active
-        conversation_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Conversation Id
-        document_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Document Id
-      type: object
-      required:
-      - active
-      title: ActiveSessionResponse
-      description: Response from active-session — tells browser if there's a live session to reconnect to
-    ConversationListResponse:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        task:
-          type: string
-          title: Task
-        repo_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Repo Path
-        repo_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Repo Paths
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        message_count:
-          type: integer
-          title: Message Count
-          default: 0
-        is_browser:
-          type: boolean
-          title: Is Browser
-          readOnly: true
-      type: object
-      required:
-      - id
-      - task
-      - repo_path
-      - created_at
-      - updated_at
-      - is_browser
-      title: ConversationListResponse
-      description: Lightweight response for listing conversations
-    ResumePreparationResponse:
-      properties:
-        conversation_id:
-          type: string
-          title: Conversation Id
-        ready:
-          type: boolean
-          title: Ready
-      type: object
-      required:
-      - conversation_id
-      - ready
-      title: ResumePreparationResponse
-      description: Response from resume/prepare — sandbox is awake and ready for session validation
     ResumeConfirmationResponse:
       properties:
         conversation_id:
@@ -680,6 +617,69 @@ components:
       - confirmed
       title: ResumeConfirmationResponse
       description: Response from resume/confirm — sandbox is now the active one
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ResumeRejectionResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        rejected:
+          type: boolean
+          title: Rejected
+      type: object
+      required:
+      - conversation_id
+      - rejected
+      title: ResumeRejectionResponse
+      description: Response from resume/reject — pending sandbox cleared
+    ConversationCreateResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        anthropic_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Anthropic Key
+      type: object
+      required:
+      - conversation_id
+      title: ConversationCreateResponse
+      description: Response when creating a new conversation
+    ConversationUpdate:
+      properties:
+        coordinator_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coordinator Session Id
+      type: object
+      title: ConversationUpdate
+      description: For updating conversation metadata
+    MessageUpdate:
+      properties:
+        document_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Id
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+      type: object
+      title: MessageUpdate
+      description: For updating a specific message in a conversation
   securitySchemes:
     HTTPBearer:
       type: http

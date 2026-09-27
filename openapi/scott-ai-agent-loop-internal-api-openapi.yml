@@ -138,6 +138,15 @@ components:
       - msg
       - type
       title: ValidationError
+    RedeemHandoffRequest:
+      properties:
+        handoff_code:
+          type: string
+          title: Handoff Code
+      type: object
+      required:
+      - handoff_code
+      title: RedeemHandoffRequest
     GitRetrievalDetails:
       properties:
         kind:
@@ -167,13 +176,15 @@ components:
       - commit_sha
       title: GitRetrievalDetails
       description: Details for retrieving source via git clone
-    RetrievalKind:
-      type: string
-      enum:
-      - git
-      - file
-      title: RetrievalKind
-      description: Kind of retrieval method (git clone, file download, etc.)
+    RedeemHandoffResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: RedeemHandoffResponse
     FileRetrievalDetails:
       properties:
         kind:
@@ -225,24 +236,13 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    RedeemHandoffRequest:
-      properties:
-        handoff_code:
-          type: string
-          title: Handoff Code
-      type: object
-      required:
-      - handoff_code
-      title: RedeemHandoffRequest
-    RedeemHandoffResponse:
-      properties:
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - token
-      title: RedeemHandoffResponse
+    RetrievalKind:
+      type: string
+      enum:
+      - git
+      - file
+      title: RetrievalKind
+      description: Kind of retrieval method (git clone, file download, etc.)
     AdapterType:
       type: string
       enum:

@@ -163,6 +163,32 @@ components:
       - msg
       - type
       title: ValidationError
+    NotificationType:
+      type: string
+      enum:
+      - mention
+      - workspace_invite
+      - member_joined
+      - fork_created
+      - review_requested
+      - review_decision
+      - review_nudge
+      - review_retracted
+      - comment_new
+      - comment_reply
+      title: NotificationType
+      description: Types of in-app notifications.
+    ListNotificationsResponse:
+      properties:
+        notifications:
+          items:
+            $ref: '#/components/schemas/NotificationResponse'
+          type: array
+          title: Notifications
+      type: object
+      required:
+      - notifications
+      title: ListNotificationsResponse
     HTTPValidationError:
       properties:
         detail:
@@ -238,32 +264,6 @@ components:
       required:
       - count
       title: UnreadCountResponse
-    ListNotificationsResponse:
-      properties:
-        notifications:
-          items:
-            $ref: '#/components/schemas/NotificationResponse'
-          type: array
-          title: Notifications
-      type: object
-      required:
-      - notifications
-      title: ListNotificationsResponse
-    NotificationType:
-      type: string
-      enum:
-      - mention
-      - workspace_invite
-      - member_joined
-      - fork_created
-      - review_requested
-      - review_decision
-      - review_nudge
-      - review_retracted
-      - comment_new
-      - comment_reply
-      title: NotificationType
-      description: Types of in-app notifications.
   securitySchemes:
     HTTPBearer:
       type: http

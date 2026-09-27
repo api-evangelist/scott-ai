@@ -79,6 +79,22 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    WalkthroughActionResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        status:
+          type: string
+          enum:
+          - completed
+          - dismissed
+          title: Status
+      type: object
+      required:
+      - name
+      - status
+      title: WalkthroughActionResponse
     ValidationError:
       properties:
         loc:
@@ -105,22 +121,6 @@ components:
       - msg
       - type
       title: ValidationError
-    WalkthroughActionResponse:
-      properties:
-        name:
-          type: string
-          title: Name
-        status:
-          type: string
-          enum:
-          - completed
-          - dismissed
-          title: Status
-      type: object
-      required:
-      - name
-      - status
-      title: WalkthroughActionResponse
     HTTPValidationError:
       properties:
         detail:

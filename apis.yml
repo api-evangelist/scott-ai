@@ -69,7 +69,7 @@ maintainers:
   email: info@apis.io
 apis:
 - aid: scott-ai:scott-ai-access-api
-  name: Scott Ai access API
+  name: Scott Ai Access API
   description: The access API from Scott Ai — 1 operation(s) for access.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -81,7 +81,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-access-api-openapi.yml
 - aid: scott-ai:scott-ai-agent-counsel-api
-  name: Scott Ai agent-counsel API
+  name: Scott Ai Agent Counsel API
   description: The agent-counsel API from Scott Ai — 4 operation(s) for agent-counsel.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -91,7 +91,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-agent-counsel-api-openapi.yml
 - aid: scott-ai:scott-ai-agent-counsel-internal-api
-  name: Scott Ai agent-counsel-internal API
+  name: Scott Ai Agent Counsel Internal API
   description: The agent-counsel-internal API from Scott Ai — 3 operation(s) for agent-counsel-internal.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -101,7 +101,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-agent-counsel-internal-api-openapi.yml
 - aid: scott-ai:scott-ai-agent-loop-api
-  name: Scott Ai agent-loop API
+  name: Scott Ai Agent Loop API
   description: The agent-loop API from Scott Ai — 16 operation(s) for agent-loop.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -111,7 +111,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-agent-loop-api-openapi.yml
 - aid: scott-ai:scott-ai-agent-loop-internal-api
-  name: Scott Ai agent-loop-internal API
+  name: Scott Ai Agent Loop Internal API
   description: The agent-loop-internal API from Scott Ai — 3 operation(s) for agent-loop-internal.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -121,7 +121,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-agent-loop-internal-api-openapi.yml
 - aid: scott-ai:scott-ai-artifacts-api
-  name: Scott Ai artifacts API
+  name: Scott Ai Artifacts API
   description: The artifacts API from Scott Ai — 1 operation(s) for artifacts.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -133,7 +133,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-artifacts-api-openapi.yml
 - aid: scott-ai:scott-ai-auth-api
-  name: Scott Ai auth API
+  name: Scott Ai Auth API
   description: The auth API from Scott Ai — 1 operation(s) for auth.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -145,7 +145,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-auth-api-openapi.yml
 - aid: scott-ai:scott-ai-billing-api
-  name: Scott Ai billing API
+  name: Scott Ai Billing API
   description: The billing API from Scott Ai — 5 operation(s) for billing.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -157,7 +157,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-billing-api-openapi.yml
 - aid: scott-ai:scott-ai-cli-version-api
-  name: Scott Ai cli-version API
+  name: Scott Ai Cli Version API
   description: The cli-version API from Scott Ai — 1 operation(s) for cli-version.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -167,7 +167,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-cli-version-api-openapi.yml
 - aid: scott-ai:scott-ai-connected-sources-api
-  name: Scott Ai connected-sources API
+  name: Scott Ai Connected Sources API
   description: The connected-sources API from Scott Ai — 6 operation(s) for connected-sources.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -177,7 +177,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-connected-sources-api-openapi.yml
 - aid: scott-ai:scott-ai-conversations-api
-  name: Scott Ai conversations API
+  name: Scott Ai Conversations API
   description: The conversations API from Scott Ai — 9 operation(s) for conversations.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -189,7 +189,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-conversations-api-openapi.yml
 - aid: scott-ai:scott-ai-documents-api
-  name: Scott Ai documents API
+  name: Scott Ai Documents API
   description: The documents API from Scott Ai — 9 operation(s) for documents.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -201,7 +201,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-documents-api-openapi.yml
 - aid: scott-ai:scott-ai-e2b-api
-  name: Scott Ai e2b API
+  name: Scott Ai E2b API
   description: The e2b API from Scott Ai — 2 operation(s) for e2b.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -211,7 +211,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-e2b-api-openapi.yml
 - aid: scott-ai:scott-ai-github-api
-  name: Scott Ai github API
+  name: Scott Ai Github API
   description: The github API from Scott Ai — 1 operation(s) for github.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -223,7 +223,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-github-api-openapi.yml
 - aid: scott-ai:scott-ai-github-links-api
-  name: Scott Ai github-links API
+  name: Scott Ai Github Links API
   description: The github-links API from Scott Ai — 3 operation(s) for github-links.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -243,7 +243,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-health-api-openapi.yml
 - aid: scott-ai:scott-ai-integrations-api
-  name: Scott Ai integrations API
+  name: Scott Ai Integrations API
   description: The integrations API from Scott Ai — 1 operation(s) for integrations.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -255,7 +255,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-integrations-api-openapi.yml
 - aid: scott-ai:scott-ai-invites-api
-  name: Scott Ai invites API
+  name: Scott Ai Invites API
   description: The invites API from Scott Ai — 6 operation(s) for invites.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -267,7 +267,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-invites-api-openapi.yml
 - aid: scott-ai:scott-ai-issues-api
-  name: Scott Ai issues API
+  name: Scott Ai Issues API
   description: The issues API from Scott Ai — 1 operation(s) for issues.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -279,7 +279,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-issues-api-openapi.yml
 - aid: scott-ai:scott-ai-notifications-api
-  name: Scott Ai notifications API
+  name: Scott Ai Notifications API
   description: The notifications API from Scott Ai — 5 operation(s) for notifications.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -301,7 +301,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-one-shot-api-api-openapi.yml
 - aid: scott-ai:scott-ai-orgs-api
-  name: Scott Ai orgs API
+  name: Scott Ai Orgs API
   description: The orgs API from Scott Ai — 1 operation(s) for orgs.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -313,7 +313,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-orgs-api-openapi.yml
 - aid: scott-ai:scott-ai-probes-api
-  name: Scott Ai probes API
+  name: Scott Ai Probes API
   description: The probes API from Scott Ai — 3 operation(s) for probes.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -325,7 +325,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-probes-api-openapi.yml
 - aid: scott-ai:scott-ai-reviews-api
-  name: Scott Ai reviews API
+  name: Scott Ai Reviews API
   description: The reviews API from Scott Ai — 9 operation(s) for reviews.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -337,7 +337,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-reviews-api-openapi.yml
 - aid: scott-ai:scott-ai-snapshots-api
-  name: Scott Ai snapshots API
+  name: Scott Ai Snapshots API
   description: The snapshots API from Scott Ai — 7 operation(s) for snapshots.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -349,7 +349,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-snapshots-api-openapi.yml
 - aid: scott-ai:scott-ai-sync-chat-api
-  name: Scott Ai sync-chat API
+  name: Scott Ai Sync Chat API
   description: The sync-chat API from Scott Ai — 8 operation(s) for sync-chat.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -359,7 +359,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-sync-chat-api-openapi.yml
 - aid: scott-ai:scott-ai-users-api
-  name: Scott Ai users API
+  name: Scott Ai Users API
   description: The users API from Scott Ai — 8 operation(s) for users.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -371,7 +371,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-users-api-openapi.yml
 - aid: scott-ai:scott-ai-waitlist-api
-  name: Scott Ai waitlist API
+  name: Scott Ai Waitlist API
   description: The waitlist API from Scott Ai — 1 operation(s) for waitlist.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai
@@ -383,7 +383,7 @@ apis:
   - type: OpenAPI
     url: openapi/scott-ai-waitlist-api-openapi.yml
 - aid: scott-ai:scott-ai-walkthroughs-api
-  name: Scott Ai walkthroughs API
+  name: Scott Ai Walkthroughs API
   description: The walkthroughs API from Scott Ai — 3 operation(s) for walkthroughs.
   humanURL: https://docs.tryscott.ai
   baseURL: https://api.tryscott.ai

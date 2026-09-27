@@ -149,32 +149,6 @@ components:
       - msg
       - type
       title: ValidationError
-    WriteLinksResponse:
-      properties:
-        linked_snapshot_ids:
-          items:
-            type: string
-          type: array
-          title: Linked Snapshot Ids
-        comment_patched:
-          type: boolean
-          title: Comment Patched
-      type: object
-      required:
-      - linked_snapshot_ids
-      - comment_patched
-      title: WriteLinksResponse
-    LinkableNodesResponse:
-      properties:
-        nodes:
-          items:
-            $ref: '#/components/schemas/LinkableNode'
-          type: array
-          title: Nodes
-      type: object
-      required:
-      - nodes
-      title: LinkableNodesResponse
     LinkableNode:
       properties:
         snapshot_id:
@@ -200,33 +174,6 @@ components:
       - created_at
       - approval_state
       title: LinkableNode
-    WriteLinksRequest:
-      properties:
-        repo:
-          type: string
-          title: Repo
-        pr_number:
-          type: integer
-          title: Pr Number
-        installation_id:
-          type: integer
-          title: Installation Id
-        workspace_id:
-          type: string
-          title: Workspace Id
-        snapshot_ids:
-          items:
-            type: string
-          type: array
-          title: Snapshot Ids
-      type: object
-      required:
-      - repo
-      - pr_number
-      - installation_id
-      - workspace_id
-      - snapshot_ids
-      title: WriteLinksRequest
     WorkspacePrLinksResponse:
       properties:
         links:
@@ -240,6 +187,26 @@ components:
       required:
       - links
       title: WorkspacePrLinksResponse
+    LinkableNodesResponse:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/LinkableNode'
+          type: array
+          title: Nodes
+      type: object
+      required:
+      - nodes
+      title: LinkableNodesResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     WorkspacePrLink:
       properties:
         pr_number:
@@ -267,15 +234,6 @@ components:
       - linked_at
       - linked_by_user_id
       title: WorkspacePrLink
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     PrLinksResponse:
       properties:
         snapshot_ids:
@@ -287,6 +245,48 @@ components:
       required:
       - snapshot_ids
       title: PrLinksResponse
+    WriteLinksRequest:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        pr_number:
+          type: integer
+          title: Pr Number
+        installation_id:
+          type: integer
+          title: Installation Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        snapshot_ids:
+          items:
+            type: string
+          type: array
+          title: Snapshot Ids
+      type: object
+      required:
+      - repo
+      - pr_number
+      - installation_id
+      - workspace_id
+      - snapshot_ids
+      title: WriteLinksRequest
+    WriteLinksResponse:
+      properties:
+        linked_snapshot_ids:
+          items:
+            type: string
+          type: array
+          title: Linked Snapshot Ids
+        comment_patched:
+          type: boolean
+          title: Comment Patched
+      type: object
+      required:
+      - linked_snapshot_ids
+      - comment_patched
+      title: WriteLinksResponse
   securitySchemes:
     HTTPBearer:
       type: http

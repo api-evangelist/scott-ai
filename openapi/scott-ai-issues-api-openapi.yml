@@ -34,6 +34,24 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    IssueField:
+      properties:
+        label:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Label
+        value:
+          type: string
+          maxLength: 400
+          minLength: 1
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: IssueField
+      description: A labelled value rendered into the Linear issue description (e.g. Category).
     ValidationError:
       properties:
         loc:
@@ -60,6 +78,28 @@ components:
       - msg
       - type
       title: ValidationError
+    FileIssueResponse:
+      properties:
+        issue_url:
+          type: string
+          title: Issue Url
+        issue_identifier:
+          type: string
+          title: Issue Identifier
+      type: object
+      required:
+      - issue_url
+      - issue_identifier
+      title: FileIssueResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     FileIssueRequest:
       properties:
         title:
@@ -105,46 +145,6 @@ components:
       required:
       - title
       title: FileIssueRequest
-    FileIssueResponse:
-      properties:
-        issue_url:
-          type: string
-          title: Issue Url
-        issue_identifier:
-          type: string
-          title: Issue Identifier
-      type: object
-      required:
-      - issue_url
-      - issue_identifier
-      title: FileIssueResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    IssueField:
-      properties:
-        label:
-          type: string
-          maxLength: 80
-          minLength: 1
-          title: Label
-        value:
-          type: string
-          maxLength: 400
-          minLength: 1
-          title: Value
-      type: object
-      required:
-      - label
-      - value
-      title: IssueField
-      description: A labelled value rendered into the Linear issue description (e.g. Category).
   securitySchemes:
     HTTPBearer:
       type: http

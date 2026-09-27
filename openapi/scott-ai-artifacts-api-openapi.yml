@@ -63,6 +63,37 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    CreateDocumentArtifactResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        produced_at_turn_id:
+          type: string
+          title: Produced At Turn Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - workspace_id
+      - name
+      - produced_at_turn_id
+      - created_at
+      title: CreateDocumentArtifactResponse
+      description: 'Same shape as the document-only fields of `ArtifactSummary`,
+
+        declared here to keep the write endpoint self-contained.'
     ValidationError:
       properties:
         loc:
@@ -89,38 +120,6 @@ components:
       - msg
       - type
       title: ValidationError
-    ChangeEntry:
-      properties:
-        changeType:
-          type: string
-          enum:
-          - added
-          - modified
-          - removed
-          title: Changetype
-        concept:
-          type: string
-          title: Concept
-        summary:
-          type: string
-          title: Summary
-        sectionHeading:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Sectionheading
-      type: object
-      required:
-      - changeType
-      - concept
-      - summary
-      title: ChangeEntry
-      description: 'One semantic change emitted by the agent''s `write_document` tool.
-
-
-        Field-name casing matches the agent''s serialization (camelCase) so
-
-        Pydantic round-trips without aliasing.'
     CreateDocumentArtifactRequest:
       properties:
         id:
@@ -167,37 +166,38 @@ components:
         boundary as `<workspace_id>:<document_artifact_id>`; not stored in
 
         the schema.'
-    CreateDocumentArtifactResponse:
+    ChangeEntry:
       properties:
-        id:
+        changeType:
           type: string
-          title: Id
-        workspace_id:
+          enum:
+          - added
+          - modified
+          - removed
+          title: Changetype
+        concept:
           type: string
-          title: Workspace Id
-        name:
+          title: Concept
+        summary:
+          type: string
+          title: Summary
+        sectionHeading:
           anyOf:
           - type: string
           - type: 'null'
-          title: Name
-        produced_at_turn_id:
-          type: string
-          title: Produced At Turn Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
+          title: Sectionheading
       type: object
       required:
-      - id
-      - workspace_id
-      - name
-      - produced_at_turn_id
-      - created_at
-      title: CreateDocumentArtifactResponse
-      description: 'Same shape as the document-only fields of `ArtifactSummary`,
+      - changeType
+      - concept
+      - summary
+      title: ChangeEntry
+      description: 'One semantic change emitted by the agent''s `write_document` tool.
 
-        declared here to keep the write endpoint self-contained.'
+
+        Field-name casing matches the agent''s serialization (camelCase) so
+
+        Pydantic round-trips without aliasing.'
     HTTPValidationError:
       properties:
         detail:

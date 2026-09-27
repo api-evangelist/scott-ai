@@ -263,6 +263,40 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    UpdateInviteRequest:
+      properties:
+        role:
+          anyOf:
+          - type: string
+            enum:
+            - owner
+            - editor
+            - viewer
+            - commenter
+          - type: 'null'
+          title: Role
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      additionalProperties: false
+      type: object
+      title: UpdateInviteRequest
+    AcceptInviteReviewHint:
+      properties:
+        review_request_id:
+          type: string
+          title: Review Request Id
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+      type: object
+      required:
+      - review_request_id
+      - snapshot_id
+      title: AcceptInviteReviewHint
+      description: Node-anchored routing hint set when an accepted invite carried a review request.
     ValidationError:
       properties:
         loc:
@@ -289,6 +323,60 @@ components:
       - msg
       - type
       title: ValidationError
+    CreateInviteRequest:
+      properties:
+        invitee_email:
+          type: string
+          title: Invitee Email
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+          default: editor
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+        notify_people:
+          type: boolean
+          title: Notify People
+          default: true
+        review:
+          anyOf:
+          - $ref: '#/components/schemas/ReviewMetadata'
+          - type: 'null'
+      type: object
+      required:
+      - invitee_email
+      title: CreateInviteRequest
+    AcceptInviteResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+        review:
+          anyOf:
+          - $ref: '#/components/schemas/AcceptInviteReviewHint'
+          - type: 'null'
+      type: object
+      required:
+      - workspace_id
+      - role
+      title: AcceptInviteResponse
+      description: Accept result; `review` is set iff the invite carried a review request (SCO-1353).
     InviteResponse:
       properties:
         id:
@@ -344,25 +432,6 @@ components:
       - created_at
       - accepted_at
       title: InviteResponse
-    MyPendingInviteResponse:
-      properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-        role:
-          type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-      type: object
-      required:
-      - workspace_id
-      - role
-      title: MyPendingInviteResponse
-      description: Pending-invite preview for the authenticated user, scoped to a workspace.
     InvitePreviewResponse:
       properties:
         workspace_id:
@@ -372,49 +441,6 @@ components:
       required:
       - workspace_id
       title: InvitePreviewResponse
-    UpdateInviteRequest:
-      properties:
-        role:
-          anyOf:
-          - type: string
-            enum:
-            - owner
-            - editor
-            - viewer
-            - commenter
-          - type: 'null'
-          title: Role
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      additionalProperties: false
-      type: object
-      title: UpdateInviteRequest
-    AcceptInviteResponse:
-      properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-        role:
-          type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-        review:
-          anyOf:
-          - $ref: '#/components/schemas/AcceptInviteReviewHint'
-          - type: 'null'
-      type: object
-      required:
-      - workspace_id
-      - role
-      title: AcceptInviteResponse
-      description: Accept result; `review` is set iff the invite carried a review request (SCO-1353).
     ListWorkspaceInvitesResponse:
       properties:
         invites:
@@ -456,25 +482,11 @@ components:
         snapshot_id anchors the request to the node being shared; the reviewer
 
         binds in on invite acceptance.'
-    AcceptInviteReviewHint:
+    MyPendingInviteResponse:
       properties:
-        review_request_id:
+        workspace_id:
           type: string
-          title: Review Request Id
-        snapshot_id:
-          type: string
-          title: Snapshot Id
-      type: object
-      required:
-      - review_request_id
-      - snapshot_id
-      title: AcceptInviteReviewHint
-      description: Node-anchored routing hint set when an accepted invite carried a review request.
-    CreateInviteRequest:
-      properties:
-        invitee_email:
-          type: string
-          title: Invitee Email
+          title: Workspace Id
         role:
           type: string
           enum:
@@ -483,24 +495,12 @@ components:
           - viewer
           - commenter
           title: Role
-          default: editor
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-        notify_people:
-          type: boolean
-          title: Notify People
-          default: true
-        review:
-          anyOf:
-          - $ref: '#/components/schemas/ReviewMetadata'
-          - type: 'null'
       type: object
       required:
-      - invitee_email
-      title: CreateInviteRequest
+      - workspace_id
+      - role
+      title: MyPendingInviteResponse
+      description: Pending-invite preview for the authenticated user, scoped to a workspace.
   securitySchemes:
     HTTPBearer:
       type: http

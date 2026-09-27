@@ -290,6 +290,67 @@ components:
       - msg
       - type
       title: ValidationError
+    CommitSnapshotRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        blocks:
+          anyOf:
+          - items: {}
+            type: array
+          - type: 'null'
+          title: Blocks
+        markdown:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Markdown
+      type: object
+      required:
+      - name
+      title: CommitSnapshotRequest
+    CreateSnapshotRequest:
+      properties:
+        parent_snapshot_id:
+          type: string
+          title: Parent Snapshot Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      required:
+      - parent_snapshot_id
+      title: CreateSnapshotRequest
+    RenameSnapshotRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - name
+      title: RenameSnapshotRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SetHasUserEditsRequest:
+      properties:
+        has_user_edits:
+          type: boolean
+          title: Has User Edits
+      type: object
+      required:
+      - has_user_edits
+      title: SetHasUserEditsRequest
     SnapshotResponse:
       properties:
         id:
@@ -343,67 +404,6 @@ components:
       - name
       - created_at
       title: SnapshotResponse
-    CommitSnapshotRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        blocks:
-          anyOf:
-          - items: {}
-            type: array
-          - type: 'null'
-          title: Blocks
-        markdown:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Markdown
-      type: object
-      required:
-      - name
-      title: CommitSnapshotRequest
-    SetHasUserEditsRequest:
-      properties:
-        has_user_edits:
-          type: boolean
-          title: Has User Edits
-      type: object
-      required:
-      - has_user_edits
-      title: SetHasUserEditsRequest
-    CreateSnapshotRequest:
-      properties:
-        parent_snapshot_id:
-          type: string
-          title: Parent Snapshot Id
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-      type: object
-      required:
-      - parent_snapshot_id
-      title: CreateSnapshotRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    RenameSnapshotRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-      type: object
-      required:
-      - name
-      title: RenameSnapshotRequest
   securitySchemes:
     HTTPBearer:
       type: http

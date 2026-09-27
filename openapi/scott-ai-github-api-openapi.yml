@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: One-Shot Github API
+  title: One-Shot GitHub API
   version: 1.0.0
 tags:
 - name: Github
@@ -63,6 +63,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     PrStatus:
       properties:
         number:
@@ -94,15 +103,6 @@ components:
       - state
       title: PrStatus
       description: Live status of a pull request, resolved via a GitHub App installation.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     HTTPBearer:
       type: http
