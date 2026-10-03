@@ -263,66 +263,24 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UpdateInviteRequest:
+    InvitePreviewResponse:
       properties:
-        role:
-          anyOf:
-          - type: string
-            enum:
-            - owner
-            - editor
-            - viewer
-            - commenter
-          - type: 'null'
-          title: Role
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      additionalProperties: false
-      type: object
-      title: UpdateInviteRequest
-    AcceptInviteReviewHint:
-      properties:
-        review_request_id:
+        workspace_id:
           type: string
-          title: Review Request Id
-        snapshot_id:
-          type: string
-          title: Snapshot Id
+          title: Workspace Id
       type: object
       required:
-      - review_request_id
-      - snapshot_id
-      title: AcceptInviteReviewHint
-      description: Node-anchored routing hint set when an accepted invite carried a review request.
-    ValidationError:
+      - workspace_id
+      title: InvitePreviewResponse
+    HTTPValidationError:
       properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Detail
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      title: HTTPValidationError
     CreateInviteRequest:
       properties:
         invitee_email:
@@ -354,7 +312,7 @@ components:
       required:
       - invitee_email
       title: CreateInviteRequest
-    AcceptInviteResponse:
+    MyPendingInviteResponse:
       properties:
         workspace_id:
           type: string
@@ -367,16 +325,32 @@ components:
           - viewer
           - commenter
           title: Role
-        review:
-          anyOf:
-          - $ref: '#/components/schemas/AcceptInviteReviewHint'
-          - type: 'null'
       type: object
       required:
       - workspace_id
       - role
-      title: AcceptInviteResponse
-      description: Accept result; `review` is set iff the invite carried a review request (SCO-1353).
+      title: MyPendingInviteResponse
+      description: Pending-invite preview for the authenticated user, scoped to a workspace.
+    UpdateInviteRequest:
+      properties:
+        role:
+          anyOf:
+          - type: string
+            enum:
+            - owner
+            - editor
+            - viewer
+            - commenter
+          - type: 'null'
+          title: Role
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      additionalProperties: false
+      type: object
+      title: UpdateInviteRequest
     InviteResponse:
       properties:
         id:
@@ -432,15 +406,6 @@ components:
       - created_at
       - accepted_at
       title: InviteResponse
-    InvitePreviewResponse:
-      properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-      type: object
-      required:
-      - workspace_id
-      title: InvitePreviewResponse
     ListWorkspaceInvitesResponse:
       properties:
         invites:
@@ -452,15 +417,43 @@ components:
       required:
       - invites
       title: ListWorkspaceInvitesResponse
-    HTTPValidationError:
+    AcceptInviteReviewHint:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        review_request_id:
+          type: string
+          title: Review Request Id
+        snapshot_id:
+          type: string
+          title: Snapshot Id
       type: object
-      title: HTTPValidationError
+      required:
+      - review_request_id
+      - snapshot_id
+      title: AcceptInviteReviewHint
+      description: Node-anchored routing hint set when an accepted invite carried a review request.
+    AcceptInviteResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+        review:
+          anyOf:
+          - $ref: '#/components/schemas/AcceptInviteReviewHint'
+          - type: 'null'
+      type: object
+      required:
+      - workspace_id
+      - role
+      title: AcceptInviteResponse
+      description: Accept result; `review` is set iff the invite carried a review request (SCO-1353).
     ReviewMetadata:
       properties:
         snapshot_id:
@@ -482,25 +475,32 @@ components:
         snapshot_id anchors the request to the node being shared; the reviewer
 
         binds in on invite acceptance.'
-    MyPendingInviteResponse:
+    ValidationError:
       properties:
-        workspace_id:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Workspace Id
-        role:
+          title: Message
+        type:
           type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
-      - workspace_id
-      - role
-      title: MyPendingInviteResponse
-      description: Pending-invite preview for the authenticated user, scoped to a workspace.
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http

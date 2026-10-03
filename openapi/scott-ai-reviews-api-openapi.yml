@@ -379,32 +379,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     PriorReviewDecision:
       properties:
         decision:
@@ -422,109 +396,26 @@ components:
       - decision
       - decided_at
       title: PriorReviewDecision
-    SubmitDecisionBody:
+    HTTPValidationError:
       properties:
-        decision:
-          type: string
-          enum:
-          - approved
-          - rejected
-          title: Decision
-      type: object
-      required:
-      - decision
-      title: SubmitDecisionBody
-    ReviewCommentPreview:
-      properties:
-        thread_id:
-          type: string
-          title: Thread Id
-        comment_id:
-          type: string
-          title: Comment Id
-        anchor_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Anchor Text
-        text:
-          type: string
-          title: Text
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        resolved:
-          type: boolean
-          title: Resolved
-      type: object
-      required:
-      - thread_id
-      - comment_id
-      - anchor_text
-      - text
-      - created_at
-      - resolved
-      title: ReviewCommentPreview
-    SnapshotReviewsResponse:
-      properties:
-        snapshot_id:
-          type: string
-          title: Snapshot Id
-        reviewers:
+        detail:
           items:
-            $ref: '#/components/schemas/SnapshotReviewerEntry'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Reviewers
+          title: Detail
       type: object
-      required:
-      - snapshot_id
-      - reviewers
-      title: SnapshotReviewsResponse
-    CreateReviewRequestsBody:
+      title: HTTPValidationError
+    ReviewSummaryResponse:
       properties:
-        snapshot_id:
-          type: string
-          title: Snapshot Id
-        reviewers:
+        nodes:
           items:
-            $ref: '#/components/schemas/ReviewerInput'
+            $ref: '#/components/schemas/ReviewSummaryNode'
           type: array
-          minItems: 1
-          title: Reviewers
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
+          title: Nodes
       type: object
       required:
-      - snapshot_id
-      - reviewers
-      title: CreateReviewRequestsBody
-    ReviewSummaryNode:
-      properties:
-        snapshot_id:
-          type: string
-          title: Snapshot Id
-        counts:
-          $ref: '#/components/schemas/NodeReviewCounts'
-      type: object
-      required:
-      - snapshot_id
-      - counts
-      title: ReviewSummaryNode
-    BringForwardResponse:
-      properties:
-        reviewers:
-          items:
-            $ref: '#/components/schemas/BringForwardEntry'
-          type: array
-          title: Reviewers
-      type: object
-      required:
-      - reviewers
-      title: BringForwardResponse
+      - nodes
+      title: ReviewSummaryResponse
     ReviewRequestResponse:
       properties:
         id:
@@ -643,146 +534,50 @@ components:
       - requester_display_name
       - reviewer_display_name
       title: ReviewRequestResponse
-    BringForwardEntry:
+    ReviewSummaryNode:
       properties:
-        reviewer_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reviewer Id
-        display_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Display Name
-        pending_invite_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Pending Invite Id
-        state:
+        snapshot_id:
           type: string
-          enum:
-          - pending
-          - in_progress
-          - approved
-          - rejected
-          title: State
-        source_request_id:
+          title: Snapshot Id
+        counts:
+          $ref: '#/components/schemas/NodeReviewCounts'
+      type: object
+      required:
+      - snapshot_id
+      - counts
+      title: ReviewSummaryNode
+    ReviewCommentPreview:
+      properties:
+        thread_id:
           type: string
-          title: Source Request Id
-        source_snapshot_id:
+          title: Thread Id
+        comment_id:
           type: string
-          title: Source Snapshot Id
-        source_snapshot_name:
+          title: Comment Id
+        anchor_text:
           anyOf:
           - type: string
           - type: 'null'
-          title: Source Snapshot Name
-        source_created_at:
+          title: Anchor Text
+        text:
+          type: string
+          title: Text
+        created_at:
           type: string
           format: date-time
-          title: Source Created At
-        nodes_behind:
-          type: integer
-          title: Nodes Behind
-        comment_count:
-          type: integer
-          title: Comment Count
-        comments:
-          items:
-            $ref: '#/components/schemas/ReviewCommentPreview'
-          type: array
-          title: Comments
-          default: []
-        suggested_action:
-          type: string
-          enum:
-          - re_request
-          - move
-          - ask_again
-          title: Suggested Action
-      type: object
-      required:
-      - reviewer_id
-      - display_name
-      - pending_invite_id
-      - state
-      - source_request_id
-      - source_snapshot_id
-      - source_snapshot_name
-      - source_created_at
-      - nodes_behind
-      - comment_count
-      - suggested_action
-      title: BringForwardEntry
-    MoveReviewRequestBody:
-      properties:
-        target_snapshot_id:
-          type: string
-          title: Target Snapshot Id
-      type: object
-      required:
-      - target_snapshot_id
-      title: MoveReviewRequestBody
-    NudgeReviewRequestResponse:
-      properties:
-        nudged:
+          title: Created At
+        resolved:
           type: boolean
-          title: Nudged
-        next_allowed_at:
-          type: string
-          format: date-time
-          title: Next Allowed At
-        review_request:
-          $ref: '#/components/schemas/ReviewRequestResponse'
+          title: Resolved
       type: object
       required:
-      - nudged
-      - next_allowed_at
-      - review_request
-      title: NudgeReviewRequestResponse
-    NodeReviewCounts:
-      properties:
-        approved:
-          type: integer
-          title: Approved
-        in_progress:
-          type: integer
-          title: In Progress
-        rejected:
-          type: integer
-          title: Rejected
-        pending:
-          type: integer
-          title: Pending
-      type: object
-      required:
-      - approved
-      - in_progress
-      - rejected
-      - pending
-      title: NodeReviewCounts
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ListReviewRequestsResponse:
-      properties:
-        review_requests:
-          items:
-            $ref: '#/components/schemas/ReviewRequestResponse'
-          type: array
-          title: Review Requests
-      type: object
-      required:
-      - review_requests
-      title: ListReviewRequestsResponse
+      - thread_id
+      - comment_id
+      - anchor_text
+      - text
+      - created_at
+      - resolved
+      title: ReviewCommentPreview
     SnapshotReviewerEntry:
       properties:
         request_id:
@@ -870,17 +665,196 @@ components:
       - last_activity_at
       - comment_count
       title: SnapshotReviewerEntry
-    ReviewSummaryResponse:
+    SubmitDecisionBody:
       properties:
-        nodes:
-          items:
-            $ref: '#/components/schemas/ReviewSummaryNode'
-          type: array
-          title: Nodes
+        decision:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Decision
       type: object
       required:
-      - nodes
-      title: ReviewSummaryResponse
+      - decision
+      title: SubmitDecisionBody
+    NudgeReviewRequestResponse:
+      properties:
+        nudged:
+          type: boolean
+          title: Nudged
+        next_allowed_at:
+          type: string
+          format: date-time
+          title: Next Allowed At
+        review_request:
+          $ref: '#/components/schemas/ReviewRequestResponse'
+      type: object
+      required:
+      - nudged
+      - next_allowed_at
+      - review_request
+      title: NudgeReviewRequestResponse
+    SnapshotReviewsResponse:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        reviewers:
+          items:
+            $ref: '#/components/schemas/SnapshotReviewerEntry'
+          type: array
+          title: Reviewers
+      type: object
+      required:
+      - snapshot_id
+      - reviewers
+      title: SnapshotReviewsResponse
+    ListReviewRequestsResponse:
+      properties:
+        review_requests:
+          items:
+            $ref: '#/components/schemas/ReviewRequestResponse'
+          type: array
+          title: Review Requests
+      type: object
+      required:
+      - review_requests
+      title: ListReviewRequestsResponse
+    CreateReviewRequestsBody:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        reviewers:
+          items:
+            $ref: '#/components/schemas/ReviewerInput'
+          type: array
+          minItems: 1
+          title: Reviewers
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      type: object
+      required:
+      - snapshot_id
+      - reviewers
+      title: CreateReviewRequestsBody
+    BringForwardResponse:
+      properties:
+        reviewers:
+          items:
+            $ref: '#/components/schemas/BringForwardEntry'
+          type: array
+          title: Reviewers
+      type: object
+      required:
+      - reviewers
+      title: BringForwardResponse
+    NodeReviewCounts:
+      properties:
+        approved:
+          type: integer
+          title: Approved
+        in_progress:
+          type: integer
+          title: In Progress
+        rejected:
+          type: integer
+          title: Rejected
+        pending:
+          type: integer
+          title: Pending
+      type: object
+      required:
+      - approved
+      - in_progress
+      - rejected
+      - pending
+      title: NodeReviewCounts
+    BringForwardEntry:
+      properties:
+        reviewer_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reviewer Id
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        pending_invite_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pending Invite Id
+        state:
+          type: string
+          enum:
+          - pending
+          - in_progress
+          - approved
+          - rejected
+          title: State
+        source_request_id:
+          type: string
+          title: Source Request Id
+        source_snapshot_id:
+          type: string
+          title: Source Snapshot Id
+        source_snapshot_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Snapshot Name
+        source_created_at:
+          type: string
+          format: date-time
+          title: Source Created At
+        nodes_behind:
+          type: integer
+          title: Nodes Behind
+        comment_count:
+          type: integer
+          title: Comment Count
+        comments:
+          items:
+            $ref: '#/components/schemas/ReviewCommentPreview'
+          type: array
+          title: Comments
+          default: []
+        suggested_action:
+          type: string
+          enum:
+          - re_request
+          - move
+          - ask_again
+          title: Suggested Action
+      type: object
+      required:
+      - reviewer_id
+      - display_name
+      - pending_invite_id
+      - state
+      - source_request_id
+      - source_snapshot_id
+      - source_snapshot_name
+      - source_created_at
+      - nodes_behind
+      - comment_count
+      - suggested_action
+      title: BringForwardEntry
+    MoveReviewRequestBody:
+      properties:
+        target_snapshot_id:
+          type: string
+          title: Target Snapshot Id
+      type: object
+      required:
+      - target_snapshot_id
+      title: MoveReviewRequestBody
     ReviewerInput:
       properties:
         reviewer_id:
@@ -895,6 +869,32 @@ components:
       required:
       - reviewer_id
       title: ReviewerInput
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http

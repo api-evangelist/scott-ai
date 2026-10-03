@@ -144,6 +144,15 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ProbeStatus:
       type: string
       enum:
@@ -151,81 +160,6 @@ components:
       - approved
       - rejected
       title: ProbeStatus
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ListProbesResponse:
-      properties:
-        probes:
-          items:
-            $ref: '#/components/schemas/ProbeState'
-          type: array
-          title: Probes
-      type: object
-      required:
-      - probes
-      title: ListProbesResponse
-    CreateProbeBody:
-      properties:
-        id:
-          type: string
-          title: Id
-        site:
-          type: string
-          title: Site
-        slot:
-          type: string
-          title: Slot
-        subsystem:
-          type: string
-          title: Subsystem
-        mint_run:
-          type: string
-          title: Mint Run
-        artifacts:
-          $ref: '#/components/schemas/CreateProbeArtifactsBody'
-        status:
-          anyOf:
-          - $ref: '#/components/schemas/ProbeStatus'
-          - type: 'null'
-        created_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Created At
-      type: object
-      required:
-      - id
-      - site
-      - slot
-      - subsystem
-      - mint_run
-      - artifacts
-      title: CreateProbeBody
     ProbeState:
       properties:
         id:
@@ -275,101 +209,6 @@ components:
       - mint_run
       - created_at
       title: ProbeState
-    ReviewProbeBody:
-      properties:
-        verdict:
-          type: string
-          enum:
-          - approved
-          - rejected
-          title: Verdict
-        comment:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Comment
-      type: object
-      required:
-      - verdict
-      title: ReviewProbeBody
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ProbeArtifacts:
-      properties:
-        probe_md:
-          type: string
-          title: Probe Md
-        meta_json:
-          type: string
-          title: Meta Json
-        mutant_diff:
-          type: string
-          title: Mutant Diff
-        sentinel_py:
-          type: string
-          title: Sentinel Py
-      type: object
-      required:
-      - probe_md
-      - meta_json
-      - mutant_diff
-      - sentinel_py
-      title: ProbeArtifacts
-    ProbeComment:
-      properties:
-        author:
-          type: string
-          title: Author
-        verdict:
-          type: string
-          enum:
-          - approved
-          - rejected
-          title: Verdict
-        comment:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Comment
-        at:
-          type: string
-          format: date-time
-          title: At
-      type: object
-      required:
-      - author
-      - verdict
-      - comment
-      - at
-      title: ProbeComment
-    CreateProbeArtifactsBody:
-      properties:
-        probe_md:
-          type: string
-          title: Probe Md
-        meta_json:
-          type: string
-          title: Meta Json
-        mutant_diff:
-          type: string
-          title: Mutant Diff
-        sentinel_py:
-          type: string
-          title: Sentinel Py
-      type: object
-      required:
-      - probe_md
-      - meta_json
-      - mutant_diff
-      - sentinel_py
-      title: CreateProbeArtifactsBody
     ProbeWithArtifacts:
       properties:
         id:
@@ -422,6 +261,167 @@ components:
       - created_at
       - artifacts
       title: ProbeWithArtifacts
+    CreateProbeArtifactsBody:
+      properties:
+        probe_md:
+          type: string
+          title: Probe Md
+        meta_json:
+          type: string
+          title: Meta Json
+        mutant_diff:
+          type: string
+          title: Mutant Diff
+        sentinel_py:
+          type: string
+          title: Sentinel Py
+      type: object
+      required:
+      - probe_md
+      - meta_json
+      - mutant_diff
+      - sentinel_py
+      title: CreateProbeArtifactsBody
+    ProbeComment:
+      properties:
+        author:
+          type: string
+          title: Author
+        verdict:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Verdict
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+        at:
+          type: string
+          format: date-time
+          title: At
+      type: object
+      required:
+      - author
+      - verdict
+      - comment
+      - at
+      title: ProbeComment
+    ProbeArtifacts:
+      properties:
+        probe_md:
+          type: string
+          title: Probe Md
+        meta_json:
+          type: string
+          title: Meta Json
+        mutant_diff:
+          type: string
+          title: Mutant Diff
+        sentinel_py:
+          type: string
+          title: Sentinel Py
+      type: object
+      required:
+      - probe_md
+      - meta_json
+      - mutant_diff
+      - sentinel_py
+      title: ProbeArtifacts
+    ListProbesResponse:
+      properties:
+        probes:
+          items:
+            $ref: '#/components/schemas/ProbeState'
+          type: array
+          title: Probes
+      type: object
+      required:
+      - probes
+      title: ListProbesResponse
+    ReviewProbeBody:
+      properties:
+        verdict:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Verdict
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+      type: object
+      required:
+      - verdict
+      title: ReviewProbeBody
+    CreateProbeBody:
+      properties:
+        id:
+          type: string
+          title: Id
+        site:
+          type: string
+          title: Site
+        slot:
+          type: string
+          title: Slot
+        subsystem:
+          type: string
+          title: Subsystem
+        mint_run:
+          type: string
+          title: Mint Run
+        artifacts:
+          $ref: '#/components/schemas/CreateProbeArtifactsBody'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/ProbeStatus'
+          - type: 'null'
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - id
+      - site
+      - slot
+      - subsystem
+      - mint_run
+      - artifacts
+      title: CreateProbeBody
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http

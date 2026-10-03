@@ -396,142 +396,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ConversationListResponse:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        task:
-          type: string
-          title: Task
-        repo_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Repo Path
-        repo_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Repo Paths
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        message_count:
-          type: integer
-          title: Message Count
-          default: 0
-        is_browser:
-          type: boolean
-          title: Is Browser
-          readOnly: true
-      type: object
-      required:
-      - id
-      - task
-      - repo_path
-      - created_at
-      - updated_at
-      - is_browser
-      title: ConversationListResponse
-      description: Lightweight response for listing conversations
-    ConversationCreate:
-      properties:
-        repo_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Repo Path
-        repo_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Repo Paths
-        task:
-          type: string
-          title: Task
-        agent_configs:
-          anyOf:
-          - items:
-              additionalProperties: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Agent Configs
-      type: object
-      required:
-      - task
-      title: ConversationCreate
-    ActiveSessionResponse:
-      properties:
-        active:
-          type: boolean
-          title: Active
-        conversation_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Conversation Id
-        document_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Document Id
-      type: object
-      required:
-      - active
-      title: ActiveSessionResponse
-      description: Response from active-session — tells browser if there's a live session to reconnect to
-    ResumePreparationResponse:
-      properties:
-        conversation_id:
-          type: string
-          title: Conversation Id
-        ready:
-          type: boolean
-          title: Ready
-      type: object
-      required:
-      - conversation_id
-      - ready
-      title: ResumePreparationResponse
-      description: Response from resume/prepare — sandbox is awake and ready for session validation
     MessageAppend:
       properties:
         messages:
@@ -545,6 +409,15 @@ components:
       - messages
       title: MessageAppend
       description: For appending messages to a conversation
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ConversationResponse:
       properties:
         id:
@@ -603,29 +476,6 @@ components:
       - is_browser
       title: ConversationResponse
       description: Metadata only - no messages
-    ResumeConfirmationResponse:
-      properties:
-        conversation_id:
-          type: string
-          title: Conversation Id
-        confirmed:
-          type: boolean
-          title: Confirmed
-      type: object
-      required:
-      - conversation_id
-      - confirmed
-      title: ResumeConfirmationResponse
-      description: Response from resume/confirm — sandbox is now the active one
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ResumeRejectionResponse:
       properties:
         conversation_id:
@@ -640,6 +490,63 @@ components:
       - rejected
       title: ResumeRejectionResponse
       description: Response from resume/reject — pending sandbox cleared
+    ConversationListResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        task:
+          type: string
+          title: Task
+        repo_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Path
+        repo_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Repo Paths
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        message_count:
+          type: integer
+          title: Message Count
+          default: 0
+        is_browser:
+          type: boolean
+          title: Is Browser
+          readOnly: true
+      type: object
+      required:
+      - id
+      - task
+      - repo_path
+      - created_at
+      - updated_at
+      - is_browser
+      title: ConversationListResponse
+      description: Lightweight response for listing conversations
+    ConversationUpdate:
+      properties:
+        coordinator_session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coordinator Session Id
+      type: object
+      title: ConversationUpdate
+      description: For updating conversation metadata
     ConversationCreateResponse:
       properties:
         conversation_id:
@@ -655,16 +562,34 @@ components:
       - conversation_id
       title: ConversationCreateResponse
       description: Response when creating a new conversation
-    ConversationUpdate:
+    ResumeConfirmationResponse:
       properties:
-        coordinator_session_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Coordinator Session Id
+        conversation_id:
+          type: string
+          title: Conversation Id
+        confirmed:
+          type: boolean
+          title: Confirmed
       type: object
-      title: ConversationUpdate
-      description: For updating conversation metadata
+      required:
+      - conversation_id
+      - confirmed
+      title: ResumeConfirmationResponse
+      description: Response from resume/confirm — sandbox is now the active one
+    ResumePreparationResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        ready:
+          type: boolean
+          title: Ready
+      type: object
+      required:
+      - conversation_id
+      - ready
+      title: ResumePreparationResponse
+      description: Response from resume/prepare — sandbox is awake and ready for session validation
     MessageUpdate:
       properties:
         document_id:
@@ -680,6 +605,81 @@ components:
       type: object
       title: MessageUpdate
       description: For updating a specific message in a conversation
+    ActiveSessionResponse:
+      properties:
+        active:
+          type: boolean
+          title: Active
+        conversation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conversation Id
+        document_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Id
+      type: object
+      required:
+      - active
+      title: ActiveSessionResponse
+      description: Response from active-session — tells browser if there's a live session to reconnect to
+    ConversationCreate:
+      properties:
+        repo_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Path
+        repo_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Repo Paths
+        task:
+          type: string
+          title: Task
+        agent_configs:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Agent Configs
+      type: object
+      required:
+      - task
+      title: ConversationCreate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http

@@ -173,28 +173,190 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    PriorReviewDecision:
+    StartedReviewerResponse:
       properties:
-        decision:
+        reviewer_id:
           type: string
-          enum:
-          - approved
-          - rejected
-          title: Decision
-        decided_at:
+          title: Reviewer Id
+        request_id:
           type: string
-          format: date-time
-          title: Decided At
+          title: Request Id
+        display_name:
+          type: string
+          title: Display Name
+        model:
+          type: string
+          title: Model
+        mode:
+          type: string
+          title: Mode
+        turn_id:
+          type: string
+          title: Turn Id
       type: object
       required:
-      - decision
-      - decided_at
-      title: PriorReviewDecision
+      - reviewer_id
+      - request_id
+      - display_name
+      - model
+      - mode
+      - turn_id
+      title: StartedReviewerResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CommentSnapshot:
+      properties:
+        id:
+          type: string
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        author_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Author Display Name
+        content:
+          type: string
+          title: Content
+        anchor_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Anchor Text
+        resolved:
+          type: boolean
+          title: Resolved
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - content
+      - resolved
+      - created_at
+      title: CommentSnapshot
+      description: 'Comment projection for agent context — derived from `thread_comments`
+
+        joined with `threads` and the author''s user profile.
+
+
+        Replies share `parent_id` = the thread''s first comment id (so the agent
+
+        prompt''s `<comments>` block keeps its `reply_to` thread structure intact).
+
+        `anchor_text` carries the prosemirror range the thread anchors to (mirrored
+
+        from hocuspocus when the comment mark lands in the Y.Doc); null for
+
+        pre-anchor threads and threads whose anchor was lost to a concurrent edit.'
+    AgentCommentResponse:
+      properties:
+        thread_id:
+          type: string
+          title: Thread Id
+        resolved_anchor_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resolved Anchor Text
+      type: object
+      required:
+      - thread_id
+      title: AgentCommentResponse
+    ConnectedSource:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        linked_by_user_id:
+          type: string
+          title: Linked By User Id
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+        config:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceConfig'
+          - $ref: '#/components/schemas/SlackSourceConfig'
+          - $ref: '#/components/schemas/UploadedFileSourceConfig'
+          title: Config
+        metadata:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceMetadata'
+          - $ref: '#/components/schemas/SlackSourceMetadata'
+          - $ref: '#/components/schemas/UploadedFileSourceMetadata'
+          title: Metadata
+      type: object
+      required:
+      - linked_by_user_id
+      - adapter
+      - config
+      - metadata
+      title: ConnectedSource
+    SnapshotInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - id
+      - content
+      title: SnapshotInfo
     AgentFinishBody:
       properties: {}
       type: object
       title: AgentFinishBody
       description: 'Empty body: the agent does not choose a verdict; finish records approved.'
+    AgentCommentBody:
+      properties:
+        quote:
+          type: string
+          title: Quote
+        body:
+          type: string
+          title: Body
+        context_before:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Context Before
+        context_after:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Context After
+      type: object
+      required:
+      - quote
+      - body
+      title: AgentCommentBody
+      description: A quote-anchored review comment from a synthetic reviewer.
     SlackSourceConfig:
       properties:
         slack_team_id:
@@ -209,6 +371,144 @@ components:
       - channel_id
       title: SlackSourceConfig
       description: Configuration for a Slack source
+    GitHubSourceMetadata:
+      properties:
+        installation_id:
+          type: integer
+          title: Installation Id
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - installation_id
+      - commit_sha
+      title: GitHubSourceMetadata
+      description: Metadata for a GitHub source
+    ReviewerContextTurn:
+      properties:
+        id:
+          type: string
+          title: Id
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        user_display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Display Name
+        user_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Message
+        assistant_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Text
+        message_deltas:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Message Deltas
+        usage:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Usage
+      type: object
+      required:
+      - id
+      - parent_id
+      - user_message
+      - assistant_text
+      title: ReviewerContextTurn
+      description: 'A snapshot-scoped thread turn for agent hydration. `parent_id` is the
+
+        linear chain pointer; user authorship is always the reviewer.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    GitHubSourceConfig:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceConfig
+      description: Configuration for a GitHub source
+    UploadedFileSourceConfig:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+      type: object
+      required:
+      - file_id
+      title: UploadedFileSourceConfig
+      description: Configuration for an uploaded file source
+    RequestCounselBody:
+      properties:
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+        agents:
+          items:
+            $ref: '#/components/schemas/AgentSpecBody'
+          type: array
+          maxItems: 5
+          minItems: 1
+          title: Agents
+      type: object
+      required:
+      - snapshot_id
+      - agents
+      title: RequestCounselBody
+    SourceVisibility:
+      type: string
+      enum:
+      - private
+      - public
+      title: SourceVisibility
+      description: Visibility level of a source
     SlackSourceMetadata:
       properties:
         team_name:
@@ -228,83 +528,6 @@ components:
       - channel_name
       title: SlackSourceMetadata
       description: Metadata for a Slack source
-    UploadedFileSourceMetadata:
-      properties:
-        filename:
-          type: string
-          title: Filename
-        content_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content Type
-        size_bytes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size Bytes
-      type: object
-      required:
-      - filename
-      title: UploadedFileSourceMetadata
-      description: Metadata for an uploaded file source
-    RequestCounselBody:
-      properties:
-        snapshot_id:
-          type: string
-          title: Snapshot Id
-        agents:
-          items:
-            $ref: '#/components/schemas/AgentSpecBody'
-          type: array
-          maxItems: 5
-          minItems: 1
-          title: Agents
-      type: object
-      required:
-      - snapshot_id
-      - agents
-      title: RequestCounselBody
-    AdapterType:
-      type: string
-      enum:
-      - github
-      - slack
-      - uploaded_file
-      title: AdapterType
-      description: Type of source adapter (github, uploaded_file, etc.)
-    GitHubSourceConfig:
-      properties:
-        repo:
-          type: string
-          title: Repo
-        branch:
-          type: string
-          title: Branch
-      type: object
-      required:
-      - repo
-      - branch
-      title: GitHubSourceConfig
-      description: Configuration for a GitHub source
-    RequestCounselResponse:
-      properties:
-        reviewers:
-          items:
-            $ref: '#/components/schemas/StartedReviewerResponse'
-          type: array
-          title: Reviewers
-      type: object
-      required:
-      - reviewers
-      title: RequestCounselResponse
-    SourceVisibility:
-      type: string
-      enum:
-      - private
-      - public
-      title: SourceVisibility
-      description: Visibility level of a source
     WorkspaceContextInfo:
       properties:
         id:
@@ -336,32 +559,51 @@ components:
       required:
       - id
       title: WorkspaceContextInfo
-    ValidationError:
+    PriorReviewDecision:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        decision:
           type: string
-          title: Message
-        type:
+          enum:
+          - approved
+          - rejected
+          title: Decision
+        decided_at:
           type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          format: date-time
+          title: Decided At
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - decision
+      - decided_at
+      title: PriorReviewDecision
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
+    UploadedFileSourceMetadata:
+      properties:
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - filename
+      title: UploadedFileSourceMetadata
+      description: Metadata for an uploaded file source
     AgentDecisionResponse:
       properties:
         id:
@@ -473,222 +715,6 @@ components:
         closed request carries an approved decision; the UI hides the verdict for
 
         agent reviewers.'
-    AgentCommentResponse:
-      properties:
-        thread_id:
-          type: string
-          title: Thread Id
-        resolved_anchor_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Resolved Anchor Text
-      type: object
-      required:
-      - thread_id
-      title: AgentCommentResponse
-    ConnectedSource:
-      properties:
-        id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Id
-        linked_by_user_id:
-          type: string
-          title: Linked By User Id
-        adapter:
-          $ref: '#/components/schemas/AdapterType'
-        visibility:
-          $ref: '#/components/schemas/SourceVisibility'
-          default: private
-        config:
-          anyOf:
-          - $ref: '#/components/schemas/GitHubSourceConfig'
-          - $ref: '#/components/schemas/SlackSourceConfig'
-          - $ref: '#/components/schemas/UploadedFileSourceConfig'
-          title: Config
-        metadata:
-          anyOf:
-          - $ref: '#/components/schemas/GitHubSourceMetadata'
-          - $ref: '#/components/schemas/SlackSourceMetadata'
-          - $ref: '#/components/schemas/UploadedFileSourceMetadata'
-          title: Metadata
-      type: object
-      required:
-      - linked_by_user_id
-      - adapter
-      - config
-      - metadata
-      title: ConnectedSource
-    CommentSnapshot:
-      properties:
-        id:
-          type: string
-          title: Id
-        parent_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Parent Id
-        author_display_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Author Display Name
-        content:
-          type: string
-          title: Content
-        anchor_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Anchor Text
-        resolved:
-          type: boolean
-          title: Resolved
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - content
-      - resolved
-      - created_at
-      title: CommentSnapshot
-      description: 'Comment projection for agent context — derived from `thread_comments`
-
-        joined with `threads` and the author''s user profile.
-
-
-        Replies share `parent_id` = the thread''s first comment id (so the agent
-
-        prompt''s `<comments>` block keeps its `reply_to` thread structure intact).
-
-        `anchor_text` carries the prosemirror range the thread anchors to (mirrored
-
-        from hocuspocus when the comment mark lands in the Y.Doc); null for
-
-        pre-anchor threads and threads whose anchor was lost to a concurrent edit.'
-    StartedReviewerResponse:
-      properties:
-        reviewer_id:
-          type: string
-          title: Reviewer Id
-        request_id:
-          type: string
-          title: Request Id
-        display_name:
-          type: string
-          title: Display Name
-        model:
-          type: string
-          title: Model
-        mode:
-          type: string
-          title: Mode
-        turn_id:
-          type: string
-          title: Turn Id
-      type: object
-      required:
-      - reviewer_id
-      - request_id
-      - display_name
-      - model
-      - mode
-      - turn_id
-      title: StartedReviewerResponse
-    AgentCommentBody:
-      properties:
-        quote:
-          type: string
-          title: Quote
-        body:
-          type: string
-          title: Body
-        context_before:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Context Before
-        context_after:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Context After
-      type: object
-      required:
-      - quote
-      - body
-      title: AgentCommentBody
-      description: A quote-anchored review comment from a synthetic reviewer.
-    GitHubSourceMetadata:
-      properties:
-        installation_id:
-          type: integer
-          title: Installation Id
-        commit_sha:
-          type: string
-          title: Commit Sha
-      type: object
-      required:
-      - installation_id
-      - commit_sha
-      title: GitHubSourceMetadata
-      description: Metadata for a GitHub source
-    ReviewerContextTurn:
-      properties:
-        id:
-          type: string
-          title: Id
-        parent_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Parent Id
-        user_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Id
-        user_display_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Display Name
-        user_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Message
-        assistant_text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Assistant Text
-        message_deltas:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Message Deltas
-        usage:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Usage
-      type: object
-      required:
-      - id
-      - parent_id
-      - user_message
-      - assistant_text
-      title: ReviewerContextTurn
-      description: 'A snapshot-scoped thread turn for agent hydration. `parent_id` is the
-
-        linear chain pointer; user authorship is always the reviewer.'
     AgentSpecBody:
       properties:
         model:
@@ -702,33 +728,17 @@ components:
       - model
       - mode
       title: AgentSpecBody
-    SnapshotInfo:
+    RequestCounselResponse:
       properties:
-        id:
-          type: string
-          title: Id
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        content:
-          type: string
-          title: Content
+        reviewers:
+          items:
+            $ref: '#/components/schemas/StartedReviewerResponse'
+          type: array
+          title: Reviewers
       type: object
       required:
-      - id
-      - content
-      title: SnapshotInfo
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - reviewers
+      title: RequestCounselResponse
     AgentCounselContextResponse:
       properties:
         snapshot:
@@ -757,16 +767,6 @@ components:
         owns its own name + OpenAPI id, decoupled from review-chat. ``turns`` is always
 
         empty (a counsel review is a single fire-and-forget pass).'
-    UploadedFileSourceConfig:
-      properties:
-        file_id:
-          type: string
-          title: File Id
-      type: object
-      required:
-      - file_id
-      title: UploadedFileSourceConfig
-      description: Configuration for an uploaded file source
   securitySchemes:
     HTTPBearer:
       type: http

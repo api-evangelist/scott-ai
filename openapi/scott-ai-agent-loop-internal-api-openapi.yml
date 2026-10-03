@@ -112,41 +112,38 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
+    RetrievalResult:
       properties:
-        loc:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        retrieval:
+          anyOf:
+          - $ref: '#/components/schemas/GitRetrievalDetails'
+          - $ref: '#/components/schemas/FileRetrievalDetails'
+          title: Retrieval
+      type: object
+      required:
+      - adapter
+      - retrieval
+      title: RetrievalResult
+      description: Result of retrieving a source (how to actually fetch it)
+    HTTPValidationError:
+      properties:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Detail
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    RedeemHandoffRequest:
-      properties:
-        handoff_code:
-          type: string
-          title: Handoff Code
-      type: object
-      required:
-      - handoff_code
-      title: RedeemHandoffRequest
+      title: HTTPValidationError
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
     GitRetrievalDetails:
       properties:
         kind:
@@ -176,15 +173,6 @@ components:
       - commit_sha
       title: GitRetrievalDetails
       description: Details for retrieving source via git clone
-    RedeemHandoffResponse:
-      properties:
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - token
-      title: RedeemHandoffResponse
     FileRetrievalDetails:
       properties:
         kind:
@@ -212,30 +200,15 @@ components:
       - filename
       title: FileRetrievalDetails
       description: Details for retrieving source via file download
-    RetrievalResult:
+    RedeemHandoffRequest:
       properties:
-        adapter:
-          $ref: '#/components/schemas/AdapterType'
-        retrieval:
-          anyOf:
-          - $ref: '#/components/schemas/GitRetrievalDetails'
-          - $ref: '#/components/schemas/FileRetrievalDetails'
-          title: Retrieval
+        handoff_code:
+          type: string
+          title: Handoff Code
       type: object
       required:
-      - adapter
-      - retrieval
-      title: RetrievalResult
-      description: Result of retrieving a source (how to actually fetch it)
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - handoff_code
+      title: RedeemHandoffRequest
     RetrievalKind:
       type: string
       enum:
@@ -243,14 +216,41 @@ components:
       - file
       title: RetrievalKind
       description: Kind of retrieval method (git clone, file download, etc.)
-    AdapterType:
-      type: string
-      enum:
-      - github
-      - slack
-      - uploaded_file
-      title: AdapterType
-      description: Type of source adapter (github, uploaded_file, etc.)
+    RedeemHandoffResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: RedeemHandoffResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http

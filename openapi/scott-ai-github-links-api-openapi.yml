@@ -123,32 +123,30 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
+    HTTPValidationError:
       properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WriteLinksResponse:
+      properties:
+        linked_snapshot_ids:
+          items:
+            type: string
+          type: array
+          title: Linked Snapshot Ids
+        comment_patched:
+          type: boolean
+          title: Comment Patched
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - linked_snapshot_ids
+      - comment_patched
+      title: WriteLinksResponse
     LinkableNode:
       properties:
         snapshot_id:
@@ -174,19 +172,6 @@ components:
       - created_at
       - approval_state
       title: LinkableNode
-    WorkspacePrLinksResponse:
-      properties:
-        links:
-          additionalProperties:
-            items:
-              $ref: '#/components/schemas/WorkspacePrLink'
-            type: array
-          type: object
-          title: Links
-      type: object
-      required:
-      - links
-      title: WorkspacePrLinksResponse
     LinkableNodesResponse:
       properties:
         nodes:
@@ -198,15 +183,6 @@ components:
       required:
       - nodes
       title: LinkableNodesResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     WorkspacePrLink:
       properties:
         pr_number:
@@ -234,6 +210,19 @@ components:
       - linked_at
       - linked_by_user_id
       title: WorkspacePrLink
+    WorkspacePrLinksResponse:
+      properties:
+        links:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/WorkspacePrLink'
+            type: array
+          type: object
+          title: Links
+      type: object
+      required:
+      - links
+      title: WorkspacePrLinksResponse
     PrLinksResponse:
       properties:
         snapshot_ids:
@@ -272,21 +261,32 @@ components:
       - workspace_id
       - snapshot_ids
       title: WriteLinksRequest
-    WriteLinksResponse:
+    ValidationError:
       properties:
-        linked_snapshot_ids:
+        loc:
           items:
-            type: string
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Linked Snapshot Ids
-        comment_patched:
-          type: boolean
-          title: Comment Patched
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
-      - linked_snapshot_ids
-      - comment_patched
-      title: WriteLinksResponse
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http
