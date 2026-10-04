@@ -79,15 +79,17 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    PendingWalkthroughResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
       type: object
-      title: HTTPValidationError
+      required:
+      - name
+      title: PendingWalkthroughResponse
     WalkthroughActionResponse:
       properties:
         name:
@@ -104,6 +106,15 @@ components:
       - name
       - status
       title: WalkthroughActionResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -130,17 +141,6 @@ components:
       - msg
       - type
       title: ValidationError
-    PendingWalkthroughResponse:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-      type: object
-      required:
-      - name
-      title: PendingWalkthroughResponse
   securitySchemes:
     HTTPBearer:
       type: http

@@ -137,15 +137,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     SubscriptionStatusRequest:
       properties:
         email:
@@ -169,65 +160,6 @@ components:
       required:
       - url
       title: CustomerPortalResponse
-    UsageStatusResponse:
-      properties:
-        plan_tier:
-          type: string
-          title: Plan Tier
-        conversation_count:
-          type: integer
-          title: Conversation Count
-        limit:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Limit
-        day_start_date:
-          type: string
-          title: Day Start Date
-        resets_at:
-          type: string
-          title: Resets At
-      type: object
-      required:
-      - plan_tier
-      - conversation_count
-      - limit
-      - day_start_date
-      - resets_at
-      title: UsageStatusResponse
-    CustomerPortalRequest:
-      properties:
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-      type: object
-      title: CustomerPortalRequest
-    CheckoutSessionRequest:
-      properties:
-        priceId:
-          type: string
-          title: Priceid
-        quantity:
-          type: integer
-          title: Quantity
-          default: 1
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-        return_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Return Url
-      type: object
-      required:
-      - priceId
-      title: CheckoutSessionRequest
     TurnUsageStatusResponse:
       properties:
         plan_tier:
@@ -257,6 +189,15 @@ components:
       - is_throttled
       - window_resets_at
       title: TurnUsageStatusResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     SubscriptionStatusResponse:
       properties:
         status:
@@ -295,6 +236,65 @@ components:
       - status
       - plan
       title: SubscriptionStatusResponse
+    UsageStatusResponse:
+      properties:
+        plan_tier:
+          type: string
+          title: Plan Tier
+        conversation_count:
+          type: integer
+          title: Conversation Count
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+        day_start_date:
+          type: string
+          title: Day Start Date
+        resets_at:
+          type: string
+          title: Resets At
+      type: object
+      required:
+      - plan_tier
+      - conversation_count
+      - limit
+      - day_start_date
+      - resets_at
+      title: UsageStatusResponse
+    CheckoutSessionRequest:
+      properties:
+        priceId:
+          type: string
+          title: Priceid
+        quantity:
+          type: integer
+          title: Quantity
+          default: 1
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        return_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Return Url
+      type: object
+      required:
+      - priceId
+      title: CheckoutSessionRequest
+    CustomerPortalRequest:
+      properties:
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+      type: object
+      title: CustomerPortalRequest
     CheckoutSessionResponse:
       properties:
         url:

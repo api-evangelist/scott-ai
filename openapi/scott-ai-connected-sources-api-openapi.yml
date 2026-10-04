@@ -212,39 +212,8 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    UploadedFileSourceMetadata:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    OAuthBeginSetupResult:
-      properties:
-        setup_kind:
-          type: string
-          const: oauth
-          title: Setup Kind
-          default: oauth
-        url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Url
-      type: object
-      title: OAuthBeginSetupResult
-    UploadedFileAvailableSource:
-      properties:
-        adapter:
-          type: string
-          const: uploaded_file
-          title: Adapter
-          default: uploaded_file
-        file_id:
-          type: string
-          title: File Id
         filename:
           type: string
           title: Filename
@@ -258,16 +227,81 @@ components:
           - type: integer
           - type: 'null'
           title: Size Bytes
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
       type: object
       required:
-      - file_id
       - filename
-      - created_at
-      title: UploadedFileAvailableSource
+      title: UploadedFileSourceMetadata
+      description: Metadata for an uploaded file source
+    ConnectedSourceSetupStartResponse:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        setup_token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Setup Token
+        expires_in:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expires In
+        setup:
+          anyOf:
+          - $ref: '#/components/schemas/OAuthBeginSetupResult'
+          - $ref: '#/components/schemas/UploadBeginSetupResult'
+          title: Setup
+      type: object
+      required:
+      - adapter
+      - setup
+      title: ConnectedSourceSetupStartResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AdapterType:
+      type: string
+      enum:
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
+    CreateWorkspaceConnectedSourceRequest:
+      properties:
+        adapter:
+          $ref: '#/components/schemas/AdapterType'
+        selection:
+          anyOf:
+          - $ref: '#/components/schemas/GitHubSourceSelection'
+          - $ref: '#/components/schemas/SlackSourceSelection'
+          - $ref: '#/components/schemas/UploadedFileSourceSelection'
+          title: Selection
+      type: object
+      required:
+      - adapter
+      - selection
+      title: CreateWorkspaceConnectedSourceRequest
+    SlackSourceConfig:
+      properties:
+        slack_team_id:
+          type: string
+          title: Slack Team Id
+        channel_id:
+          type: string
+          title: Channel Id
+      type: object
+      required:
+      - slack_team_id
+      - channel_id
+      title: SlackSourceConfig
+      description: Configuration for a Slack source
     ConnectedSource:
       properties:
         id:
@@ -316,47 +350,97 @@ components:
       required:
       - items
       title: ListAvailableConnectedSourcesResponse
-    SlackSourceConfig:
+    GitHubRepoAvailableSourceBranch:
       properties:
-        slack_team_id:
+        name:
           type: string
-          title: Slack Team Id
-        channel_id:
-          type: string
-          title: Channel Id
-      type: object
-      required:
-      - slack_team_id
-      - channel_id
-      title: SlackSourceConfig
-      description: Configuration for a Slack source
-    UploadedFileSourceSelection:
-      properties:
-        file_id:
-          type: string
-          title: File Id
-        visibility:
-          $ref: '#/components/schemas/SourceVisibility'
-          default: private
-      type: object
-      required:
-      - file_id
-      title: UploadedFileSourceSelection
-      description: User's selection when connecting an uploaded file source
-    GitHubSourceMetadata:
-      properties:
-        installation_id:
-          type: integer
-          title: Installation Id
+          title: Name
         commit_sha:
           type: string
           title: Commit Sha
       type: object
       required:
-      - installation_id
+      - name
       - commit_sha
-      title: GitHubSourceMetadata
-      description: Metadata for a GitHub source
+      title: GitHubRepoAvailableSourceBranch
+    GitHubBeginSetupInput:
+      properties:
+        redirect_to:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Redirect To
+      type: object
+      title: GitHubBeginSetupInput
+    Body_start_uploaded_file_connected_source_setup:
+      properties:
+        file:
+          type: string
+          contentMediaType: application/octet-stream
+          title: File
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+      type: object
+      required:
+      - file
+      title: Body_start_uploaded_file_connected_source_setup
+    UploadedFileAvailableSource:
+      properties:
+        adapter:
+          type: string
+          const: uploaded_file
+          title: Adapter
+          default: uploaded_file
+        file_id:
+          type: string
+          title: File Id
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - file_id
+      - filename
+      - created_at
+      title: UploadedFileAvailableSource
+    SlackBeginSetupInput:
+      properties:
+        redirect_to:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Redirect To
+      type: object
+      title: SlackBeginSetupInput
+    GitHubSourceConfig:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceConfig
+      description: Configuration for a GitHub source
     SlackChannelAvailableSource:
       properties:
         adapter:
@@ -388,21 +472,78 @@ components:
       - channel_id
       - channel_name
       title: SlackChannelAvailableSource
-    CreateWorkspaceConnectedSourceRequest:
+    ValidationError:
       properties:
-        adapter:
-          $ref: '#/components/schemas/AdapterType'
-        selection:
-          anyOf:
-          - $ref: '#/components/schemas/GitHubSourceSelection'
-          - $ref: '#/components/schemas/SlackSourceSelection'
-          - $ref: '#/components/schemas/UploadedFileSourceSelection'
-          title: Selection
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
-      - adapter
-      - selection
-      title: CreateWorkspaceConnectedSourceRequest
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    GitHubSourceSelection:
+      properties:
+        repo:
+          type: string
+          title: Repo
+        branch:
+          type: string
+          title: Branch
+      type: object
+      required:
+      - repo
+      - branch
+      title: GitHubSourceSelection
+      description: User's selection when connecting a GitHub source
+    SlackSourceMetadata:
+      properties:
+        team_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Team Name
+        channel_name:
+          type: string
+          title: Channel Name
+        is_private:
+          type: boolean
+          title: Is Private
+          default: false
+      type: object
+      required:
+      - channel_name
+      title: SlackSourceMetadata
+      description: Metadata for a Slack source
+    UploadedFileSourceSelection:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+        visibility:
+          $ref: '#/components/schemas/SourceVisibility'
+          default: private
+      type: object
+      required:
+      - file_id
+      title: UploadedFileSourceSelection
+      description: User's selection when connecting an uploaded file source
     SlackSourceSelection:
       properties:
         slack_team_id:
@@ -417,6 +558,34 @@ components:
       - channel_id
       title: SlackSourceSelection
       description: User's selection when connecting a Slack source
+    UploadBeginSetupResult:
+      properties:
+        setup_kind:
+          type: string
+          const: upload
+          title: Setup Kind
+          default: upload
+        file_id:
+          type: string
+          title: File Id
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - file_id
+      - filename
+      title: UploadBeginSetupResult
     GitHubRepoAvailableSource:
       properties:
         adapter:
@@ -450,83 +619,6 @@ components:
       required:
       - full_name
       title: GitHubRepoAvailableSource
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    Body_start_uploaded_file_connected_source_setup:
-      properties:
-        file:
-          type: string
-          contentMediaType: application/octet-stream
-          title: File
-        visibility:
-          $ref: '#/components/schemas/SourceVisibility'
-          default: private
-      type: object
-      required:
-      - file
-      title: Body_start_uploaded_file_connected_source_setup
-    ConnectedSourceSetupStartResponse:
-      properties:
-        adapter:
-          $ref: '#/components/schemas/AdapterType'
-        setup_token:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Setup Token
-        expires_in:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Expires In
-        setup:
-          anyOf:
-          - $ref: '#/components/schemas/OAuthBeginSetupResult'
-          - $ref: '#/components/schemas/UploadBeginSetupResult'
-          title: Setup
-      type: object
-      required:
-      - adapter
-      - setup
-      title: ConnectedSourceSetupStartResponse
-    GitHubSourceConfig:
-      properties:
-        repo:
-          type: string
-          title: Repo
-        branch:
-          type: string
-          title: Branch
-      type: object
-      required:
-      - repo
-      - branch
-      title: GitHubSourceConfig
-      description: Configuration for a GitHub source
     UploadedFileSourceConfig:
       properties:
         file_id:
@@ -537,15 +629,34 @@ components:
       - file_id
       title: UploadedFileSourceConfig
       description: Configuration for an uploaded file source
-    SlackBeginSetupInput:
+    OAuthBeginSetupResult:
       properties:
-        redirect_to:
+        setup_kind:
+          type: string
+          const: oauth
+          title: Setup Kind
+          default: oauth
+        url:
           anyOf:
           - type: string
           - type: 'null'
-          title: Redirect To
+          title: Url
       type: object
-      title: SlackBeginSetupInput
+      title: OAuthBeginSetupResult
+    GitHubSourceMetadata:
+      properties:
+        installation_id:
+          type: integer
+          title: Installation Id
+        commit_sha:
+          type: string
+          title: Commit Sha
+      type: object
+      required:
+      - installation_id
+      - commit_sha
+      title: GitHubSourceMetadata
+      description: Metadata for a GitHub source
     SourceVisibility:
       type: string
       enum:
@@ -553,117 +664,6 @@ components:
       - public
       title: SourceVisibility
       description: Visibility level of a source
-    SlackSourceMetadata:
-      properties:
-        team_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Team Name
-        channel_name:
-          type: string
-          title: Channel Name
-        is_private:
-          type: boolean
-          title: Is Private
-          default: false
-      type: object
-      required:
-      - channel_name
-      title: SlackSourceMetadata
-      description: Metadata for a Slack source
-    GitHubRepoAvailableSourceBranch:
-      properties:
-        name:
-          type: string
-          title: Name
-        commit_sha:
-          type: string
-          title: Commit Sha
-      type: object
-      required:
-      - name
-      - commit_sha
-      title: GitHubRepoAvailableSourceBranch
-    AdapterType:
-      type: string
-      enum:
-      - github
-      - slack
-      - uploaded_file
-      title: AdapterType
-      description: Type of source adapter (github, uploaded_file, etc.)
-    UploadedFileSourceMetadata:
-      properties:
-        filename:
-          type: string
-          title: Filename
-        content_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content Type
-        size_bytes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size Bytes
-      type: object
-      required:
-      - filename
-      title: UploadedFileSourceMetadata
-      description: Metadata for an uploaded file source
-    UploadBeginSetupResult:
-      properties:
-        setup_kind:
-          type: string
-          const: upload
-          title: Setup Kind
-          default: upload
-        file_id:
-          type: string
-          title: File Id
-        filename:
-          type: string
-          title: Filename
-        content_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content Type
-        size_bytes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size Bytes
-      type: object
-      required:
-      - file_id
-      - filename
-      title: UploadBeginSetupResult
-    GitHubSourceSelection:
-      properties:
-        repo:
-          type: string
-          title: Repo
-        branch:
-          type: string
-          title: Branch
-      type: object
-      required:
-      - repo
-      - branch
-      title: GitHubSourceSelection
-      description: User's selection when connecting a GitHub source
-    GitHubBeginSetupInput:
-      properties:
-        redirect_to:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Redirect To
-      type: object
-      title: GitHubBeginSetupInput
   securitySchemes:
     HTTPBearer:
       type: http

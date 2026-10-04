@@ -37,6 +37,35 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    IntegrationType:
+      type: string
+      enum:
+      - github
+      - slack
+      title: IntegrationType
+      description: Type of OAuth integration that produces a third-party install.
+    ListIntegrationsResponse:
+      properties:
+        items:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/GitHubInstall'
+            - $ref: '#/components/schemas/SlackInstall'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: ListIntegrationsResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     SlackInstall:
       properties:
         integration_type:
@@ -60,28 +89,6 @@ components:
       - slack_team_id
       - status
       title: SlackInstall
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ListIntegrationsResponse:
-      properties:
-        items:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/GitHubInstall'
-            - $ref: '#/components/schemas/SlackInstall'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: ListIntegrationsResponse
     GitHubInstall:
       properties:
         integration_type:
@@ -105,13 +112,6 @@ components:
       - installation_id
       - status
       title: GitHubInstall
-    IntegrationType:
-      type: string
-      enum:
-      - github
-      - slack
-      title: IntegrationType
-      description: Type of OAuth integration that produces a third-party install.
     ValidationError:
       properties:
         loc:

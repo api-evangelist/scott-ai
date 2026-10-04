@@ -123,6 +123,19 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    WorkspacePrLinksResponse:
+      properties:
+        links:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/WorkspacePrLink'
+            type: array
+          type: object
+          title: Links
+      type: object
+      required:
+      - links
+      title: WorkspacePrLinksResponse
     HTTPValidationError:
       properties:
         detail:
@@ -132,21 +145,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    WriteLinksResponse:
-      properties:
-        linked_snapshot_ids:
-          items:
-            type: string
-          type: array
-          title: Linked Snapshot Ids
-        comment_patched:
-          type: boolean
-          title: Comment Patched
-      type: object
-      required:
-      - linked_snapshot_ids
-      - comment_patched
-      title: WriteLinksResponse
     LinkableNode:
       properties:
         snapshot_id:
@@ -172,17 +170,32 @@ components:
       - created_at
       - approval_state
       title: LinkableNode
-    LinkableNodesResponse:
+    WriteLinksResponse:
       properties:
-        nodes:
+        linked_snapshot_ids:
           items:
-            $ref: '#/components/schemas/LinkableNode'
+            type: string
           type: array
-          title: Nodes
+          title: Linked Snapshot Ids
+        comment_patched:
+          type: boolean
+          title: Comment Patched
       type: object
       required:
-      - nodes
-      title: LinkableNodesResponse
+      - linked_snapshot_ids
+      - comment_patched
+      title: WriteLinksResponse
+    PrLinksResponse:
+      properties:
+        snapshot_ids:
+          items:
+            type: string
+          type: array
+          title: Snapshot Ids
+      type: object
+      required:
+      - snapshot_ids
+      title: PrLinksResponse
     WorkspacePrLink:
       properties:
         pr_number:
@@ -210,30 +223,6 @@ components:
       - linked_at
       - linked_by_user_id
       title: WorkspacePrLink
-    WorkspacePrLinksResponse:
-      properties:
-        links:
-          additionalProperties:
-            items:
-              $ref: '#/components/schemas/WorkspacePrLink'
-            type: array
-          type: object
-          title: Links
-      type: object
-      required:
-      - links
-      title: WorkspacePrLinksResponse
-    PrLinksResponse:
-      properties:
-        snapshot_ids:
-          items:
-            type: string
-          type: array
-          title: Snapshot Ids
-      type: object
-      required:
-      - snapshot_ids
-      title: PrLinksResponse
     WriteLinksRequest:
       properties:
         repo:
@@ -261,6 +250,17 @@ components:
       - workspace_id
       - snapshot_ids
       title: WriteLinksRequest
+    LinkableNodesResponse:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/LinkableNode'
+          type: array
+          title: Nodes
+      type: object
+      required:
+      - nodes
+      title: LinkableNodesResponse
     ValidationError:
       properties:
         loc:

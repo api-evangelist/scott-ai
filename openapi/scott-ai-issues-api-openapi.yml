@@ -34,33 +34,6 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    IssueField:
-      properties:
-        label:
-          type: string
-          maxLength: 80
-          minLength: 1
-          title: Label
-        value:
-          type: string
-          maxLength: 400
-          minLength: 1
-          title: Value
-      type: object
-      required:
-      - label
-      - value
-      title: IssueField
-      description: A labelled value rendered into the Linear issue description (e.g. Category).
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     FileIssueRequest:
       properties:
         title:
@@ -106,6 +79,33 @@ components:
       required:
       - title
       title: FileIssueRequest
+    IssueField:
+      properties:
+        label:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Label
+        value:
+          type: string
+          maxLength: 400
+          minLength: 1
+          title: Value
+      type: object
+      required:
+      - label
+      - value
+      title: IssueField
+      description: A labelled value rendered into the Linear issue description (e.g. Category).
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     FileIssueResponse:
       properties:
         issue_url:

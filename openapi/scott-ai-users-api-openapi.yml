@@ -348,6 +348,100 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    CompleteOnboardingResponse:
+      properties:
+        profile:
+          $ref: '#/components/schemas/UserProfileResponse'
+        current_org:
+          $ref: '#/components/schemas/OrgRefDTO'
+      type: object
+      required:
+      - profile
+      - current_org
+      title: CompleteOnboardingResponse
+    CurrentOrg:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        claimed_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Claimed Domain
+        external_sharing_enabled:
+          type: boolean
+          title: External Sharing Enabled
+        viewer_role:
+          type: string
+          enum:
+          - owner
+          - admin
+          - member
+          title: Viewer Role
+        is_personal:
+          type: boolean
+          title: Is Personal
+          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
+          readOnly: true
+      type: object
+      required:
+      - id
+      - name
+      - external_sharing_enabled
+      - viewer_role
+      - is_personal
+      title: CurrentOrg
+      description: 'The viewer''s own org — adds the fields the renderer needs to render settings
+
+        without a second round-trip: the toggle value plus the viewer''s role for owner-gated UI.'
+    AddWorkspaceMemberRequest:
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          title: Email
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+          default: editor
+      type: object
+      required:
+      - email
+      title: AddWorkspaceMemberRequest
+    OrgRefDTO:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        claimed_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Claimed Domain
+        is_personal:
+          type: boolean
+          title: Is Personal
+          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
+          readOnly: true
+      type: object
+      required:
+      - id
+      - name
+      - is_personal
+      title: OrgRefDTO
+      description: Lightweight {id, name, is_personal} pointer used by settings and onboarding flows.
     UserIdentityResponse:
       properties:
         user_id:
@@ -392,177 +486,6 @@ components:
       required:
       - kind
       title: _TeamOnboarding
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    UpdateMemberRoleRequest:
-      properties:
-        role:
-          type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-      type: object
-      required:
-      - role
-      title: UpdateMemberRoleRequest
-    UpdateProfileRequest:
-      properties:
-        display_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Display Name
-        avatar_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Avatar Url
-      type: object
-      title: UpdateProfileRequest
-    CurrentOrg:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        claimed_domain:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Claimed Domain
-        external_sharing_enabled:
-          type: boolean
-          title: External Sharing Enabled
-        viewer_role:
-          type: string
-          enum:
-          - owner
-          - admin
-          - member
-          title: Viewer Role
-        is_personal:
-          type: boolean
-          title: Is Personal
-          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
-          readOnly: true
-      type: object
-      required:
-      - id
-      - name
-      - external_sharing_enabled
-      - viewer_role
-      - is_personal
-      title: CurrentOrg
-      description: 'The viewer''s own org — adds the fields the renderer needs to render settings
-
-        without a second round-trip: the toggle value plus the viewer''s role for owner-gated UI.'
-    _SoloOnboarding:
-      properties:
-        kind:
-          type: string
-          const: solo
-          title: Kind
-      type: object
-      required:
-      - kind
-      title: _SoloOnboarding
-    OrgRefDTO:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        claimed_domain:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Claimed Domain
-        is_personal:
-          type: boolean
-          title: Is Personal
-          description: True when the org has no claimed domain — i.e. it is a personal/solo org.
-          readOnly: true
-      type: object
-      required:
-      - id
-      - name
-      - is_personal
-      title: OrgRefDTO
-      description: Lightweight {id, name, is_personal} pointer used by settings and onboarding flows.
-    OnboardingOptionsResponse:
-      properties:
-        has_completed_onboarding:
-          type: boolean
-          title: Has Completed Onboarding
-        current_org:
-          anyOf:
-          - $ref: '#/components/schemas/OrgRefDTO'
-          - type: 'null'
-        matching_org:
-          anyOf:
-          - $ref: '#/components/schemas/OrgRefDTO'
-          - type: 'null'
-      type: object
-      required:
-      - has_completed_onboarding
-      - current_org
-      - matching_org
-      title: OnboardingOptionsResponse
-    CompleteOnboardingResponse:
-      properties:
-        profile:
-          $ref: '#/components/schemas/UserProfileResponse'
-        current_org:
-          $ref: '#/components/schemas/OrgRefDTO'
-      type: object
-      required:
-      - profile
-      - current_org
-      title: CompleteOnboardingResponse
-    ListWorkspaceMembersResponse:
-      properties:
-        members:
-          items:
-            $ref: '#/components/schemas/WorkspaceMemberResponse'
-          type: array
-          title: Members
-      type: object
-      required:
-      - members
-      title: ListWorkspaceMembersResponse
-    AddWorkspaceMemberRequest:
-      properties:
-        email:
-          type: string
-          maxLength: 254
-          title: Email
-        role:
-          type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-          default: editor
-      type: object
-      required:
-      - email
-      title: AddWorkspaceMemberRequest
     WorkspaceMemberResponse:
       properties:
         user_id:
@@ -604,6 +527,44 @@ components:
       - avatar_url
       - email
       title: WorkspaceMemberResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    OnboardingOptionsResponse:
+      properties:
+        has_completed_onboarding:
+          type: boolean
+          title: Has Completed Onboarding
+        current_org:
+          anyOf:
+          - $ref: '#/components/schemas/OrgRefDTO'
+          - type: 'null'
+        matching_org:
+          anyOf:
+          - $ref: '#/components/schemas/OrgRefDTO'
+          - type: 'null'
+      type: object
+      required:
+      - has_completed_onboarding
+      - current_org
+      - matching_org
+      title: OnboardingOptionsResponse
+    _SoloOnboarding:
+      properties:
+        kind:
+          type: string
+          const: solo
+          title: Kind
+      type: object
+      required:
+      - kind
+      title: _SoloOnboarding
     UserProfileResponse:
       properties:
         user_id:
@@ -637,6 +598,45 @@ components:
       - avatar_url
       - email
       title: UserProfileResponse
+    ListWorkspaceMembersResponse:
+      properties:
+        members:
+          items:
+            $ref: '#/components/schemas/WorkspaceMemberResponse'
+          type: array
+          title: Members
+      type: object
+      required:
+      - members
+      title: ListWorkspaceMembersResponse
+    UpdateMemberRoleRequest:
+      properties:
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
+      type: object
+      required:
+      - role
+      title: UpdateMemberRoleRequest
+    UpdateProfileRequest:
+      properties:
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+      type: object
+      title: UpdateProfileRequest
     ValidationError:
       properties:
         loc:

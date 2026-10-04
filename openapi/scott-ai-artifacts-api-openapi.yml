@@ -63,15 +63,37 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    CreateDocumentArtifactResponse:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        id:
+          type: string
+          title: Id
+        workspace_id:
+          type: string
+          title: Workspace Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        produced_at_turn_id:
+          type: string
+          title: Produced At Turn Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
       type: object
-      title: HTTPValidationError
+      required:
+      - id
+      - workspace_id
+      - name
+      - produced_at_turn_id
+      - created_at
+      title: CreateDocumentArtifactResponse
+      description: 'Same shape as the document-only fields of `ArtifactSummary`,
+
+        declared here to keep the write endpoint self-contained.'
     CreateDocumentArtifactRequest:
       properties:
         id:
@@ -118,6 +140,15 @@ components:
         boundary as `<workspace_id>:<document_artifact_id>`; not stored in
 
         the schema.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ChangeEntry:
       properties:
         changeType:
@@ -150,37 +181,6 @@ components:
         Field-name casing matches the agent''s serialization (camelCase) so
 
         Pydantic round-trips without aliasing.'
-    CreateDocumentArtifactResponse:
-      properties:
-        id:
-          type: string
-          title: Id
-        workspace_id:
-          type: string
-          title: Workspace Id
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        produced_at_turn_id:
-          type: string
-          title: Produced At Turn Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - workspace_id
-      - name
-      - produced_at_turn_id
-      - created_at
-      title: CreateDocumentArtifactResponse
-      description: 'Same shape as the document-only fields of `ArtifactSummary`,
-
-        declared here to keep the write endpoint self-contained.'
     ValidationError:
       properties:
         loc:

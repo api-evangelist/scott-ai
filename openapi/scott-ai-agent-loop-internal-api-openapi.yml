@@ -112,6 +112,22 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    RedeemHandoffRequest:
+      properties:
+        handoff_code:
+          type: string
+          title: Handoff Code
+      type: object
+      required:
+      - handoff_code
+      title: RedeemHandoffRequest
+    RetrievalKind:
+      type: string
+      enum:
+      - git
+      - file
+      title: RetrievalKind
+      description: Kind of retrieval method (git clone, file download, etc.)
     RetrievalResult:
       properties:
         adapter:
@@ -127,23 +143,33 @@ components:
       - retrieval
       title: RetrievalResult
       description: Result of retrieving a source (how to actually fetch it)
-    HTTPValidationError:
+    FileRetrievalDetails:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        kind:
+          $ref: '#/components/schemas/RetrievalKind'
+          default: file
+        download_url:
+          type: string
+          title: Download Url
+        filename:
+          type: string
+          title: Filename
+        content_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content Type
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
       type: object
-      title: HTTPValidationError
-    AdapterType:
-      type: string
-      enum:
-      - github
-      - slack
-      - uploaded_file
-      title: AdapterType
-      description: Type of source adapter (github, uploaded_file, etc.)
+      required:
+      - download_url
+      - filename
+      title: FileRetrievalDetails
+      description: Details for retrieving source via file download
     GitRetrievalDetails:
       properties:
         kind:
@@ -173,49 +199,23 @@ components:
       - commit_sha
       title: GitRetrievalDetails
       description: Details for retrieving source via git clone
-    FileRetrievalDetails:
+    HTTPValidationError:
       properties:
-        kind:
-          $ref: '#/components/schemas/RetrievalKind'
-          default: file
-        download_url:
-          type: string
-          title: Download Url
-        filename:
-          type: string
-          title: Filename
-        content_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Content Type
-        size_bytes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Size Bytes
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - download_url
-      - filename
-      title: FileRetrievalDetails
-      description: Details for retrieving source via file download
-    RedeemHandoffRequest:
-      properties:
-        handoff_code:
-          type: string
-          title: Handoff Code
-      type: object
-      required:
-      - handoff_code
-      title: RedeemHandoffRequest
-    RetrievalKind:
+      title: HTTPValidationError
+    AdapterType:
       type: string
       enum:
-      - git
-      - file
-      title: RetrievalKind
-      description: Kind of retrieval method (git clone, file download, etc.)
+      - github
+      - slack
+      - uploaded_file
+      title: AdapterType
+      description: Type of source adapter (github, uploaded_file, etc.)
     RedeemHandoffResponse:
       properties:
         token:

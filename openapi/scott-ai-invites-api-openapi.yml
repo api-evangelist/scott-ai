@@ -263,24 +263,50 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    InvitePreviewResponse:
+    ListWorkspaceInvitesResponse:
+      properties:
+        invites:
+          items:
+            $ref: '#/components/schemas/InviteResponse'
+          type: array
+          title: Invites
+      type: object
+      required:
+      - invites
+      title: ListWorkspaceInvitesResponse
+    AcceptInviteReviewHint:
+      properties:
+        review_request_id:
+          type: string
+          title: Review Request Id
+        snapshot_id:
+          type: string
+          title: Snapshot Id
+      type: object
+      required:
+      - review_request_id
+      - snapshot_id
+      title: AcceptInviteReviewHint
+      description: Node-anchored routing hint set when an accepted invite carried a review request.
+    MyPendingInviteResponse:
       properties:
         workspace_id:
           type: string
           title: Workspace Id
+        role:
+          type: string
+          enum:
+          - owner
+          - editor
+          - viewer
+          - commenter
+          title: Role
       type: object
       required:
       - workspace_id
-      title: InvitePreviewResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - role
+      title: MyPendingInviteResponse
+      description: Pending-invite preview for the authenticated user, scoped to a workspace.
     CreateInviteRequest:
       properties:
         invitee_email:
@@ -312,45 +338,6 @@ components:
       required:
       - invitee_email
       title: CreateInviteRequest
-    MyPendingInviteResponse:
-      properties:
-        workspace_id:
-          type: string
-          title: Workspace Id
-        role:
-          type: string
-          enum:
-          - owner
-          - editor
-          - viewer
-          - commenter
-          title: Role
-      type: object
-      required:
-      - workspace_id
-      - role
-      title: MyPendingInviteResponse
-      description: Pending-invite preview for the authenticated user, scoped to a workspace.
-    UpdateInviteRequest:
-      properties:
-        role:
-          anyOf:
-          - type: string
-            enum:
-            - owner
-            - editor
-            - viewer
-            - commenter
-          - type: 'null'
-          title: Role
-        message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Message
-      additionalProperties: false
-      type: object
-      title: UpdateInviteRequest
     InviteResponse:
       properties:
         id:
@@ -406,31 +393,6 @@ components:
       - created_at
       - accepted_at
       title: InviteResponse
-    ListWorkspaceInvitesResponse:
-      properties:
-        invites:
-          items:
-            $ref: '#/components/schemas/InviteResponse'
-          type: array
-          title: Invites
-      type: object
-      required:
-      - invites
-      title: ListWorkspaceInvitesResponse
-    AcceptInviteReviewHint:
-      properties:
-        review_request_id:
-          type: string
-          title: Review Request Id
-        snapshot_id:
-          type: string
-          title: Snapshot Id
-      type: object
-      required:
-      - review_request_id
-      - snapshot_id
-      title: AcceptInviteReviewHint
-      description: Node-anchored routing hint set when an accepted invite carried a review request.
     AcceptInviteResponse:
       properties:
         workspace_id:
@@ -454,6 +416,15 @@ components:
       - role
       title: AcceptInviteResponse
       description: Accept result; `review` is set iff the invite carried a review request (SCO-1353).
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ReviewMetadata:
       properties:
         snapshot_id:
@@ -475,6 +446,35 @@ components:
         snapshot_id anchors the request to the node being shared; the reviewer
 
         binds in on invite acceptance.'
+    InvitePreviewResponse:
+      properties:
+        workspace_id:
+          type: string
+          title: Workspace Id
+      type: object
+      required:
+      - workspace_id
+      title: InvitePreviewResponse
+    UpdateInviteRequest:
+      properties:
+        role:
+          anyOf:
+          - type: string
+            enum:
+            - owner
+            - editor
+            - viewer
+            - commenter
+          - type: 'null'
+          title: Role
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+      additionalProperties: false
+      type: object
+      title: UpdateInviteRequest
     ValidationError:
       properties:
         loc:
